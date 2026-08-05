@@ -32,7 +32,23 @@ export type ResultType = {
   id: ResultTypeId;
   name: string;
   trace: string;
+  descriptor: string;
+  intro: readonly string[];
+  strengths: readonly string[];
+  behaviors: readonly string[];
   engravedTraces: readonly string[];
+  mindSentence: string;
+  todayMessage: string;
+  imageSrc: string;
+  separatorSrc: string;
+  theme: {
+    background: string;
+    accent: string;
+    text: string;
+    muted: string;
+    buttonGradient: string;
+    buttonText: string;
+  };
 };
 
 export type ResultTypeScores = Record<ResultTypeId, number>;

@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Burst / Radiant Rays" opacity="0" filter="url(#filter0_f_0_58)" style="mix-blend-mode:screen">
+<path d="M65 0L69.0376 49.9316L97.5 8.70835L76.0309 53.9691L121.292 32.5L80.0684 60.9624L130 65L80.0684 69.0376L121.292 97.5L76.0309 76.0309L97.5 121.292L69.0376 80.0684L65 130L60.9624 80.0684L32.5 121.292L53.9691 76.0309L8.70835 97.5L49.9316 69.0376L0 65L49.9316 60.9624L8.70835 32.5L53.9691 53.9691L32.5 8.70835L60.9624 49.9316L65 0Z" fill="url(#paint0_radial_0_58)" style="mix-blend-mode:screen"/>
+</g>
+<defs>
+<filter id="filter0_f_0_58" x="inf" y="inf" width="-inf" height="-inf" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.5" result="effect1_foregroundBlur_0_58"/>
+</filter>
+<radialGradient id="paint0_radial_0_58" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(65 65) scale(65)">
+<stop stop-color="white"/>
+<stop offset="0.28" stop-color="#FFF7B8"/>
+<stop offset="0.62" stop-color="#B8EDFF" stop-opacity="0.92"/>
+<stop offset="1" stop-color="#B880FF" stop-opacity="0.72"/>
+</radialGradient>
+</defs>
+</svg>

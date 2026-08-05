@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="308" height="242" viewBox="0 0 308 242" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Loading Ring / Outer" filter="url(#filter0_f_0_61)">
+<path d="M154 3C237.637 3 305 56.0445 305 121C305 185.955 237.637 239 154 239C70.3632 239 3 185.955 3 121C3 56.0445 70.3632 3 154 3Z" stroke="#8CEBFF" stroke-opacity="0.34" stroke-width="2"/>
+</g>
+<defs>
+<filter id="filter0_f_0_61" x="0" y="0" width="308" height="242" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1" result="effect1_foregroundBlur_0_61"/>
+</filter>
+</defs>
+</svg>

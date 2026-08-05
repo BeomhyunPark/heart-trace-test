@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="556" height="316" viewBox="0 0 556 316" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Flow / Violet Arc" filter="url(#filter0_f_0_46)">
+<path d="M278 12C352.01 12 418.815 28.6743 466.977 55.4307C515.273 82.2623 544 118.691 544 158C544 197.309 515.273 233.738 466.977 260.569C418.815 287.326 352.01 304 278 304C203.99 304 137.185 287.326 89.0234 260.569C40.7267 233.738 12 197.309 12 158C12 118.691 40.7267 82.2623 89.0234 55.4307C137.185 28.6743 203.99 12 278 12Z" stroke="#B58AF2" stroke-opacity="0.08" stroke-width="8"/>
+</g>
+<defs>
+<filter id="filter0_f_0_46" x="0" y="0" width="556" height="316" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_0_46"/>
+</filter>
+</defs>
+</svg>

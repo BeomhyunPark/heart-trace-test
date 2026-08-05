@@ -9,6 +9,7 @@ html {
   background: var(--color-background);
   font-family: var(--font-family-sans);
   line-height: 1.5;
+  scroll-behavior: smooth;
   text-size-adjust: 100%;
 }
 
@@ -17,6 +18,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
+  background: #050816;
 }
 
 button,
@@ -26,30 +28,43 @@ select {
   font: inherit;
 }
 
-.app-shell {
-  display: grid;
+a {
+  color: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+#root {
+  width: min(100%, var(--app-max-width));
   min-height: 100vh;
   min-height: 100dvh;
-  place-content: center;
-  padding: calc(var(--space-page) + env(safe-area-inset-top))
-    calc(var(--space-page) + env(safe-area-inset-right))
-    calc(var(--space-page) + env(safe-area-inset-bottom))
-    calc(var(--space-page) + env(safe-area-inset-left));
-  text-align: center;
-}
-
-.app-shell > * {
-  width: min(100%, var(--content-max-width));
   margin-inline: auto;
+  overflow: hidden;
+  background: #0c253f;
+  box-shadow: 0 0 5rem rgba(0, 0, 0, 0.4);
 }
 
-.app-shell h1 {
-  margin-block: 0;
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
+@media (min-width: 31rem) {
+  #root {
+    margin-block: 1.5rem;
+    border-radius: 2rem;
+  }
 }
 
-.app-shell p {
-  margin-block: 0.75rem 0;
-  color: var(--color-text-muted);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
-

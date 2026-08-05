@@ -1,10 +1,16 @@
 :root {
-  --color-background: #ffffff;
-  --color-surface: #f6f6f6;
-  --color-text: #1f1f1f;
-  --color-text-muted: #666666;
-  --font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --content-max-width: 30rem;
-  --space-page: clamp(1rem, 5vw, 1.5rem);
+  --color-background: #050816;
+  --color-text: #f8f7ff;
+  --color-text-muted: #c9c9df;
+  --color-accent-cyan: #55ddf2;
+  --color-accent-violet: #a88af2;
+  --color-accent-rose: #f09acd;
+  --color-surface: rgba(26, 41, 79, 0.72);
+  --color-border: rgba(156, 191, 237, 0.72);
+  --font-family-sans: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-family-display: "Jua", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  --app-max-width: 25.125rem;
+  --content-max-width: 22.125rem;
+  --space-page: clamp(1rem, 5.97vw, 1.5rem);
+  --button-gradient: linear-gradient(90deg, #55ddf2 0%, #a88af2 52%, #f09acd 100%);
 }
-

@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="644" height="384" viewBox="0 0 644 384" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Flow / Cyan Arc" filter="url(#filter0_f_0_41)">
+<path d="M322 22C406.16 22 481.862 41.8288 536.182 73.3691C590.755 105.057 622 147.351 622 192C622 236.649 590.755 278.943 536.182 310.631C481.862 342.171 406.16 362 322 362C237.84 362 162.138 342.171 107.818 310.631C53.2453 278.943 22 236.649 22 192C22 147.351 53.2453 105.057 107.818 73.3691C162.138 41.8288 237.84 22 322 22Z" stroke="#58D9F2" stroke-opacity="0.04" stroke-width="20"/>
+</g>
+<defs>
+<filter id="filter0_f_0_41" x="0" y="0" width="644" height="384" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="6" result="effect1_foregroundBlur_0_41"/>
+</filter>
+</defs>
+</svg>

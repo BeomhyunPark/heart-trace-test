@@ -19,6 +19,11 @@ export function QuestionScreen({
   onPrevious,
 }: QuestionScreenProps) {
   const questionNumber = questionIndex + 1;
+  const promptDensity = question.text.length <= 28
+    ? 'standard'
+    : question.text.length <= 48
+      ? 'compact'
+      : 'dense';
 
   return (
     <ScreenLayout className="question-screen">
@@ -31,7 +36,7 @@ export function QuestionScreen({
       </header>
 
       <fieldset className="question-fieldset">
-        <legend>
+        <legend className={`question-prompt question-prompt--${promptDensity}`}>
           <span className="question-number">Q{questionNumber}</span>
           <span className="question-title">{question.text}</span>
         </legend>
@@ -55,7 +60,7 @@ export function QuestionScreen({
 
       {questionIndex > 0 ? (
         <button className="previous-button" type="button" onClick={onPrevious}>
-          <span aria-hidden="true">‹</span> 이전
+          이전
         </button>
       ) : null}
     </ScreenLayout>

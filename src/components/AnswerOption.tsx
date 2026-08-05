@@ -31,7 +31,6 @@ export function AnswerOption({
         <span className="answer-option__marker" aria-hidden="true">{marker}</span>
       ) : null}
       <span className="answer-option__text">{text}</span>
-      <span className="answer-option__check" aria-hidden="true">✓</span>
     </label>
   );
 }

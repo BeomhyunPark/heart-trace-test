@@ -6,9 +6,11 @@ import axe from 'axe-core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '../src/app/App';
+import { RESULT_REVEAL_DELAY_MS } from '../src/app/timing';
 import { QUESTIONS } from '../src/data/questions';
 import { RESULT_TYPES } from '../src/data/resultTypes';
 import { RESULT_TYPE_IDS, type ResultTypeId } from '../src/domain/types';
+import { LoadingScreen } from '../src/screens/LoadingScreen';
 
 afterEach(() => {
   cleanup();
@@ -18,7 +20,7 @@ afterEach(() => {
 
 function startQuestionFlow() {
   fireEvent.click(screen.getByRole('button', { name: '테스트 시작하기' }));
-  fireEvent.click(screen.getByRole('button', { name: '검사 시작하기' }));
+  fireEvent.click(screen.getByRole('button', { name: '알겠어요' }));
 }
 
 function getOptionText(questionIndex: number, resultType: ResultTypeId): string {
@@ -56,6 +58,33 @@ async function getAccessibilityViolations(container: HTMLElement) {
 }
 
 describe('앱 화면 흐름과 접근성', () => {
+  it('결과 로딩 진행률과 분석 단계가 시간에 따라 실제로 바뀐다', async () => {
+    vi.useFakeTimers();
+    const { container } = render(<LoadingScreen />);
+    const progressBar = screen.getByRole('progressbar', { name: '결과 분석 진행률' });
+    const soulOrb = container.querySelector('.soul-orb');
+
+    expect(progressBar.getAttribute('aria-valuenow')).toBe('0');
+    expect(soulOrb?.getAttribute('data-stage')).toBe('1');
+    expect(screen.getByRole('heading', { name: '마음의 대답을 모으고 있어요' })).toBeTruthy();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1600);
+    });
+
+    expect(progressBar.getAttribute('aria-valuenow')).toBe('40');
+    expect(soulOrb?.getAttribute('data-stage')).toBe('3');
+    expect(screen.getByRole('heading', { name: '흔적의 결을 비교하고 있어요' })).toBeTruthy();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2400);
+    });
+
+    expect(progressBar.getAttribute('aria-valuenow')).toBe('100');
+    expect(soulOrb?.getAttribute('data-stage')).toBe('8');
+    expect(screen.getByRole('heading', { name: '당신의 흔적을 찾았어요' })).toBeTruthy();
+  });
+
   it('시작 화면과 질문 화면에 자동 접근성 위반이 없다', async () => {
     const { container } = render(<App />);
     expect(await getAccessibilityViolations(container)).toEqual([]);
@@ -73,7 +102,7 @@ describe('앱 화면 흐름과 접근성', () => {
     await user.keyboard('{Enter}');
 
     await user.tab();
-    expect(document.activeElement?.textContent).toContain('검사 시작하기');
+    expect(document.activeElement?.textContent).toContain('알겠어요');
     await user.keyboard(' ');
 
     expect(screen.getByRole('group', { name: /Q1/ })).toBeTruthy();
@@ -136,10 +165,10 @@ describe('앱 화면 흐름과 접근성', () => {
       name: RESULT_TYPES.spring.name,
     }));
 
-    expect(screen.getByText('가장 선명한 흔적을 찾고 있어요')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /가장 선명한 흔적을.*찾고 있어요/ })).toBeTruthy();
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1100);
+      await vi.advanceTimersByTimeAsync(RESULT_REVEAL_DELAY_MS);
     });
     vi.useRealTimers();
 
@@ -158,13 +187,13 @@ describe('앱 화면 흐름과 접근성', () => {
     });
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1100);
+      await vi.advanceTimersByTimeAsync(RESULT_REVEAL_DELAY_MS);
     });
 
     expect(screen.getByRole('heading', { name: RESULT_TYPES.bear.name })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '처음부터 다시 하기' }));
 
-    expect(screen.getByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /흔적을 대하는 자세는/ })).toBeTruthy();
     expect(screen.queryByRole('radio')).toBeNull();
   });
 
@@ -188,10 +217,10 @@ describe('앱 화면 흐름과 접근성', () => {
       answerWithResultType(questionIndex, 'express');
     });
 
-    expect(screen.getByText('가장 선명한 흔적을 찾고 있어요')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /가장 선명한 흔적을.*찾고 있어요/ })).toBeTruthy();
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1100);
+      await vi.advanceTimersByTimeAsync(RESULT_REVEAL_DELAY_MS);
     });
 
     expect(screen.getByRole('heading', { name: RESULT_TYPES.express.name })).toBeTruthy();

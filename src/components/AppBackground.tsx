@@ -12,6 +12,11 @@ export function AppBackground() {
       <img className="app-background__star app-background__star--one" src={assetUrl('images/background/star-small.svg')} alt="" />
       <img className="app-background__star app-background__star--two" src={assetUrl('images/background/star-small.svg')} alt="" />
       <img className="app-background__star app-background__star--three" src={assetUrl('images/background/star-small.svg')} alt="" />
+      <img className="app-background__star app-background__star--four" src={assetUrl('images/background/star-small.svg')} alt="" />
+      <img className="app-background__star app-background__star--five" src={assetUrl('images/background/star-small.svg')} alt="" />
+      <img className="app-background__star app-background__star--six" src={assetUrl('images/background/star-small.svg')} alt="" />
+      <img className="app-background__star app-background__star--seven" src={assetUrl('images/background/star-small.svg')} alt="" />
+      <img className="app-background__star app-background__star--eight" src={assetUrl('images/background/star-small.svg')} alt="" />
     </div>
   );
 }

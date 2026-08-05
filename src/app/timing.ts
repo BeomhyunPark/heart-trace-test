@@ -1,0 +1,2 @@
+export const RESULT_REVEAL_DELAY_MS = 4400;
+export const LOADING_SEQUENCE_DURATION_MS = 4000;

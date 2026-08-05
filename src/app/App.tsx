@@ -12,6 +12,7 @@ import { ResultScreen } from '../screens/ResultScreen';
 import { TieBreakerScreen } from '../screens/TieBreakerScreen';
 import { getResultImageFilename, preloadResultImage } from '../utils/resultImage';
 import { createInitialTestState, testReducer } from './testReducer';
+import { RESULT_REVEAL_DELAY_MS } from './timing';
 
 export function App() {
   const [state, dispatch] = useReducer(
@@ -37,7 +38,7 @@ export function App() {
     const result = state.result;
     const timer = window.setTimeout(() => {
       setRevealedResult(result);
-    }, 1100);
+    }, RESULT_REVEAL_DELAY_MS);
 
     return () => window.clearTimeout(timer);
   }, [state.phase, state.result]);

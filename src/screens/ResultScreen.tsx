@@ -169,12 +169,12 @@ export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
         <img className="result-separator" src={result.separatorSrc} alt="" aria-hidden="true" />
 
         <section className="result-panel">
-          <h2>이런 힘을 가지고 있어요</h2>
+          <h2>{result.name}의 강점</h2>
           {result.strengths.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </section>
 
         <section className="result-behaviors">
-          <h2>이런 모습으로 나타나요</h2>
+          <h2>이런 모습을 보여요</h2>
           <ul>
             {result.behaviors.map((behavior) => <li key={behavior}>{behavior}</li>)}
           </ul>
@@ -183,17 +183,18 @@ export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
         <section className="result-traces">
           <h2>{result.name}에게 새겨질 흔적</h2>
           <div className="result-traces__tags">
-            {result.engravedTraces.map((trace) => <span key={trace}># {trace}</span>)}
+            {result.engravedTraces.map((trace) => <span key={trace}>{trace}</span>)}
           </div>
         </section>
 
+        <h2 className="result-messages__title">마음에 새겨요</h2>
         <section className="result-messages">
           <article>
             <h2>마음에 남길 한 문장</h2>
             <p>{result.mindSentence}</p>
           </article>
           <article>
-            <h2>오늘의 흔적 미션</h2>
+            <h2>오늘의 한마디</h2>
             <p>{result.todayMessage}</p>
           </article>
         </section>
@@ -212,17 +213,11 @@ export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
                 ? '이미지 준비 중…'
                 : '결과 이미지 저장하기'}
         </button>
-        <p className="result-save-notice" aria-live="polite">
-          {saveMessage ?? '휴대폰에서는 공유 창에서 사진 앱에 저장할 수 있어요.'}
-        </p>
+        <p className="result-save-notice" aria-live="polite">{saveMessage}</p>
 
-        <button className="result-restart-button" type="button" onClick={onRestart}>
-          처음부터 다시 하기
-        </button>
+        <p className="result-disclaimer">이 결과는 당신을 규정하거나 저장하지 않아요.</p>
 
-        <p className="result-disclaimer">
-          이 결과는 수련회 아이스브레이킹을 위한 콘텐츠이며,<br />전문적인 심리 진단이 아닙니다.
-        </p>
+        <button className="result-restart-button" type="button" onClick={onRestart}>처음부터 다시 하기</button>
       </div>
 
       {showIosHelp ? (

@@ -22,6 +22,8 @@ export function TieBreakerScreen({ question, onSelect, onPrevious }: TieBreakerS
         {question.options.map((option) => (
           <AnswerOption
             key={option.id}
+            name="tie-breaker"
+            value={option.id}
             text={option.label}
             selected={false}
             onSelect={() => onSelect(option.id)}

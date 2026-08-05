@@ -42,6 +42,8 @@ export function QuestionScreen({
           {question.options.map((option) => (
             <AnswerOption
               key={option.id}
+              name={`question-${question.id}`}
+              value={option.id}
               marker={option.id}
               text={option.text}
               selected={selectedAnswer === option.resultType}

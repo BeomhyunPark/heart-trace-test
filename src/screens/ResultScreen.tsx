@@ -11,6 +11,7 @@ import {
 
 type ResultScreenProps = {
   resultId: ResultTypeId;
+  onRestart: () => void;
 };
 
 type ResultStyle = CSSProperties & {
@@ -22,7 +23,7 @@ type ResultStyle = CSSProperties & {
   '--result-button-text': string;
 };
 
-export function ResultScreen({ resultId }: ResultScreenProps) {
+export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
   const result = RESULT_TYPES[resultId];
   const [resultFile, setResultFile] = useState<File | null>(null);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
@@ -145,7 +146,11 @@ export function ResultScreen({ resultId }: ResultScreenProps) {
 
   return (
     <main className={`result-screen result-screen--${result.id}`} style={style}>
-      <div className="result-screen__content">
+      <div
+        className="result-screen__content"
+        inert={showIosHelp}
+        aria-hidden={showIosHelp || undefined}
+      >
         <header className="result-hero">
           <p className="eyebrow">당신에게 가장 선명한 흔적</p>
           <h1>{result.name}</h1>
@@ -210,6 +215,10 @@ export function ResultScreen({ resultId }: ResultScreenProps) {
         <p className="result-save-notice" aria-live="polite">
           {saveMessage ?? '휴대폰에서는 공유 창에서 사진 앱에 저장할 수 있어요.'}
         </p>
+
+        <button className="result-restart-button" type="button" onClick={onRestart}>
+          처음부터 다시 하기
+        </button>
 
         <p className="result-disclaimer">
           이 결과는 수련회 아이스브레이킹을 위한 콘텐츠이며,<br />전문적인 심리 진단이 아닙니다.

@@ -22,6 +22,12 @@ export function App() {
   const [introStep, setIntroStep] = useState<'intro' | 'guide'>('intro');
   const [revealedResult, setRevealedResult] = useState<ResultTypeId | null>(null);
 
+  const handleRestart = () => {
+    setIntroStep('intro');
+    setRevealedResult(null);
+    dispatch({ type: 'RESTART' });
+  };
+
   useEffect(() => {
     if (state.phase !== 'result' || state.result === null) {
       setRevealedResult(null);
@@ -96,7 +102,7 @@ export function App() {
       return <LoadingScreen />;
     }
 
-    return <ResultScreen resultId={revealedResult} />;
+    return <ResultScreen resultId={revealedResult} onRestart={handleRestart} />;
   }
 
   return <IntroScreen onContinue={() => setIntroStep('guide')} />;

@@ -354,6 +354,21 @@
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
+.answer-option__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.answer-option:has(.answer-option__input:focus-visible) {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
 .answer-option:hover {
   border-color: #bfeaff;
   background: rgba(38, 60, 105, 0.82);
@@ -798,6 +813,21 @@
   color: var(--result-muted);
   font-size: 0.67rem;
   text-align: center;
+}
+
+.result-restart-button {
+  display: block;
+  min-height: 2.75rem;
+  margin: 0.7rem auto 0;
+  padding-inline: 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--result-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.22rem;
 }
 
 .result-disclaimer {

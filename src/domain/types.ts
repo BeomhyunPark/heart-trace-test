@@ -8,7 +8,13 @@ export const RESULT_TYPE_IDS = [
 
 export type ResultTypeId = (typeof RESULT_TYPE_IDS)[number];
 
-export type AnswerOptionId = 'A' | 'B' | 'C' | 'D' | 'E';
+export const ANSWER_OPTION_IDS = ['A', 'B', 'C', 'D', 'E'] as const;
+
+export const TEST_QUESTION_COUNT = 20;
+
+export type AnswerOptionId = (typeof ANSWER_OPTION_IDS)[number];
+
+export type Answer = ResultTypeId | null;
 
 export type AnswerOption = {
   id: AnswerOptionId;
@@ -29,3 +35,17 @@ export type ResultType = {
   engravedTraces: readonly string[];
 };
 
+export type ResultTypeScores = Record<ResultTypeId, number>;
+
+export type ScoringOutcome =
+  | { status: 'incomplete' }
+  | {
+      status: 'resolved';
+      result: ResultTypeId;
+      scores: ResultTypeScores;
+    }
+  | {
+      status: 'tie';
+      tiedTypes: readonly ResultTypeId[];
+      scores: ResultTypeScores;
+    };

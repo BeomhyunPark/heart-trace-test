@@ -1,0 +1,55 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color: var(--color-text);
+  background: var(--color-background);
+  font-family: var(--font-family-sans);
+  line-height: 1.5;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  place-content: center;
+  padding: calc(var(--space-page) + env(safe-area-inset-top))
+    calc(var(--space-page) + env(safe-area-inset-right))
+    calc(var(--space-page) + env(safe-area-inset-bottom))
+    calc(var(--space-page) + env(safe-area-inset-left));
+  text-align: center;
+}
+
+.app-shell > * {
+  width: min(100%, var(--content-max-width));
+  margin-inline: auto;
+}
+
+.app-shell h1 {
+  margin-block: 0;
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+}
+
+.app-shell p {
+  margin-block: 0.75rem 0;
+  color: var(--color-text-muted);
+}
+

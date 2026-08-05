@@ -41,6 +41,7 @@ export type ResultType = {
   todayMessage: string;
   imageSrc: string;
   separatorSrc: string;
+  resultCardSrc: string;
   theme: {
     background: string;
     accent: string;

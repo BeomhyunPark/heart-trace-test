@@ -774,13 +774,23 @@
   background: var(--result-button-gradient);
   box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--result-accent) 24%, transparent);
   color: var(--result-button-text);
+  cursor: pointer;
   font-size: 0.92rem;
   font-weight: 700;
-  opacity: 0.78;
+  transition: filter 160ms ease, opacity 160ms ease, transform 160ms ease;
+}
+
+.result-save-button:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+.result-save-button:not(:disabled):active {
+  transform: translateY(1px);
 }
 
 .result-save-button:disabled {
   cursor: not-allowed;
+  opacity: 0.62;
 }
 
 .result-save-notice {
@@ -796,6 +806,93 @@
   font-size: 0.65rem;
   line-height: 1.6;
   text-align: center;
+}
+
+.save-help {
+  position: fixed;
+  z-index: 20;
+  display: grid;
+  inset: 0;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  place-items: center;
+  background: rgba(4, 6, 18, 0.78);
+  backdrop-filter: blur(0.65rem);
+}
+
+.save-help__dialog {
+  position: relative;
+  width: min(100%, 22rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+  padding: 1.45rem 1rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--result-accent) 42%, transparent);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, #121529 92%, var(--result-accent));
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.5);
+  color: #f8f7ff;
+  text-align: center;
+}
+
+.save-help__dialog h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.save-help__dialog > p {
+  margin: 0.55rem 0 0.9rem;
+  color: #d3d9e8;
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.save-help__close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.save-help__preview {
+  max-height: 50dvh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.9rem;
+  background: #080b18;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.save-help__preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-touch-callout: default;
+}
+
+.save-help__dialog > a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.8rem;
+  padding-inline: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 @keyframes soul-float {

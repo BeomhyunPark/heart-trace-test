@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 
 import { QUESTIONS } from '../data/questions';
+import { RESULT_TYPES } from '../data/resultTypes';
 import { createTieBreakerQuestion } from '../domain/tieBreaker';
 import type { ResultTypeId } from '../domain/types';
 import { GuideScreen } from '../screens/GuideScreen';
@@ -9,6 +10,7 @@ import { LoadingScreen } from '../screens/LoadingScreen';
 import { QuestionScreen } from '../screens/QuestionScreen';
 import { ResultScreen } from '../screens/ResultScreen';
 import { TieBreakerScreen } from '../screens/TieBreakerScreen';
+import { getResultImageFilename, preloadResultImage } from '../utils/resultImage';
 import { createInitialTestState, testReducer } from './testReducer';
 
 export function App() {
@@ -33,6 +35,21 @@ export function App() {
 
     return () => window.clearTimeout(timer);
   }, [state.phase, state.result]);
+
+  useEffect(() => {
+    if (state.result === null) {
+      return;
+    }
+
+    const result = RESULT_TYPES[state.result];
+
+    void preloadResultImage(
+      result.resultCardSrc,
+      getResultImageFilename(result.id),
+    ).catch(() => {
+      // 결과 화면에서 다시 시도할 수 있도록 프리로드 실패는 조용히 넘긴다.
+    });
+  }, [state.result]);
 
   if (state.phase === 'intro') {
     if (introStep === 'guide') {

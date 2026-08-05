@@ -1,7 +1,13 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
 import { RESULT_TYPES } from '../data/resultTypes';
 import type { ResultTypeId } from '../domain/types';
+import {
+  getResultImageFilename,
+  loadResultImageFile,
+  saveResultImageFile,
+  type ResultImageAction,
+} from '../utils/resultImage';
 
 type ResultScreenProps = {
   resultId: ResultTypeId;
@@ -18,6 +24,12 @@ type ResultStyle = CSSProperties & {
 
 export function ResultScreen({ resultId }: ResultScreenProps) {
   const result = RESULT_TYPES[resultId];
+  const [resultFile, setResultFile] = useState<File | null>(null);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [showIosHelp, setShowIosHelp] = useState(false);
+  const closeHelpButtonRef = useRef<HTMLButtonElement>(null);
   const style: ResultStyle = {
     '--result-background': result.theme.background,
     '--result-accent': result.theme.accent,
@@ -25,6 +37,110 @@ export function ResultScreen({ resultId }: ResultScreenProps) {
     '--result-muted': result.theme.muted,
     '--result-button-gradient': result.theme.buttonGradient,
     '--result-button-text': result.theme.buttonText,
+  };
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    setResultFile(null);
+    setImageLoadFailed(false);
+    setSaveMessage(null);
+
+    void loadResultImageFile(
+      result.resultCardSrc,
+      getResultImageFilename(result.id),
+    )
+      .then((file) => {
+        if (isCurrent) {
+          setImageLoadFailed(false);
+          setResultFile(file);
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setImageLoadFailed(true);
+          setSaveMessage('이미지를 준비하지 못했어요. 잠시 후 다시 시도해 주세요.');
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [result.id, result.resultCardSrc]);
+
+  useEffect(() => {
+    if (!showIosHelp) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocusedElement = document.activeElement;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowIosHelp(false);
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    closeHelpButtonRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+
+      if (previouslyFocusedElement instanceof HTMLElement) {
+        previouslyFocusedElement.focus();
+      }
+    };
+  }, [showIosHelp]);
+
+  const handleImageAction = (action: ResultImageAction) => {
+    switch (action) {
+      case 'shared':
+        setSaveMessage('결과 이미지를 공유했어요.');
+        break;
+      case 'downloaded':
+        setSaveMessage('결과 이미지 다운로드를 시작했어요.');
+        break;
+      case 'ios-help':
+        setSaveMessage(null);
+        setShowIosHelp(true);
+        break;
+      case 'cancelled':
+        setSaveMessage(null);
+        break;
+    }
+  };
+
+  const handleSave = async () => {
+    if (isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const file = resultFile ?? await loadResultImageFile(
+        result.resultCardSrc,
+        getResultImageFilename(result.id),
+      );
+
+      setResultFile(file);
+      setImageLoadFailed(false);
+
+      const action = await saveResultImageFile(
+        file,
+        `${result.name} · 마음의 흔적 테스트`,
+      );
+      handleImageAction(action);
+    } catch {
+      setImageLoadFailed(true);
+      setSaveMessage('이미지를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -80,17 +196,55 @@ export function ResultScreen({ resultId }: ResultScreenProps) {
         <button
           className="result-save-button"
           type="button"
-          disabled
-          title="결과 이미지 저장은 다음 개발 단계에서 제공됩니다."
+          disabled={(resultFile === null && !imageLoadFailed) || isSaving}
+          onClick={handleSave}
         >
-          결과 이미지 저장하기
+          {isSaving
+            ? '저장 준비 중…'
+            : imageLoadFailed
+              ? '이미지 다시 불러오기'
+              : resultFile === null
+                ? '이미지 준비 중…'
+                : '결과 이미지 저장하기'}
         </button>
-        <p className="result-save-notice">이미지 저장 기능은 다음 단계에서 연결돼요.</p>
+        <p className="result-save-notice" aria-live="polite">
+          {saveMessage ?? '휴대폰에서는 공유 창에서 사진 앱에 저장할 수 있어요.'}
+        </p>
 
         <p className="result-disclaimer">
           이 결과는 수련회 아이스브레이킹을 위한 콘텐츠이며,<br />전문적인 심리 진단이 아닙니다.
         </p>
       </div>
+
+      {showIosHelp ? (
+        <div className="save-help" role="presentation" onMouseDown={() => setShowIosHelp(false)}>
+          <section
+            className="save-help__dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="save-help-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button
+              ref={closeHelpButtonRef}
+              className="save-help__close"
+              type="button"
+              aria-label="저장 안내 닫기"
+              onClick={() => setShowIosHelp(false)}
+            >
+              ×
+            </button>
+            <h2 id="save-help-title">iPhone에 이미지 저장하기</h2>
+            <p>아래 이미지를 길게 누른 뒤<br />‘사진에 저장’을 선택해 주세요.</p>
+            <div className="save-help__preview">
+              <img src={result.resultCardSrc} alt={`${result.name} 저장용 결과 이미지`} />
+            </div>
+            <a href={result.resultCardSrc} target="_blank" rel="noopener noreferrer">
+              이미지 크게 열기
+            </a>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

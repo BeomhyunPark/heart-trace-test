@@ -25,6 +25,7 @@ export const RESULT_TYPES = {
     todayMessage: '생각이 많아질 때, 잠시 하나님께 마음을 털어놓아 볼래?',
     imageSrc: '/images/characters/bear.png',
     separatorSrc: '/images/characters/bear-separator.svg',
+    resultCardSrc: '/images/result-cards/result-bear.png',
     theme: {
       background: 'linear-gradient(180deg, #0e0a24 0%, #1f1442 56%, #3b244a 100%)',
       accent: '#ffd4f0',
@@ -58,6 +59,7 @@ export const RESULT_TYPES = {
     todayMessage: '오늘은 괜찮은 척했던 마음 하나를 예수님께 솔직히 말해볼래?',
     imageSrc: '/images/characters/spring.png',
     separatorSrc: '/images/characters/spring-separator.svg',
+    resultCardSrc: '/images/result-cards/result-spring.png',
     theme: {
       background: 'linear-gradient(180deg, #251822 0%, #5d362d 52%, #783e1a 100%)',
       accent: '#ffe08a',
@@ -91,6 +93,7 @@ export const RESULT_TYPES = {
     todayMessage: '오늘은 혼자 해결하려 하기보다, 하나님께 먼저 맡겨볼래?',
     imageSrc: '/images/characters/effort.png',
     separatorSrc: '/images/characters/effort-separator.svg',
+    resultCardSrc: '/images/result-cards/result-effort.png',
     theme: {
       background: 'linear-gradient(180deg, #04091a 0%, #062445 54%, #0b1a33 100%)',
       accent: '#bcebff',
@@ -124,6 +127,7 @@ export const RESULT_TYPES = {
     todayMessage: '오늘은 충분히 숨을 고른 뒤, 믿을 수 있는 한 사람에게 내 마음을 조금 나눠볼래?',
     imageSrc: '/images/characters/pause.png',
     separatorSrc: '/images/characters/pause-separator.svg',
+    resultCardSrc: '/images/result-cards/result-pause.png',
     theme: {
       background: 'linear-gradient(180deg, #051c14 0%, #0e3624 54%, #21301a 100%)',
       accent: '#dff29a',
@@ -157,6 +161,7 @@ export const RESULT_TYPES = {
     todayMessage: '마음이 뜨거워질 때, 잠시 멈추고 하나님께 먼저 이야기해 볼래?',
     imageSrc: '/images/characters/express.png',
     separatorSrc: '/images/characters/express-separator.svg',
+    resultCardSrc: '/images/result-cards/result-express.png',
     theme: {
       background: 'linear-gradient(100deg, #12091e 0%, #2a0c18 34%, #651b24 70%, #3a1326 100%)',
       accent: '#ffc069',

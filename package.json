@@ -9,6 +9,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "build": "tsc -b && vite build",
+    "verify": "npm test && npm run build",
     "preview": "vite preview"
   },
   "dependencies": {

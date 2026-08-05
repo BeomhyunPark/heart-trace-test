@@ -167,4 +167,48 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
     expect(screen.queryByRole('radio')).toBeNull();
   });
+
+  it('결과 이미지가 느려도 결과를 먼저 보여주고 준비 후 저장을 활성화한다', async () => {
+    vi.useFakeTimers();
+
+    let finishImageRequest: ((response: {
+      ok: boolean;
+      status: number;
+      blob: () => Promise<Blob>;
+    }) => void) | undefined;
+
+    vi.stubGlobal('fetch', vi.fn(() => new Promise((resolve) => {
+      finishImageRequest = resolve;
+    })));
+
+    render(<App />);
+    startQuestionFlow();
+
+    QUESTIONS.forEach((_, questionIndex) => {
+      answerWithResultType(questionIndex, 'express');
+    });
+
+    expect(screen.getByText('가장 선명한 흔적을 찾고 있어요')).toBeTruthy();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1100);
+    });
+
+    expect(screen.getByRole('heading', { name: RESULT_TYPES.express.name })).toBeTruthy();
+    const preparingButton = screen.getByRole('button', { name: '이미지 준비 중…' });
+    expect((preparingButton as HTMLButtonElement).disabled).toBe(true);
+
+    await act(async () => {
+      finishImageRequest?.({
+        ok: true,
+        status: 200,
+        blob: async () => new Blob(['slow-result-image'], { type: 'image/png' }),
+      });
+      await Promise.resolve();
+    });
+
+    const readyButton = screen.getByRole('button', { name: '결과 이미지 저장하기' });
+    expect((readyButton as HTMLButtonElement).disabled).toBe(false);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
 });

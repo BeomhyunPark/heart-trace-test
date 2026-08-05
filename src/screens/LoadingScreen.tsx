@@ -1,5 +1,6 @@
 import { ProgressBar } from '../components/ProgressBar';
 import { ScreenLayout } from '../components/ScreenLayout';
+import { assetUrl } from '../utils/assetUrl';
 
 export function LoadingScreen() {
   return (
@@ -9,13 +10,13 @@ export function LoadingScreen() {
       </header>
 
       <div className="soul-orb" aria-hidden="true">
-        <img className="soul-orb__rays" src="/images/loading/rays.svg" alt="" />
-        <img className="soul-orb__halo" src="/images/loading/halo.svg" alt="" />
-        <img className="soul-orb__shockwave" src="/images/loading/shockwave.svg" alt="" />
-        <img className="soul-orb__image" src="/images/loading/soul-orb.png" alt="" />
-        <img className="soul-orb__ring" src="/images/loading/ring-inner.svg" alt="" />
-        <img className="soul-orb__character" src="/images/loading/soul-character.svg" alt="" />
-        <img className="soul-orb__highlight" src="/images/loading/orb-highlight.svg" alt="" />
+        <img className="soul-orb__rays" src={assetUrl('images/loading/rays.svg')} alt="" />
+        <img className="soul-orb__halo" src={assetUrl('images/loading/halo.svg')} alt="" />
+        <img className="soul-orb__shockwave" src={assetUrl('images/loading/shockwave.svg')} alt="" />
+        <img className="soul-orb__image" src={assetUrl('images/loading/soul-orb.png')} alt="" />
+        <img className="soul-orb__ring" src={assetUrl('images/loading/ring-inner.svg')} alt="" />
+        <img className="soul-orb__character" src={assetUrl('images/loading/soul-character.svg')} alt="" />
+        <img className="soul-orb__highlight" src={assetUrl('images/loading/orb-highlight.svg')} alt="" />
       </div>
 
       <div className="loading-screen__copy">

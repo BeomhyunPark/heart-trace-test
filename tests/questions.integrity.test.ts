@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { QUESTIONS } from '../src/data/questions';
+import { calculateResult } from '../src/domain/scoring';
 import {
   ANSWER_OPTION_IDS,
   RESULT_TYPE_IDS,
@@ -69,5 +70,24 @@ describe('질문 데이터 무결성', () => {
         [...question.options.map(({ resultType }) => resultType)].sort(),
       ).toEqual([...RESULT_TYPE_IDS].sort());
     }
+  });
+
+  it.each(RESULT_TYPE_IDS)('실제 질문 선택지로 %s 결과에 도달할 수 있다', (resultType) => {
+    const answers = QUESTIONS.map((question) => {
+      const option = question.options.find(
+        (candidate) => candidate.resultType === resultType,
+      );
+
+      if (!option) {
+        throw new Error(`${question.id}번 문항에서 ${resultType} 선택지를 찾지 못했습니다.`);
+      }
+
+      return option.resultType;
+    });
+
+    expect(calculateResult(answers)).toMatchObject({
+      status: 'resolved',
+      result: resultType,
+    });
   });
 });

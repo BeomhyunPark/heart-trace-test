@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { RESULT_TYPES } from '../src/data/resultTypes';
@@ -17,6 +20,20 @@ describe('결과 이미지', () => {
         `/images/result-cards/${filename}`,
       );
     }
+  });
+
+  it.each(RESULT_TYPE_IDS)('%s 저장 이미지가 유효한 고해상도 PNG다', (resultTypeId) => {
+    const resultType = RESULT_TYPES[resultTypeId];
+    const imagePath = resolve('public', resultType.resultCardSrc.replace(/^\//, ''));
+    const image = readFileSync(imagePath);
+    const pngSignature = image.subarray(0, 8).toString('hex');
+    const width = image.readUInt32BE(16);
+    const height = image.readUInt32BE(20);
+
+    expect(pngSignature).toBe('89504e470d0a1a0a');
+    expect(width).toBeGreaterThanOrEqual(800);
+    expect(height).toBeGreaterThanOrEqual(1900);
+    expect(image.byteLength).toBeLessThanOrEqual(3 * 1024 * 1024);
   });
 
   it('일반 iPhone과 iPadOS 데스크톱 모드를 감지한다', () => {

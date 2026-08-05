@@ -1,5 +1,6 @@
 import { PrimaryButton } from '../components/PrimaryButton';
 import { ScreenLayout } from '../components/ScreenLayout';
+import { assetUrl } from '../utils/assetUrl';
 
 type IntroScreenProps = {
   onContinue: () => void;
@@ -16,7 +17,7 @@ export function IntroScreen({ onContinue }: IntroScreenProps) {
 
       <div className="intro-screen__visual" aria-hidden="true">
         <span className="intro-screen__glow" />
-        <img src="/images/characters/start-orb.png" alt="" />
+        <img src={assetUrl('images/characters/start-orb.png')} alt="" />
       </div>
 
       <p className="intro-screen__message">

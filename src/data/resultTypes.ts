@@ -1,4 +1,5 @@
 import type { ResultType, ResultTypeId } from '../domain/types';
+import { assetUrl } from '../utils/assetUrl';
 
 export const RESULT_TYPES = {
   bear: {
@@ -23,9 +24,9 @@ export const RESULT_TYPES = {
     engravedTraces: ['위로', '용서', '자유'],
     mindSentence: '지나간 상처보다, 하나님의 위로가 더 깊게 남기를.',
     todayMessage: '생각이 많아질 때, 잠시 하나님께 마음을 털어놓아 볼래?',
-    imageSrc: '/images/characters/bear.png',
-    separatorSrc: '/images/characters/bear-separator.svg',
-    resultCardSrc: '/images/result-cards/result-bear.png',
+    imageSrc: assetUrl('images/characters/bear.png'),
+    separatorSrc: assetUrl('images/characters/bear-separator.svg'),
+    resultCardSrc: assetUrl('images/result-cards/result-bear.png'),
     theme: {
       background: 'linear-gradient(180deg, #0e0a24 0%, #1f1442 56%, #3b244a 100%)',
       accent: '#ffd4f0',
@@ -57,9 +58,9 @@ export const RESULT_TYPES = {
     engravedTraces: ['사랑', '담대함', '정체성'],
     mindSentence: '사람의 시선보다, 하나님이 바라보시는 시선을 기억하기.',
     todayMessage: '오늘은 괜찮은 척했던 마음 하나를 예수님께 솔직히 말해볼래?',
-    imageSrc: '/images/characters/spring.png',
-    separatorSrc: '/images/characters/spring-separator.svg',
-    resultCardSrc: '/images/result-cards/result-spring.png',
+    imageSrc: assetUrl('images/characters/spring.png'),
+    separatorSrc: assetUrl('images/characters/spring-separator.svg'),
+    resultCardSrc: assetUrl('images/result-cards/result-spring.png'),
     theme: {
       background: 'linear-gradient(180deg, #251822 0%, #5d362d 52%, #783e1a 100%)',
       accent: '#ffe08a',
@@ -91,9 +92,9 @@ export const RESULT_TYPES = {
     engravedTraces: ['은혜', '균형', '신뢰'],
     mindSentence: '내 힘보다 하나님을 의지하는 마음이 더 큰 힘이 되기를.',
     todayMessage: '오늘은 혼자 해결하려 하기보다, 하나님께 먼저 맡겨볼래?',
-    imageSrc: '/images/characters/effort.png',
-    separatorSrc: '/images/characters/effort-separator.svg',
-    resultCardSrc: '/images/result-cards/result-effort.png',
+    imageSrc: assetUrl('images/characters/effort.png'),
+    separatorSrc: assetUrl('images/characters/effort-separator.svg'),
+    resultCardSrc: assetUrl('images/result-cards/result-effort.png'),
     theme: {
       background: 'linear-gradient(180deg, #04091a 0%, #062445 54%, #0b1a33 100%)',
       accent: '#bcebff',
@@ -125,9 +126,9 @@ export const RESULT_TYPES = {
     engravedTraces: ['용기', '공동체', '소망'],
     mindSentence: '혼자 숨는 시간이 아니라, 함께 걸어가는 용기를.',
     todayMessage: '오늘은 충분히 숨을 고른 뒤, 믿을 수 있는 한 사람에게 내 마음을 조금 나눠볼래?',
-    imageSrc: '/images/characters/pause.png',
-    separatorSrc: '/images/characters/pause-separator.svg',
-    resultCardSrc: '/images/result-cards/result-pause.png',
+    imageSrc: assetUrl('images/characters/pause.png'),
+    separatorSrc: assetUrl('images/characters/pause-separator.svg'),
+    resultCardSrc: assetUrl('images/result-cards/result-pause.png'),
     theme: {
       background: 'linear-gradient(180deg, #051c14 0%, #0e3624 54%, #21301a 100%)',
       accent: '#dff29a',
@@ -159,9 +160,9 @@ export const RESULT_TYPES = {
     engravedTraces: ['온유', '인내', '평안'],
     mindSentence: '빠르게 타오르는 감정보다, 하나님의 평안이 더 오래 머물기를.',
     todayMessage: '마음이 뜨거워질 때, 잠시 멈추고 하나님께 먼저 이야기해 볼래?',
-    imageSrc: '/images/characters/express.png',
-    separatorSrc: '/images/characters/express-separator.svg',
-    resultCardSrc: '/images/result-cards/result-express.png',
+    imageSrc: assetUrl('images/characters/express.png'),
+    separatorSrc: assetUrl('images/characters/express-separator.svg'),
+    resultCardSrc: assetUrl('images/result-cards/result-express.png'),
     theme: {
       background: 'linear-gradient(100deg, #12091e 0%, #2a0c18 34%, #651b24 70%, #3a1326 100%)',
       accent: '#ffc069',

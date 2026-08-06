@@ -1,81 +1,3 @@
-@property --start-orb-radial-0 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(255 248 255);
-}
-
-@property --start-orb-radial-1 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(204 250 255);
-}
-
-@property --start-orb-radial-2 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(120 229 242 / 98%);
-}
-
-@property --start-orb-radial-3 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(138 123 243 / 96%);
-}
-
-@property --start-orb-radial-4 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(215 131 231 / 90%);
-}
-
-@property --start-orb-stop-1 {
-  syntax: "<percentage>";
-  inherits: true;
-  initial-value: 18%;
-}
-
-@property --start-orb-stop-2 {
-  syntax: "<percentage>";
-  inherits: true;
-  initial-value: 44%;
-}
-
-@property --start-orb-stop-3 {
-  syntax: "<percentage>";
-  inherits: true;
-  initial-value: 72%;
-}
-
-@property --start-orb-angular-0 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(238 157 206 / 34%);
-}
-
-@property --start-orb-angular-1 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(121 231 230 / 24%);
-}
-
-@property --start-orb-angular-2 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(164 134 246 / 32%);
-}
-
-@property --start-orb-shadow-violet {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(167 122 245 / 25%);
-}
-
-@property --start-orb-shadow-cyan {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(125 230 242 / 36%);
-}
-
 .screen-layout {
   position: relative;
   display: flex;
@@ -322,32 +244,55 @@
   border-radius: 50%;
   background: radial-gradient(
     circle at center,
-    var(--start-orb-radial-0) 0%,
-    var(--start-orb-radial-1) var(--start-orb-stop-1),
-    var(--start-orb-radial-2) var(--start-orb-stop-2),
-    var(--start-orb-radial-3) var(--start-orb-stop-3),
-    var(--start-orb-radial-4) 100%
+    rgb(255 248 255) 0%,
+    rgb(204 250 255) 18%,
+    rgb(120 229 242 / 98%) 44%,
+    rgb(138 123 243 / 96%) 72%,
+    rgb(215 131 231 / 90%) 100%
   );
-  box-shadow: 0 0 54px 6px var(--start-orb-shadow-violet),
-    0 0 29px 3px var(--start-orb-shadow-cyan);
-  transform: translate(-50%, -50%);
-  animation: start-soul-orb-loop 5.1s linear infinite;
+  box-shadow: 0 0 54px 6px rgb(167 122 245 / 25%),
+    0 0 29px 3px rgb(125 230 242 / 36%);
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform;
+  animation: start-soul-orb-breathe 5.1s ease-in-out infinite;
+}
+
+.start-soul-orb__core::before,
+.start-soul-orb__core::after {
+  position: absolute;
+  border-radius: inherit;
+  content: "";
+  inset: 0;
 }
 
 .start-soul-orb__core::before {
-  position: absolute;
-  border-radius: inherit;
   background: conic-gradient(
     from 0deg,
-    var(--start-orb-angular-0) 0%,
-    var(--start-orb-angular-1) 34%,
-    var(--start-orb-angular-2) 68%,
-    var(--start-orb-angular-0) 100%
+    rgb(238 157 206 / 34%) 0%,
+    rgb(121 231 230 / 24%) 34%,
+    rgb(164 134 246 / 32%) 68%,
+    rgb(238 157 206 / 34%) 100%
   );
-  content: "";
-  inset: 0;
   mix-blend-mode: screen;
   opacity: 0.24;
+  will-change: opacity, transform;
+  animation: start-soul-orb-sheen 10.2s linear infinite;
+}
+
+.start-soul-orb__core::after {
+  background: radial-gradient(
+    circle at center,
+    rgb(255 245 252) 0%,
+    rgb(226 197 250) 18%,
+    rgb(183 128 239 / 98%) 44%,
+    rgb(218 141 213 / 96%) 72%,
+    rgb(169 156 245 / 90%) 100%
+  );
+  box-shadow: 0 0 54px 6px rgb(196 125 233 / 25%),
+    0 0 29px 3px rgb(140 216 237 / 36%);
+  opacity: 0;
+  will-change: opacity;
+  animation: start-soul-orb-color-shift 5.1s ease-in-out infinite;
 }
 
 .intro-screen__message {
@@ -1377,102 +1322,24 @@
   50% { transform: translateY(-0.45rem); }
 }
 
-@keyframes start-soul-orb-loop {
-  0%, 100% {
-    --start-orb-radial-0: rgb(255 248 255);
-    --start-orb-radial-1: rgb(204 250 255);
-    --start-orb-radial-2: rgb(120 229 242 / 98%);
-    --start-orb-radial-3: rgb(138 123 243 / 96%);
-    --start-orb-radial-4: rgb(215 131 231 / 90%);
-    --start-orb-stop-1: 18%;
-    --start-orb-stop-2: 44%;
-    --start-orb-stop-3: 72%;
-    --start-orb-angular-0: rgb(238 157 206 / 34%);
-    --start-orb-angular-1: rgb(121 231 230 / 24%);
-    --start-orb-angular-2: rgb(164 134 246 / 32%);
-    --start-orb-shadow-violet: rgb(167 122 245 / 25%);
-    --start-orb-shadow-cyan: rgb(125 230 242 / 36%);
-  }
+@keyframes start-soul-orb-breathe {
+  0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
+  50% { transform: translate3d(-50%, -50%, 0) scale(1.018); }
+}
 
-  16.6667% {
-    --start-orb-radial-0: rgb(248 255 255);
-    --start-orb-radial-1: rgb(183 244 255);
-    --start-orb-radial-2: rgb(112 212 243 / 98%);
-    --start-orb-radial-3: rgb(155 126 243 / 96%);
-    --start-orb-radial-4: rgb(225 141 210 / 90%);
-    --start-orb-stop-1: 18%;
-    --start-orb-stop-2: 44%;
-    --start-orb-stop-3: 72%;
-    --start-orb-angular-0: rgb(232 157 200 / 32%);
-    --start-orb-angular-1: rgb(114 225 232 / 24%);
-    --start-orb-angular-2: rgb(176 130 244 / 32%);
-    --start-orb-shadow-violet: rgb(181 122 243 / 25%);
-    --start-orb-shadow-cyan: rgb(116 224 239 / 36%);
-  }
+@keyframes start-soul-orb-color-shift {
+  0%, 100% { opacity: 0; }
+  18% { opacity: 0.28; }
+  38% { opacity: 0.62; }
+  52% { opacity: 0.72; }
+  70% { opacity: 0.44; }
+  86% { opacity: 0.16; }
+}
 
-  33.3333% {
-    --start-orb-radial-0: rgb(246 251 255);
-    --start-orb-radial-1: rgb(187 217 255);
-    --start-orb-radial-2: rgb(131 143 243 / 98%);
-    --start-orb-radial-3: rgb(184 127 237 / 96%);
-    --start-orb-radial-4: rgb(230 155 188 / 90%);
-    --start-orb-stop-1: 18%;
-    --start-orb-stop-2: 44%;
-    --start-orb-stop-3: 72%;
-    --start-orb-angular-0: rgb(221 157 202 / 30%);
-    --start-orb-angular-1: rgb(126 217 236 / 23%);
-    --start-orb-angular-2: rgb(193 129 236 / 32%);
-    --start-orb-shadow-violet: rgb(193 124 234 / 25%);
-    --start-orb-shadow-cyan: rgb(121 217 237 / 36%);
-  }
-
-  50% {
-    --start-orb-radial-0: rgb(255 245 252);
-    --start-orb-radial-1: rgb(226 197 250);
-    --start-orb-radial-2: rgb(183 128 239 / 98%);
-    --start-orb-radial-3: rgb(218 141 213 / 96%);
-    --start-orb-radial-4: rgb(169 156 245 / 90%);
-    --start-orb-stop-1: 18%;
-    --start-orb-stop-2: 44%;
-    --start-orb-stop-3: 72%;
-    --start-orb-angular-0: rgb(207 147 224 / 31%);
-    --start-orb-angular-1: rgb(140 206 238 / 23%);
-    --start-orb-angular-2: rgb(227 144 200 / 31%);
-    --start-orb-shadow-violet: rgb(196 125 233 / 25%);
-    --start-orb-shadow-cyan: rgb(140 216 237 / 36%);
-  }
-
-  66.6667% {
-    --start-orb-radial-0: rgb(226 197 250);
-    --start-orb-radial-1: rgb(183 128 239 / 98%);
-    --start-orb-radial-2: rgb(218 141 213 / 96%);
-    --start-orb-radial-3: rgb(169 156 245 / 90%);
-    --start-orb-radial-4: rgb(169 229 255 / 90%);
-    --start-orb-stop-1: 0.01%;
-    --start-orb-stop-2: 36.5385%;
-    --start-orb-stop-3: 67.7885%;
-    --start-orb-angular-0: rgb(183 141 235 / 32%);
-    --start-orb-angular-1: rgb(118 221 232 / 24%);
-    --start-orb-angular-2: rgb(208 148 223 / 30%);
-    --start-orb-shadow-violet: rgb(168 126 241 / 25%);
-    --start-orb-shadow-cyan: rgb(118 223 235 / 36%);
-  }
-
-  83.3333% {
-    --start-orb-radial-0: rgb(255 248 255);
-    --start-orb-radial-1: rgb(199 238 255);
-    --start-orb-radial-2: rgb(126 218 241 / 98%);
-    --start-orb-radial-3: rgb(133 135 243 / 96%);
-    --start-orb-radial-4: rgb(186 130 234 / 90%);
-    --start-orb-stop-1: 18%;
-    --start-orb-stop-2: 44%;
-    --start-orb-stop-3: 72%;
-    --start-orb-angular-0: rgb(208 148 223 / 33%);
-    --start-orb-angular-1: rgb(119 228 232 / 24%);
-    --start-orb-angular-2: rgb(169 131 244 / 31%);
-    --start-orb-shadow-violet: rgb(164 122 243 / 25%);
-    --start-orb-shadow-cyan: rgb(121 227 238 / 36%);
-  }
+@keyframes start-soul-orb-sheen {
+  0% { opacity: 0.2; transform: rotate(0deg); }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.2; transform: rotate(360deg); }
 }
 
 @keyframes soul-float-centered {
@@ -1672,6 +1539,8 @@
 @media (prefers-reduced-motion: reduce) {
   .start-soul-orb,
   .start-soul-orb__core,
+  .start-soul-orb__core::before,
+  .start-soul-orb__core::after,
   .soul-orb__halo,
   .soul-orb__stage,
   .loading-status__item--active > span {

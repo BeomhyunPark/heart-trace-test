@@ -471,14 +471,21 @@
   outline-offset: 3px;
 }
 
-.answer-option:hover {
-  border-color: rgba(242, 166, 237, 0.78);
-  background: rgba(68, 47, 105, 0.84);
-}
+@media (hover: hover) and (pointer: fine) {
+  .answer-option:hover {
+    border-color: rgba(242, 166, 237, 0.78);
+    background: rgba(68, 47, 105, 0.84);
+  }
 
-.answer-option:hover .answer-option__marker {
-  background: rgba(255, 217, 245, 0.22);
-  color: #ffedfc;
+  .answer-option:hover .answer-option__marker {
+    background: rgba(255, 217, 245, 0.22);
+    color: #ffedfc;
+  }
+
+  .answer-option--selected:hover {
+    border-color: #f2a6ed;
+    background: rgba(97, 51, 125, 0.9);
+  }
 }
 
 .answer-option:active {
@@ -486,11 +493,6 @@
 }
 
 .answer-option--selected {
-  border-color: #f2a6ed;
-  background: rgba(97, 51, 125, 0.9);
-}
-
-.answer-option--selected:hover {
   border-color: #f2a6ed;
   background: rgba(97, 51, 125, 0.9);
 }

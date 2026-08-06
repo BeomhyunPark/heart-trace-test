@@ -6,7 +6,6 @@ import {
   type Answers,
   type ChoiceId,
   type ResultTypeId,
-  type ScoringAnswer,
 } from '../domain/types';
 
 export type TestPhase = 'intro' | 'question' | 'tie-breaker' | 'result';
@@ -47,16 +46,7 @@ function finishTest(
   state: TestState,
   answers: Answers,
 ): TestState {
-  const scoringAnswers: ScoringAnswer[] = QUESTIONS.map((question) => {
-    const answer = answers[question.id];
-
-    if (!answer) {
-      return null;
-    }
-
-    return question.options.find((option) => option.id === answer.optionId)?.resultType ?? null;
-  });
-  const outcome = calculateResult(scoringAnswers);
+  const outcome = calculateResult(QUESTIONS, answers);
 
   if (outcome.status === 'resolved') {
     return {
@@ -68,19 +58,12 @@ function finishTest(
     };
   }
 
-  if (outcome.status === 'tie') {
-    return {
-      ...state,
-      phase: 'tie-breaker',
-      answers,
-      result: null,
-      tiedTypes: outcome.tiedTypes,
-    };
-  }
-
   return {
     ...state,
+    phase: 'tie-breaker',
     answers,
+    result: null,
+    tiedTypes: outcome.tiedTypes,
   };
 }
 

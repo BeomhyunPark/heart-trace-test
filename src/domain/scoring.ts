@@ -1,9 +1,9 @@
 import {
   RESULT_TYPE_IDS,
-  TEST_QUESTION_COUNT,
+  type Answers,
+  type Question,
   type ResultTypeId,
   type ResultTypeScores,
-  type ScoringAnswer,
   type ScoringOutcome,
 } from './types';
 
@@ -18,20 +18,45 @@ export function createEmptyScores(): ResultTypeScores {
 }
 
 export function calculateScores(
-  answers: readonly ScoringAnswer[],
-): ResultTypeScores | null {
-  if (
-    answers.length !== TEST_QUESTION_COUNT ||
-    answers.some((answer) => answer === null)
-  ) {
-    return null;
-  }
+  questions: readonly Question[],
+  answers: Readonly<Answers>,
+): ResultTypeScores {
+  const questionIds = new Set<number>();
 
-  const scores = createEmptyScores();
+  const scores = questions.reduce<ResultTypeScores>((currentScores, question) => {
+    if (questionIds.has(question.id)) {
+      throw new Error(`중복된 문항 ID입니다: ${question.id}`);
+    }
 
-  for (const answer of answers) {
-    if (answer !== null) {
-      scores[answer] += 1;
+    questionIds.add(question.id);
+
+    const answer = answers[question.id];
+
+    if (!answer) {
+      return currentScores;
+    }
+
+    const selectedOption = question.options.find(
+      (option) => option.id === answer.optionId,
+    );
+
+    if (!selectedOption) {
+      throw new Error(
+        `${question.id}번 문항에 ${answer.optionId} 선택지가 없습니다.`,
+      );
+    }
+
+    return {
+      ...currentScores,
+      [selectedOption.resultType]: currentScores[selectedOption.resultType] + 1,
+    };
+  }, createEmptyScores());
+
+  for (const storedQuestionId of Object.keys(answers)) {
+    const questionId = Number(storedQuestionId);
+
+    if (!questionIds.has(questionId)) {
+      throw new Error(`존재하지 않는 문항 ID의 답변입니다: ${storedQuestionId}`);
     }
   }
 
@@ -50,13 +75,11 @@ export function findTopResultTypes(
   );
 }
 
-export function calculateResult(answers: readonly ScoringAnswer[]): ScoringOutcome {
-  const scores = calculateScores(answers);
-
-  if (scores === null) {
-    return { status: 'incomplete' };
-  }
-
+export function calculateResult(
+  questions: readonly Question[],
+  answers: Readonly<Answers>,
+): ScoringOutcome {
+  const scores = calculateScores(questions, answers);
   const topResultTypes = findTopResultTypes(scores);
 
   if (topResultTypes.length === 1) {

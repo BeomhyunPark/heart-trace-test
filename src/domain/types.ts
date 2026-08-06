@@ -25,8 +25,6 @@ export type Answer = SelectedAnswer;
 
 export type Answers = Partial<Record<number, Answer>>;
 
-export type ScoringAnswer = ResultTypeId | null;
-
 export type AnswerOption = {
   id: AnswerOptionId;
   text: string;
@@ -66,7 +64,6 @@ export type ResultType = {
 export type ResultTypeScores = Record<ResultTypeId, number>;
 
 export type ScoringOutcome =
-  | { status: 'incomplete' }
   | {
       status: 'resolved';
       result: ResultTypeId;

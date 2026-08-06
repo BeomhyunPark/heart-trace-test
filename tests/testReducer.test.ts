@@ -6,6 +6,7 @@ import {
   type TestState,
 } from '../src/app/testReducer';
 import { QUESTIONS } from '../src/data/questions';
+import { calculateScores } from '../src/domain/scoring';
 import {
   RESULT_TYPE_IDS,
   type ChoiceId,
@@ -157,6 +158,7 @@ describe('검사 상태 흐름', () => {
 
   it('동점 후보를 선택하면 해당 결과로 확정한다', () => {
     const tieState = answerAll(createBalancedAnswers());
+    const baseScores = calculateScores(QUESTIONS, tieState.answers);
     const resultState = testReducer(tieState, {
       type: 'SELECT_TIE_BREAKER',
       answer: 'express',
@@ -166,6 +168,8 @@ describe('검사 상태 흐름', () => {
       phase: 'result',
       result: 'express',
     });
+    expect(resultState.answers).toBe(tieState.answers);
+    expect(calculateScores(QUESTIONS, resultState.answers)).toEqual(baseScores);
   });
 
   it('동점 후보가 아닌 선택은 무시한다', () => {

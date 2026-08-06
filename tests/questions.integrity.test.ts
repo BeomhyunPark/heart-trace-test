@@ -6,6 +6,7 @@ import {
   ANSWER_OPTION_IDS,
   RESULT_TYPE_IDS,
   TEST_QUESTION_COUNT,
+  type Answers,
   type ResultTypeId,
 } from '../src/domain/types';
 
@@ -73,7 +74,7 @@ describe('질문 데이터 무결성', () => {
   });
 
   it.each(RESULT_TYPE_IDS)('실제 질문 선택지로 %s 결과에 도달할 수 있다', (resultType) => {
-    const answers = QUESTIONS.map((question) => {
+    const answers = QUESTIONS.reduce<Answers>((currentAnswers, question) => {
       const option = question.options.find(
         (candidate) => candidate.resultType === resultType,
       );
@@ -82,10 +83,16 @@ describe('질문 데이터 무결성', () => {
         throw new Error(`${question.id}번 문항에서 ${resultType} 선택지를 찾지 못했습니다.`);
       }
 
-      return option.resultType;
-    });
+      return {
+        ...currentAnswers,
+        [question.id]: {
+          kind: 'selected',
+          optionId: option.id,
+        },
+      };
+    }, {});
 
-    expect(calculateResult(answers)).toMatchObject({
+    expect(calculateResult(QUESTIONS, answers)).toMatchObject({
       status: 'resolved',
       result: resultType,
     });

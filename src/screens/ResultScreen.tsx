@@ -133,7 +133,6 @@ export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
 
       const action = await saveResultImageFile(
         file,
-        `${result.name} · 마음의 흔적 테스트`,
         result.resultCardSrc,
       );
       handleImageAction(action);

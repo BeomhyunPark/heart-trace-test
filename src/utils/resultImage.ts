@@ -121,7 +121,6 @@ function downloadResultImage(imageSrc: string, filename: string): void {
 
 export async function saveResultImageFile(
   file: File,
-  title: string,
   imageSrc: string,
 ): Promise<ResultImageAction> {
   const device = getCurrentDevice();
@@ -136,7 +135,6 @@ export async function saveResultImageFile(
     try {
       await navigator.share({
         files: [file],
-        title,
       });
       return 'shared';
     } catch (error: unknown) {

@@ -30,7 +30,6 @@ describe('결과 이미지 저장', () => {
     const file = new File(['result-image'], 'result-bear.png', { type: 'image/png' });
     const action = await saveResultImageFile(
       file,
-      '곰곰이 · 마음의 흔적 테스트',
       '/images/result-cards/result-bear.png',
     );
 
@@ -46,5 +45,27 @@ describe('결과 이미지 저장', () => {
 
     expect(clickedLink.getAttribute('href')).toBe('/images/result-cards/result-bear.png');
     expect(clickedLink.download).toBe('result-bear.png');
+  });
+
+  it('공유할 때는 부가 텍스트 없이 이미지 파일만 전달한다', async () => {
+    const share = vi.fn(async () => undefined);
+
+    vi.stubGlobal('navigator', {
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
+      platform: 'iPhone',
+      maxTouchPoints: 5,
+      canShare: vi.fn(() => true),
+      share,
+    });
+
+    const file = new File(['result-image'], 'result-spring.png', { type: 'image/png' });
+    const action = await saveResultImageFile(
+      file,
+      '/images/result-cards/result-spring.png',
+    );
+
+    expect(action).toBe('shared');
+    expect(share).toHaveBeenCalledTimes(1);
+    expect(share).toHaveBeenCalledWith({ files: [file] });
   });
 });

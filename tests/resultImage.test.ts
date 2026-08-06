@@ -7,6 +7,7 @@ import { RESULT_TYPES } from '../src/data/resultTypes';
 import { RESULT_TYPE_IDS } from '../src/domain/types';
 import {
   getResultImageFilename,
+  isAndroidDevice,
   isIosLikeDevice,
 } from '../src/utils/resultImage';
 
@@ -80,6 +81,20 @@ describe('결과 이미지', () => {
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15)',
       platform: 'MacIntel',
       maxTouchPoints: 0,
+    })).toBe(false);
+  });
+
+  it('Galaxy를 포함한 Android 기기를 감지한다', () => {
+    expect(isAndroidDevice({
+      userAgent: 'Mozilla/5.0 (Linux; Android 15; SM-S938N) AppleWebKit/537.36 SamsungBrowser/28.0',
+    })).toBe(true);
+
+    expect(isAndroidDevice({
+      userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/128.0',
+    })).toBe(true);
+
+    expect(isAndroidDevice({
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
     })).toBe(false);
   });
 });

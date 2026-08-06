@@ -23,6 +23,10 @@ export function isIosLikeDevice(device: DeviceInfo): boolean {
     || (device.platform === 'MacIntel' && device.maxTouchPoints > 1);
 }
 
+export function isAndroidDevice(device: Pick<DeviceInfo, 'userAgent'>): boolean {
+  return /Android/i.test(device.userAgent);
+}
+
 function getCurrentDevice(): DeviceInfo {
   return {
     userAgent: navigator.userAgent,
@@ -104,11 +108,29 @@ function downloadResultFile(file: File): void {
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }
 
+function downloadResultImage(imageSrc: string, filename: string): void {
+  const downloadLink = document.createElement('a');
+
+  downloadLink.href = imageSrc;
+  downloadLink.download = filename;
+  downloadLink.rel = 'noopener';
+  document.body.append(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+}
+
 export async function saveResultImageFile(
   file: File,
   title: string,
+  imageSrc: string,
 ): Promise<ResultImageAction> {
-  const isIos = isIosLikeDevice(getCurrentDevice());
+  const device = getCurrentDevice();
+  const isIos = isIosLikeDevice(device);
+
+  if (isAndroidDevice(device)) {
+    downloadResultImage(imageSrc, file.name);
+    return 'downloaded';
+  }
 
   if (canShareResultFile(file)) {
     try {

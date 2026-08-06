@@ -1,9 +1,12 @@
+import { QUESTIONS } from '../data/questions';
 import { calculateResult } from '../domain/scoring';
 import { resolveTie } from '../domain/tieBreaker';
 import {
   TEST_QUESTION_COUNT,
-  type Answer,
+  type Answers,
+  type ChoiceId,
   type ResultTypeId,
+  type ScoringAnswer,
 } from '../domain/types';
 
 export type TestPhase = 'intro' | 'question' | 'tie-breaker' | 'result';
@@ -11,7 +14,7 @@ export type TestPhase = 'intro' | 'question' | 'tie-breaker' | 'result';
 export type TestState = {
   phase: TestPhase;
   currentQuestionIndex: number;
-  answers: readonly Answer[];
+  answers: Answers;
   result: ResultTypeId | null;
   tiedTypes: readonly ResultTypeId[];
 };
@@ -20,8 +23,8 @@ export type TestAction =
   | { type: 'START' }
   | {
       type: 'ANSWER';
-      questionIndex: number;
-      answer: ResultTypeId;
+      questionId: number;
+      optionId: ChoiceId;
     }
   | { type: 'PREVIOUS' }
   | {
@@ -34,7 +37,7 @@ export function createInitialTestState(): TestState {
   return {
     phase: 'intro',
     currentQuestionIndex: 0,
-    answers: Array<Answer>(TEST_QUESTION_COUNT).fill(null),
+    answers: {},
     result: null,
     tiedTypes: [],
   };
@@ -42,9 +45,18 @@ export function createInitialTestState(): TestState {
 
 function finishTest(
   state: TestState,
-  answers: readonly Answer[],
+  answers: Answers,
 ): TestState {
-  const outcome = calculateResult(answers);
+  const scoringAnswers: ScoringAnswer[] = QUESTIONS.map((question) => {
+    const answer = answers[question.id];
+
+    if (!answer) {
+      return null;
+    }
+
+    return question.options.find((option) => option.id === answer.optionId)?.resultType ?? null;
+  });
+  const outcome = calculateResult(scoringAnswers);
 
   if (outcome.status === 'resolved') {
     return {
@@ -89,25 +101,32 @@ export function testReducer(
     }
 
     case 'ANSWER': {
+      const currentQuestion = QUESTIONS[state.currentQuestionIndex];
+
       if (
         state.phase !== 'question' ||
-        action.questionIndex !== state.currentQuestionIndex ||
-        action.questionIndex < 0 ||
-        action.questionIndex >= TEST_QUESTION_COUNT
+        !currentQuestion ||
+        action.questionId !== currentQuestion.id ||
+        !currentQuestion.options.some((option) => option.id === action.optionId)
       ) {
         return state;
       }
 
-      const answers = [...state.answers];
-      answers[action.questionIndex] = action.answer;
+      const answers: Answers = {
+        ...state.answers,
+        [action.questionId]: {
+          kind: 'selected',
+          optionId: action.optionId,
+        },
+      };
 
-      if (action.questionIndex === TEST_QUESTION_COUNT - 1) {
+      if (state.currentQuestionIndex === TEST_QUESTION_COUNT - 1) {
         return finishTest(state, answers);
       }
 
       return {
         ...state,
-        currentQuestionIndex: action.questionIndex + 1,
+        currentQuestionIndex: state.currentQuestionIndex + 1,
         answers,
         result: null,
         tiedTypes: [],

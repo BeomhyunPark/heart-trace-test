@@ -25,6 +25,7 @@ export function AnswerOption({
         name={name}
         value={value}
         checked={selected}
+        onClick={selected ? onSelect : undefined}
         onChange={onSelect}
       />
       {marker ? (

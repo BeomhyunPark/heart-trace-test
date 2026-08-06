@@ -1,9 +1,9 @@
 import {
   RESULT_TYPE_IDS,
   TEST_QUESTION_COUNT,
-  type Answer,
   type ResultTypeId,
   type ResultTypeScores,
+  type ScoringAnswer,
   type ScoringOutcome,
 } from './types';
 
@@ -18,7 +18,7 @@ export function createEmptyScores(): ResultTypeScores {
 }
 
 export function calculateScores(
-  answers: readonly Answer[],
+  answers: readonly ScoringAnswer[],
 ): ResultTypeScores | null {
   if (
     answers.length !== TEST_QUESTION_COUNT ||
@@ -50,7 +50,7 @@ export function findTopResultTypes(
   );
 }
 
-export function calculateResult(answers: readonly Answer[]): ScoringOutcome {
+export function calculateResult(answers: readonly ScoringAnswer[]): ScoringOutcome {
   const scores = calculateScores(answers);
 
   if (scores === null) {

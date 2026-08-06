@@ -1,20 +1,20 @@
 import { AnswerOption } from '../components/AnswerOption';
 import { ProgressBar } from '../components/ProgressBar';
 import { ScreenLayout } from '../components/ScreenLayout';
-import { TEST_QUESTION_COUNT, type Question, type ResultTypeId } from '../domain/types';
+import { TEST_QUESTION_COUNT, type ChoiceId, type Question } from '../domain/types';
 
 type QuestionScreenProps = {
   question: Question;
   questionIndex: number;
-  selectedAnswer: ResultTypeId | null;
-  onAnswer: (answer: ResultTypeId) => void;
+  selectedOptionId: ChoiceId | null;
+  onAnswer: (optionId: ChoiceId) => void;
   onPrevious: () => void;
 };
 
 export function QuestionScreen({
   question,
   questionIndex,
-  selectedAnswer,
+  selectedOptionId,
   onAnswer,
   onPrevious,
 }: QuestionScreenProps) {
@@ -51,8 +51,8 @@ export function QuestionScreen({
               value={option.id}
               marker={option.id}
               text={option.text}
-              selected={selectedAnswer === option.resultType}
-              onSelect={() => onAnswer(option.resultType)}
+              selected={selectedOptionId === option.id}
+              onSelect={() => onAnswer(option.id)}
             />
           ))}
         </div>

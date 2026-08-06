@@ -14,7 +14,18 @@ export const TEST_QUESTION_COUNT = 20;
 
 export type AnswerOptionId = (typeof ANSWER_OPTION_IDS)[number];
 
-export type Answer = ResultTypeId | null;
+export type ChoiceId = AnswerOptionId;
+
+export type SelectedAnswer = {
+  kind: 'selected';
+  optionId: ChoiceId;
+};
+
+export type Answer = SelectedAnswer;
+
+export type Answers = Partial<Record<number, Answer>>;
+
+export type ScoringAnswer = ResultTypeId | null;
 
 export type AnswerOption = {
   id: AnswerOptionId;

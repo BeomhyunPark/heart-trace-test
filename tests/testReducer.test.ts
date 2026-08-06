@@ -5,9 +5,10 @@ import {
   testReducer,
   type TestState,
 } from '../src/app/testReducer';
+import { QUESTIONS } from '../src/data/questions';
 import {
   RESULT_TYPE_IDS,
-  TEST_QUESTION_COUNT,
+  type ChoiceId,
   type ResultTypeId,
 } from '../src/domain/types';
 
@@ -17,10 +18,36 @@ function startTest(): TestState {
 
 function answerAll(answerSequence: readonly ResultTypeId[]): TestState {
   return answerSequence.reduce(
-    (state, answer, questionIndex) =>
-      testReducer(state, { type: 'ANSWER', questionIndex, answer }),
+    (state, resultType, questionIndex) => {
+      const question = QUESTIONS[questionIndex];
+      const option = question.options.find(
+        (candidate) => candidate.resultType === resultType,
+      );
+
+      if (!option) {
+        throw new Error(`${question.id}번 문항에서 ${resultType} 선택지를 찾지 못했습니다.`);
+      }
+
+      return testReducer(state, {
+        type: 'ANSWER',
+        questionId: question.id,
+        optionId: option.id,
+      });
+    },
     startTest(),
   );
+}
+
+function answerCurrent(
+  state: TestState,
+  questionIndex: number,
+  optionId: ChoiceId,
+): TestState {
+  return testReducer(state, {
+    type: 'ANSWER',
+    questionId: QUESTIONS[questionIndex].id,
+    optionId,
+  });
 }
 
 function createBalancedAnswers(): ResultTypeId[] {
@@ -37,7 +64,7 @@ describe('검사 상태 흐름', () => {
     expect(firstLoad).toEqual({
       phase: 'intro',
       currentQuestionIndex: 0,
-      answers: Array(TEST_QUESTION_COUNT).fill(null),
+      answers: {},
       result: null,
       tiedTypes: [],
     });
@@ -53,47 +80,48 @@ describe('검사 상태 흐름', () => {
   });
 
   it('답변을 저장하고 즉시 다음 문항으로 이동한다', () => {
-    const state = testReducer(startTest(), {
-      type: 'ANSWER',
-      questionIndex: 0,
-      answer: 'bear',
-    });
+    const state = answerCurrent(startTest(), 0, 'A');
 
     expect(state.currentQuestionIndex).toBe(1);
-    expect(state.answers[0]).toBe('bear');
+    expect(state.answers[QUESTIONS[0].id]).toEqual({
+      kind: 'selected',
+      optionId: 'A',
+    });
   });
 
   it('같은 문항의 중복 탭 이벤트가 다음 문항을 답하지 못하게 한다', () => {
     const action = {
       type: 'ANSWER',
-      questionIndex: 0,
-      answer: 'bear',
+      questionId: QUESTIONS[0].id,
+      optionId: 'A',
     } as const;
     const afterFirstTap = testReducer(startTest(), action);
     const afterDuplicateTap = testReducer(afterFirstTap, action);
 
     expect(afterDuplicateTap).toBe(afterFirstTap);
     expect(afterDuplicateTap.currentQuestionIndex).toBe(1);
-    expect(afterDuplicateTap.answers[1]).toBeNull();
+    expect(afterDuplicateTap.answers[QUESTIONS[1].id]).toBeUndefined();
   });
 
-  it('이전 문항으로 돌아가 기존 답변을 유지하고 변경할 수 있다', () => {
-    const afterAnswer = testReducer(startTest(), {
-      type: 'ANSWER',
-      questionIndex: 0,
-      answer: 'bear',
-    });
+  it('문항 ID별 기존 답변을 복원하고 새 선택 하나로 덮어쓴다', () => {
+    const afterAnswer = answerCurrent(startTest(), 0, 'A');
     const previous = testReducer(afterAnswer, { type: 'PREVIOUS' });
 
     expect(previous.currentQuestionIndex).toBe(0);
-    expect(previous.answers[0]).toBe('bear');
-
-    const changed = testReducer(previous, {
-      type: 'ANSWER',
-      questionIndex: 0,
-      answer: 'spring',
+    expect(previous.answers[QUESTIONS[0].id]).toEqual({
+      kind: 'selected',
+      optionId: 'A',
     });
-    expect(changed.answers[0]).toBe('spring');
+
+    const changed = answerCurrent(previous, 0, 'E');
+    expect(changed.answers).toEqual({
+      [QUESTIONS[0].id]: {
+        kind: 'selected',
+        optionId: 'E',
+      },
+    });
+    expect(Object.keys(changed.answers)).toHaveLength(1);
+    expect(changed.answers[QUESTIONS[1].id]).toBeUndefined();
     expect(changed.currentQuestionIndex).toBe(1);
   });
 
@@ -111,7 +139,7 @@ describe('검사 상태 흐름', () => {
 
     expect(state).toMatchObject({
       phase: 'result',
-      currentQuestionIndex: TEST_QUESTION_COUNT - 1,
+      currentQuestionIndex: QUESTIONS.length - 1,
       result: 'spring',
       tiedTypes: [],
     });
@@ -164,16 +192,25 @@ describe('검사 상태 흐름', () => {
 
     expect(previousFromTie).toMatchObject({
       phase: 'question',
-      currentQuestionIndex: TEST_QUESTION_COUNT - 1,
+      currentQuestionIndex: QUESTIONS.length - 1,
       result: null,
       tiedTypes: [],
     });
 
-    const changedResult = testReducer(previousFromTie, {
-      type: 'ANSWER',
-      questionIndex: TEST_QUESTION_COUNT - 1,
-      answer: 'bear',
-    });
+    const lastQuestionIndex = QUESTIONS.length - 1;
+    const bearOption = QUESTIONS[lastQuestionIndex].options.find(
+      (option) => option.resultType === 'bear',
+    );
+
+    if (!bearOption) {
+      throw new Error('마지막 문항에서 bear 선택지를 찾지 못했습니다.');
+    }
+
+    const changedResult = answerCurrent(
+      previousFromTie,
+      lastQuestionIndex,
+      bearOption.id,
+    );
     expect(changedResult).toMatchObject({
       phase: 'result',
       result: 'bear',
@@ -184,7 +221,7 @@ describe('검사 상태 흐름', () => {
     });
     expect(previousFromResult).toMatchObject({
       phase: 'question',
-      currentQuestionIndex: TEST_QUESTION_COUNT - 1,
+      currentQuestionIndex: QUESTIONS.length - 1,
       result: null,
     });
   });

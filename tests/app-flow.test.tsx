@@ -9,7 +9,11 @@ import { App } from '../src/app/App';
 import { RESULT_REVEAL_DELAY_MS } from '../src/app/timing';
 import { QUESTIONS } from '../src/data/questions';
 import { RESULT_TYPES } from '../src/data/resultTypes';
-import { RESULT_TYPE_IDS, type ResultTypeId } from '../src/domain/types';
+import {
+  RESULT_TYPE_IDS,
+  type ChoiceId,
+  type ResultTypeId,
+} from '../src/domain/types';
 import { LoadingScreen } from '../src/screens/LoadingScreen';
 
 afterEach(() => {
@@ -38,6 +42,24 @@ function getOptionText(questionIndex: number, resultType: ResultTypeId): string 
 function answerWithResultType(questionIndex: number, resultType: ResultTypeId) {
   fireEvent.click(screen.getByRole('radio', {
     name: getOptionText(questionIndex, resultType),
+  }));
+}
+
+function getOptionTextById(questionIndex: number, optionId: ChoiceId): string {
+  const option = QUESTIONS[questionIndex].options.find(
+    (candidate) => candidate.id === optionId,
+  );
+
+  if (!option) {
+    throw new Error(`${questionIndex + 1}번 문항에서 ${optionId} 선택지를 찾지 못했습니다.`);
+  }
+
+  return option.text;
+}
+
+function answerWithOptionId(questionIndex: number, optionId: ChoiceId) {
+  fireEvent.click(screen.getByRole('radio', {
+    name: getOptionTextById(questionIndex, optionId),
   }));
 }
 
@@ -115,29 +137,59 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByText('Q2')).toBeTruthy();
   });
 
-  it('이전 문항의 선택을 표시하고 반복해서 수정한다', () => {
+  it('문항별 선택을 독립적으로 복원하고 기존 답변을 하나의 새 선택으로 교체한다', () => {
     render(<App />);
     startQuestionFlow();
 
-    answerWithResultType(0, 'bear');
+    answerWithOptionId(0, 'A');
     expect(screen.getByText('Q2')).toBeTruthy();
+    expect(
+      screen.getAllByRole('radio').every((radio) => !(radio as HTMLInputElement).checked),
+    ).toBe(true);
 
     fireEvent.click(screen.getByRole('button', { name: '이전' }));
     const originalAnswer = screen.getByRole('radio', {
-      name: getOptionText(0, 'bear'),
+      name: getOptionTextById(0, 'A'),
     }) as HTMLInputElement;
     expect(originalAnswer.checked).toBe(true);
 
-    answerWithResultType(0, 'spring');
+    answerWithOptionId(0, 'E');
+    expect(screen.getByText('Q2')).toBeTruthy();
+    expect(
+      screen.getAllByRole('radio').every((radio) => !(radio as HTMLInputElement).checked),
+    ).toBe(true);
+
+    answerWithOptionId(1, 'B');
+    expect(screen.getByText('Q3')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    expect((screen.getByRole('radio', {
+      name: getOptionTextById(1, 'B'),
+    }) as HTMLInputElement).checked).toBe(true);
+
     fireEvent.click(screen.getByRole('button', { name: '이전' }));
 
     const changedAnswer = screen.getByRole('radio', {
-      name: getOptionText(0, 'spring'),
+      name: getOptionTextById(0, 'E'),
     }) as HTMLInputElement;
     expect(changedAnswer.checked).toBe(true);
     expect((screen.getByRole('radio', {
-      name: getOptionText(0, 'bear'),
+      name: getOptionTextById(0, 'A'),
     }) as HTMLInputElement).checked).toBe(false);
+
+    fireEvent.click(changedAnswer);
+    expect(screen.getByText('Q2')).toBeTruthy();
+    expect((screen.getByRole('radio', {
+      name: getOptionTextById(1, 'B'),
+    }) as HTMLInputElement).checked).toBe(true);
+
+    answerWithOptionId(1, 'B');
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+
+    expect((screen.getByRole('radio', {
+      name: getOptionTextById(0, 'E'),
+    }) as HTMLInputElement).checked).toBe(true);
   });
 
   it('동점일 때 동점 유형만 표시하고 선택한 결과로 이동한다', async () => {

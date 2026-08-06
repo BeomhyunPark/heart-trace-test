@@ -8,8 +8,8 @@ import {
 import {
   RESULT_TYPE_IDS,
   TEST_QUESTION_COUNT,
-  type Answer,
   type ResultTypeId,
+  type ScoringAnswer,
 } from '../src/domain/types';
 
 function createBalancedAnswers(): ResultTypeId[] {
@@ -116,7 +116,7 @@ describe('점수 계산', () => {
 
   it('답변 수가 부족하거나 null이 남아 있으면 결과를 만들지 않는다', () => {
     const missingAnswer = createBalancedAnswers().slice(0, -1);
-    const nullAnswer: Answer[] = createBalancedAnswers();
+    const nullAnswer: ScoringAnswer[] = createBalancedAnswers();
     nullAnswer[TEST_QUESTION_COUNT - 1] = null;
 
     expect(calculateScores(missingAnswer)).toBeNull();

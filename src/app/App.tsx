@@ -73,11 +73,11 @@ export function App() {
       <QuestionScreen
         question={question}
         questionIndex={state.currentQuestionIndex}
-        selectedAnswer={state.answers[state.currentQuestionIndex]}
-        onAnswer={(answer) => dispatch({
+        selectedOptionId={state.answers[question.id]?.optionId ?? null}
+        onAnswer={(optionId) => dispatch({
           type: 'ANSWER',
-          questionIndex: state.currentQuestionIndex,
-          answer,
+          questionId: question.id,
+          optionId,
         })}
         onPrevious={() => dispatch({ type: 'PREVIOUS' })}
       />

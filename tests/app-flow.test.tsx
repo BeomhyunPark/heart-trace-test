@@ -18,6 +18,8 @@ import { LoadingScreen } from '../src/screens/LoadingScreen';
 
 afterEach(() => {
   cleanup();
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -84,18 +86,29 @@ describe('앱 화면 흐름과 접근성', () => {
     vi.useFakeTimers();
     const { container } = render(<LoadingScreen />);
     const progressBar = screen.getByRole('progressbar', { name: '결과 분석 진행률' });
+    const progressValue = container.querySelector<HTMLElement>('.progress-bar__value');
     const soulOrb = container.querySelector('.soul-orb');
 
     expect(progressBar.getAttribute('aria-valuenow')).toBe('0');
     expect(soulOrb?.getAttribute('data-stage')).toBe('1');
+    expect(soulOrb?.querySelectorAll('.soul-orb__stage')).toHaveLength(8);
+    expect(soulOrb?.querySelector('.soul-orb__core')).toBeTruthy();
     expect(screen.getByRole('heading', { name: '마음의 대답을 모으고 있어요' })).toBeTruthy();
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1600);
+      await vi.advanceTimersByTimeAsync(32);
+    });
+
+    const earlyProgress = Number.parseFloat(progressValue?.style.width ?? '0');
+    expect(earlyProgress).toBeGreaterThan(0);
+    expect(earlyProgress).toBeLessThan(2);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1568);
     });
 
     expect(progressBar.getAttribute('aria-valuenow')).toBe('40');
-    expect(soulOrb?.getAttribute('data-stage')).toBe('3');
+    expect(soulOrb?.getAttribute('data-stage')).toBe('2');
     expect(screen.getByRole('heading', { name: '흔적의 결을 비교하고 있어요' })).toBeTruthy();
 
     await act(async () => {
@@ -135,6 +148,36 @@ describe('앱 화면 흐름과 접근성', () => {
     await user.keyboard(' ');
 
     expect(screen.getByText('Q2')).toBeTruthy();
+  });
+
+  it('화면과 문항을 이동할 때 이전 스크롤 위치를 남기지 않는다', () => {
+    render(<App />);
+
+    document.documentElement.scrollTop = 320;
+    document.body.scrollTop = 320;
+    fireEvent.click(screen.getByRole('button', { name: '테스트 시작하기' }));
+    expect(document.documentElement.scrollTop).toBe(0);
+    expect(document.body.scrollTop).toBe(0);
+
+    document.documentElement.scrollTop = 320;
+    document.body.scrollTop = 320;
+    fireEvent.click(screen.getByRole('button', { name: '알겠어요' }));
+    expect(document.documentElement.scrollTop).toBe(0);
+    expect(document.body.scrollTop).toBe(0);
+
+    document.documentElement.scrollTop = 320;
+    document.body.scrollTop = 320;
+    answerWithOptionId(0, 'A');
+    expect(screen.getByText('Q2')).toBeTruthy();
+    expect(document.documentElement.scrollTop).toBe(0);
+    expect(document.body.scrollTop).toBe(0);
+
+    document.documentElement.scrollTop = 320;
+    document.body.scrollTop = 320;
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    expect(screen.getByText('Q1')).toBeTruthy();
+    expect(document.documentElement.scrollTop).toBe(0);
+    expect(document.body.scrollTop).toBe(0);
   });
 
   it('문항별 선택을 독립적으로 복원하고 기존 답변을 하나의 새 선택으로 교체한다', () => {

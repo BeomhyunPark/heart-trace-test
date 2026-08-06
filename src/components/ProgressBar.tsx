@@ -6,6 +6,7 @@ type ProgressBarProps = {
 
 export function ProgressBar({ current, total, label = '검사 진행률' }: ProgressBarProps) {
   const percent = Math.max(0, Math.min(100, (current / total) * 100));
+  const accessibleCurrent = Math.round(current);
 
   return (
     <div
@@ -14,7 +15,7 @@ export function ProgressBar({ current, total, label = '검사 진행률' }: Prog
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={total}
-      aria-valuenow={current}
+      aria-valuenow={accessibleCurrent}
     >
       <span className="progress-bar__value" style={{ width: `${percent}%` }} />
     </div>

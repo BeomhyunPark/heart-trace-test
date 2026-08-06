@@ -1,8 +1,86 @@
+@property --start-orb-radial-0 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 248 255);
+}
+
+@property --start-orb-radial-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(204 250 255);
+}
+
+@property --start-orb-radial-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(120 229 242 / 98%);
+}
+
+@property --start-orb-radial-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(138 123 243 / 96%);
+}
+
+@property --start-orb-radial-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(215 131 231 / 90%);
+}
+
+@property --start-orb-stop-1 {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 18%;
+}
+
+@property --start-orb-stop-2 {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 44%;
+}
+
+@property --start-orb-stop-3 {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 72%;
+}
+
+@property --start-orb-angular-0 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(238 157 206 / 34%);
+}
+
+@property --start-orb-angular-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(121 231 230 / 24%);
+}
+
+@property --start-orb-angular-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(164 134 246 / 32%);
+}
+
+@property --start-orb-shadow-violet {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(167 122 245 / 25%);
+}
+
+@property --start-orb-shadow-cyan {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(125 230 242 / 36%);
+}
+
 .screen-layout {
   position: relative;
   display: flex;
-  min-height: max(100vh, 54.625rem);
-  min-height: max(100dvh, 54.625rem);
+  min-height: 100vh;
+  min-height: 100dvh;
   flex-direction: column;
   isolation: isolate;
   overflow: hidden;
@@ -185,10 +263,16 @@
 }
 
 .intro-screen .screen-layout__content,
-.guide-screen .screen-layout__content,
+.guide-screen .screen-layout__content {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
 .question-screen .screen-layout__content {
   position: relative;
-  min-height: 51.125rem;
+  min-height: 0;
 }
 
 .intro-screen__header {
@@ -228,20 +312,42 @@
   height: 100%;
 }
 
-.start-soul-orb__phase {
+.start-soul-orb__core {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 1;
   width: 100%;
-  max-width: 100%;
   height: 100%;
-  object-fit: contain;
-  opacity: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    var(--start-orb-radial-0) 0%,
+    var(--start-orb-radial-1) var(--start-orb-stop-1),
+    var(--start-orb-radial-2) var(--start-orb-stop-2),
+    var(--start-orb-radial-3) var(--start-orb-stop-3),
+    var(--start-orb-radial-4) 100%
+  );
+  box-shadow: 0 0 54px 6px var(--start-orb-shadow-violet),
+    0 0 29px 3px var(--start-orb-shadow-cyan);
   transform: translate(-50%, -50%);
-  will-change: opacity, filter;
-  animation: start-orb-phase 4.8s ease-in-out infinite both;
-  animation-delay: calc(var(--phase-index) * 0.8s - 0.4s);
+  animation: start-soul-orb-loop 5.1s linear infinite;
+}
+
+.start-soul-orb__core::before {
+  position: absolute;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    var(--start-orb-angular-0) 0%,
+    var(--start-orb-angular-1) 34%,
+    var(--start-orb-angular-2) 68%,
+    var(--start-orb-angular-0) 100%
+  );
+  content: "";
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.24;
 }
 
 .intro-screen__message {
@@ -262,17 +368,14 @@
 }
 
 .intro-screen__button {
-  position: absolute;
-  top: 42.625rem;
-  left: 0;
+  position: static;
+  margin-top: auto;
 }
 
 .intro-screen__meta {
-  position: absolute;
-  top: 47.4375rem;
-  left: 0;
+  position: static;
   width: 100%;
-  margin: 0;
+  margin: 1.1875rem 0 0;
   color: #b2ccf0;
   font-size: 0.75rem;
   line-height: 1.125rem;
@@ -335,9 +438,8 @@
 }
 
 .guide-screen__button {
-  position: absolute;
-  top: 42.625rem;
-  left: 0;
+  position: static;
+  margin-top: auto;
 }
 
 .question-screen {
@@ -384,7 +486,7 @@
 }
 
 .question-prompt {
-  height: 9rem;
+  min-height: 7.5rem;
 }
 
 .question-number {
@@ -594,7 +696,7 @@
   min-height: 3.625rem;
   align-items: center;
   justify-content: center;
-  margin: 2rem 0 0;
+  margin: 1.5rem 0 0;
   border: 1px solid rgba(159, 184, 242, 0.29);
   border-radius: 999px;
   background: rgba(10, 22, 51, 0.18);
@@ -684,70 +786,112 @@
   margin: 0;
 }
 
-.soul-orb img {
+.soul-orb > img {
   position: absolute;
-  inset: 50% auto auto 50%;
-  object-fit: contain;
-  transform: translate(-50%, -50%);
+  display: block;
+  max-width: none;
+}
+
+.soul-orb__character {
+  top: -0.125rem;
+  left: -0.125rem;
+  width: 19.25rem;
+  height: 15.125rem;
+}
+
+.soul-orb__ring {
+  top: 1rem;
+  left: 1.0625rem;
+  width: 16.875rem;
+  height: 12.875rem;
+}
+
+.soul-orb__highlight {
+  top: 1.25rem;
+  left: 3.9375rem;
+  width: 7.625rem;
+  height: 5.375rem;
 }
 
 .soul-orb__hatch {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
+  top: 0.875rem;
+  left: 2.9375rem;
   width: 13.125rem;
   height: 13.125rem;
-  transform: translate(-50%, -50%);
+  filter: blur(2px);
 }
 
-.soul-orb__hatch .soul-orb__stage {
+.soul-orb__hatch > div {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.soul-orb__halo {
+  top: 0;
+  left: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  width: 16.25rem;
+  height: 16.25rem;
+  padding: 10px;
+  background: conic-gradient(
+    from 90deg,
+    rgb(168 107 255 / 0%) 0%,
+    rgb(184 117 255 / 98%) 7%,
+    rgb(255 133 219 / 0%) 15%,
+    rgb(31 184 255 / 18%) 25%,
+    rgb(31 199 255) 32%,
+    rgb(51 255 235 / 0%) 40%,
+    rgb(66 235 122 / 18%) 50%,
+    rgb(117 255 71) 57%,
+    rgb(245 255 71 / 0%) 65%,
+    rgb(255 184 31 / 18%) 75%,
+    rgb(255 214 77) 82%,
+    rgb(255 122 184 / 0%) 91%,
+    rgb(168 107 255 / 0%) 100%
+  );
+  filter: blur(7px);
+  mix-blend-mode: screen;
+  opacity: 0.12;
+  transform: matrix(-0.5, 0.866, -0.866, -0.5, -25, -25);
+  transform-origin: 0 0;
+  will-change: filter, height, opacity, transform, width;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: soul-hatch-halo var(--loading-sequence-duration) linear both;
+}
+
+.soul-orb__core {
+  inset: 0;
+  z-index: 3;
+}
+
+.soul-orb__stage {
   position: absolute;
   top: 50%;
   left: 50%;
+  display: block;
   width: auto;
   max-width: none;
   height: auto;
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.97);
-  transition: opacity 180ms ease, transform 180ms ease;
+  transform: translate(-50%, -50%);
+  will-change: opacity;
 }
 
-.soul-orb__hatch .soul-orb__stage--active {
+.soul-orb__stage--1 { animation: soul-hatch-stage-1 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--2 { animation: soul-hatch-stage-2 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--3 { animation: soul-hatch-stage-3 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--4 { animation: soul-hatch-stage-4 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--5 { animation: soul-hatch-stage-5 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--6 { animation: soul-hatch-stage-6 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--7 { animation: soul-hatch-stage-7 var(--loading-sequence-duration) linear both; }
+.soul-orb__stage--8 {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.soul-orb__rays {
-  width: 43%;
-  opacity: 0.62;
-  animation: soul-spin 18s linear infinite;
-}
-
-.soul-orb__halo {
-  width: 69%;
-  opacity: 0.72;
-  animation: soul-pulse 2.2s ease-in-out infinite;
-}
-
-.soul-orb__shockwave {
-  width: 46%;
-  opacity: 0.72;
-  animation: soul-pulse 2.2s ease-in-out infinite;
-}
-
-.soul-orb__ring {
-  width: 89%;
-  animation: soul-spin 12s linear infinite reverse;
-}
-
-.soul-orb__character {
-  width: 100%;
-}
-
-.soul-orb__highlight {
-  width: 28%;
-  opacity: 0.65;
+  animation: soul-hatch-stage-8 var(--loading-sequence-duration) linear both;
 }
 
 .loading-screen__copy p {
@@ -759,6 +903,10 @@
 
 .loading-screen .screen-layout__content > .progress-bar {
   width: 100%;
+}
+
+.loading-screen .progress-bar__value {
+  transition: none;
 }
 
 .loading-status {
@@ -1229,10 +1377,102 @@
   50% { transform: translateY(-0.45rem); }
 }
 
-@keyframes start-orb-phase {
-  0% { opacity: 0; filter: blur(1px); }
-  8%, 18% { opacity: 1; filter: blur(0); }
-  28%, 100% { opacity: 0; filter: blur(1px); }
+@keyframes start-soul-orb-loop {
+  0%, 100% {
+    --start-orb-radial-0: rgb(255 248 255);
+    --start-orb-radial-1: rgb(204 250 255);
+    --start-orb-radial-2: rgb(120 229 242 / 98%);
+    --start-orb-radial-3: rgb(138 123 243 / 96%);
+    --start-orb-radial-4: rgb(215 131 231 / 90%);
+    --start-orb-stop-1: 18%;
+    --start-orb-stop-2: 44%;
+    --start-orb-stop-3: 72%;
+    --start-orb-angular-0: rgb(238 157 206 / 34%);
+    --start-orb-angular-1: rgb(121 231 230 / 24%);
+    --start-orb-angular-2: rgb(164 134 246 / 32%);
+    --start-orb-shadow-violet: rgb(167 122 245 / 25%);
+    --start-orb-shadow-cyan: rgb(125 230 242 / 36%);
+  }
+
+  16.6667% {
+    --start-orb-radial-0: rgb(248 255 255);
+    --start-orb-radial-1: rgb(183 244 255);
+    --start-orb-radial-2: rgb(112 212 243 / 98%);
+    --start-orb-radial-3: rgb(155 126 243 / 96%);
+    --start-orb-radial-4: rgb(225 141 210 / 90%);
+    --start-orb-stop-1: 18%;
+    --start-orb-stop-2: 44%;
+    --start-orb-stop-3: 72%;
+    --start-orb-angular-0: rgb(232 157 200 / 32%);
+    --start-orb-angular-1: rgb(114 225 232 / 24%);
+    --start-orb-angular-2: rgb(176 130 244 / 32%);
+    --start-orb-shadow-violet: rgb(181 122 243 / 25%);
+    --start-orb-shadow-cyan: rgb(116 224 239 / 36%);
+  }
+
+  33.3333% {
+    --start-orb-radial-0: rgb(246 251 255);
+    --start-orb-radial-1: rgb(187 217 255);
+    --start-orb-radial-2: rgb(131 143 243 / 98%);
+    --start-orb-radial-3: rgb(184 127 237 / 96%);
+    --start-orb-radial-4: rgb(230 155 188 / 90%);
+    --start-orb-stop-1: 18%;
+    --start-orb-stop-2: 44%;
+    --start-orb-stop-3: 72%;
+    --start-orb-angular-0: rgb(221 157 202 / 30%);
+    --start-orb-angular-1: rgb(126 217 236 / 23%);
+    --start-orb-angular-2: rgb(193 129 236 / 32%);
+    --start-orb-shadow-violet: rgb(193 124 234 / 25%);
+    --start-orb-shadow-cyan: rgb(121 217 237 / 36%);
+  }
+
+  50% {
+    --start-orb-radial-0: rgb(255 245 252);
+    --start-orb-radial-1: rgb(226 197 250);
+    --start-orb-radial-2: rgb(183 128 239 / 98%);
+    --start-orb-radial-3: rgb(218 141 213 / 96%);
+    --start-orb-radial-4: rgb(169 156 245 / 90%);
+    --start-orb-stop-1: 18%;
+    --start-orb-stop-2: 44%;
+    --start-orb-stop-3: 72%;
+    --start-orb-angular-0: rgb(207 147 224 / 31%);
+    --start-orb-angular-1: rgb(140 206 238 / 23%);
+    --start-orb-angular-2: rgb(227 144 200 / 31%);
+    --start-orb-shadow-violet: rgb(196 125 233 / 25%);
+    --start-orb-shadow-cyan: rgb(140 216 237 / 36%);
+  }
+
+  66.6667% {
+    --start-orb-radial-0: rgb(226 197 250);
+    --start-orb-radial-1: rgb(183 128 239 / 98%);
+    --start-orb-radial-2: rgb(218 141 213 / 96%);
+    --start-orb-radial-3: rgb(169 156 245 / 90%);
+    --start-orb-radial-4: rgb(169 229 255 / 90%);
+    --start-orb-stop-1: 0.01%;
+    --start-orb-stop-2: 36.5385%;
+    --start-orb-stop-3: 67.7885%;
+    --start-orb-angular-0: rgb(183 141 235 / 32%);
+    --start-orb-angular-1: rgb(118 221 232 / 24%);
+    --start-orb-angular-2: rgb(208 148 223 / 30%);
+    --start-orb-shadow-violet: rgb(168 126 241 / 25%);
+    --start-orb-shadow-cyan: rgb(118 223 235 / 36%);
+  }
+
+  83.3333% {
+    --start-orb-radial-0: rgb(255 248 255);
+    --start-orb-radial-1: rgb(199 238 255);
+    --start-orb-radial-2: rgb(126 218 241 / 98%);
+    --start-orb-radial-3: rgb(133 135 243 / 96%);
+    --start-orb-radial-4: rgb(186 130 234 / 90%);
+    --start-orb-stop-1: 18%;
+    --start-orb-stop-2: 44%;
+    --start-orb-stop-3: 72%;
+    --start-orb-angular-0: rgb(208 148 223 / 33%);
+    --start-orb-angular-1: rgb(119 228 232 / 24%);
+    --start-orb-angular-2: rgb(169 131 244 / 31%);
+    --start-orb-shadow-violet: rgb(164 122 243 / 25%);
+    --start-orb-shadow-cyan: rgb(121 227 238 / 36%);
+  }
 }
 
 @keyframes soul-float-centered {
@@ -1240,14 +1480,189 @@
   50% { transform: translate(-50%, calc(-50% - 0.35rem)); }
 }
 
-@keyframes soul-spin {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+@keyframes soul-hatch-stage-1 {
+  0%, 3.432% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  25.74%, 100% { opacity: 0; }
 }
 
-@keyframes soul-pulse {
-  0%, 100% { opacity: 0.45; transform: translate(-50%, -50%) scale(0.94); }
-  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.04); }
+@keyframes soul-hatch-stage-2 {
+  0%, 3.432% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  25.74%, 28.314% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  47.19%, 100% { opacity: 0; }
 }
+
+@keyframes soul-hatch-stage-3 {
+  0%, 28.314% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  47.19%, 48.906% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  64.35%, 100% { opacity: 0; }
+}
+
+@keyframes soul-hatch-stage-4 {
+  0%, 48.906% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  64.35%, 65.637% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  78.078%, 100% { opacity: 0; }
+}
+
+@keyframes soul-hatch-stage-5 {
+  0%, 65.637% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  78.078%, 78.936% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  88.374%, 100% { opacity: 0; }
+}
+
+@keyframes soul-hatch-stage-6 {
+  0%, 78.936% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  88.374%, 88.803% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  95.667%, 100% { opacity: 0; }
+}
+
+@keyframes soul-hatch-stage-7 {
+  0%, 88.803% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  95.667%, 95.71% {
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+
+  100% { opacity: 0; }
+}
+
+@keyframes soul-hatch-stage-8 {
+  0%, 95.71% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+  100% { opacity: 1; }
+}
+
+@keyframes soul-hatch-halo {
+  0%, 3.432% {
+    width: 200px;
+    height: 200px;
+    padding: 3px;
+    filter: blur(2px);
+    opacity: 0.34;
+    transform: matrix(1, 0, 0, 1, 5, 5);
+    animation-timing-function: ease-in;
+  }
+
+  25.74%, 28.314% {
+    width: 204px;
+    height: 204px;
+    padding: 3.5px;
+    filter: blur(2.5px);
+    opacity: 0.46;
+    transform: matrix(-0.5, 0.866025, -0.866025, -0.5, 3, 3);
+    animation-timing-function: ease-in;
+  }
+
+  47.19%, 48.906% {
+    width: 210px;
+    height: 210px;
+    padding: 4px;
+    filter: blur(2.5px);
+    opacity: 0.58;
+    transform: matrix(-0.5, -0.866025, 0.866025, -0.5, 0, 0);
+    animation-timing-function: ease-in;
+  }
+
+  64.35%, 65.637% {
+    width: 216px;
+    height: 216px;
+    padding: 4.5px;
+    filter: blur(3px);
+    opacity: 0.7;
+    transform: matrix(1, 0, 0, 1, -3, -3);
+    animation-timing-function: ease-in;
+  }
+
+  78.078%, 78.936% {
+    width: 222px;
+    height: 222px;
+    padding: 5px;
+    filter: blur(3.5px);
+    opacity: 0.82;
+    transform: matrix(-0.5, 0.866025, -0.866025, -0.5, -6, -6);
+    animation-timing-function: ease-in;
+  }
+
+  88.374%, 88.803% {
+    width: 228px;
+    height: 228px;
+    padding: 6px;
+    filter: blur(4px);
+    opacity: 0.94;
+    transform: matrix(-0.5, -0.866025, 0.866025, -0.5, -9, -9);
+    animation-timing-function: ease-in;
+  }
+
+  95.667%, 95.71% {
+    width: 234px;
+    height: 234px;
+    padding: 7px;
+    filter: blur(5px);
+    opacity: 1;
+    transform: matrix(1, 0, 0, 1, -12, -12);
+    animation-timing-function: ease-in;
+  }
+
+  100% {
+    width: 234px;
+    height: 234px;
+    padding: 7px;
+    filter: blur(5px);
+    opacity: 0.82;
+    transform: matrix(1, 0, 0, 1, -12, -12);
+  }
+}
+
 
 @keyframes loading-status-pulse {
   0%, 100% { opacity: 0.42; transform: scale(0.78); }
@@ -1256,27 +1671,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .start-soul-orb,
-  .start-soul-orb__phase,
-  .soul-orb__rays,
+  .start-soul-orb__core,
   .soul-orb__halo,
-  .soul-orb__shockwave,
-  .soul-orb__ring,
+  .soul-orb__stage,
   .loading-status__item--active > span {
     animation: none;
-  }
-
-  .start-soul-orb__phase {
-    display: none;
-    filter: none;
-  }
-
-  .start-soul-orb__phase:first-child {
-    display: block;
-    opacity: 1;
-  }
-
-  .soul-orb__hatch .soul-orb__stage {
-    transition: none;
   }
 }
 
@@ -1298,21 +1697,6 @@
     width: min(15.5625rem, 100%);
   }
 
-  .intro-screen__button,
-  .guide-screen__button {
-    position: static;
-    margin-top: auto;
-  }
-
-  .intro-screen__meta {
-    position: static;
-    margin-top: 1.1875rem;
-  }
-
-  .guide-screen__button {
-    margin-top: 3.75rem;
-  }
-
   .answer-option {
     gap: 0.625rem;
     padding-inline: 0.75rem;
@@ -1332,5 +1716,105 @@
 
   .result-messages article {
     padding-inline: 0.75rem;
+  }
+}
+
+@media (max-width: 31rem) and (max-height: 46rem) {
+  .screen-layout,
+  .result-screen {
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .question-fieldset {
+    margin-top: 0.5rem;
+  }
+
+  .question-prompt {
+    min-height: 6rem;
+  }
+
+  .question-helper {
+    margin-block: 0.5rem;
+  }
+
+  .answer-list {
+    gap: 0.5rem;
+  }
+
+  .answer-option {
+    min-height: 3.25rem;
+    padding-block: 0.5rem;
+  }
+
+  .question-skip {
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+  }
+
+  .previous-button {
+    min-height: 2.75rem;
+    margin-top: 1rem;
+  }
+
+  .loading-screen .screen-layout__content {
+    gap: 0.75rem;
+  }
+
+  .loading-screen__header {
+    gap: 0.75rem;
+  }
+
+  .loading-screen__header h1 {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+
+  .soul-orb {
+    margin-block: -1.25rem;
+    transform: scale(0.82);
+  }
+
+  .loading-status {
+    min-height: 6.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .loading-status ul {
+    line-height: 1.25rem;
+  }
+
+  .result-screen__content {
+    gap: 0.875rem;
+  }
+
+  .result-hero {
+    gap: 0.75rem;
+  }
+
+  .result-hero h1 {
+    min-height: 0;
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+
+  .result-hero__character {
+    height: 14rem;
+    aspect-ratio: auto;
+  }
+
+  .result-hero__character img {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+  }
+
+  .result-panel,
+  .result-behaviors {
+    padding: 1rem 1.125rem;
+  }
+
+  .result-traces {
+    gap: 0.75rem;
   }
 }

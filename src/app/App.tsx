@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useLayoutEffect, useReducer, useState } from 'react';
 
 import { QUESTIONS } from '../data/questions';
 import { RESULT_TYPES } from '../data/resultTypes';
@@ -26,6 +26,11 @@ export function App() {
   );
   const [introStep, setIntroStep] = useState<'intro' | 'guide'>('intro');
   const [revealedResult, setRevealedResult] = useState<ResultTypeId | null>(null);
+
+  useLayoutEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [introStep, revealedResult, state.currentQuestionIndex, state.phase]);
 
   const handleRestart = () => {
     setIntroStep('intro');

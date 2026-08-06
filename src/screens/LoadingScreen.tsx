@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 
 import { LOADING_SEQUENCE_DURATION_MS } from '../app/timing';
 import { ProgressBar } from '../components/ProgressBar';
 import { ScreenLayout } from '../components/ScreenLayout';
 import { assetUrl } from '../utils/assetUrl';
 
-const HATCH_STAGE_THRESHOLDS = [0, 20, 38, 53, 66, 77, 86, 94] as const;
+const HATCH_STAGE_THRESHOLDS = [0, 25.74, 47.19, 64.35, 78.078, 88.374, 95.667, 100] as const;
+const HATCH_IMAGES = Array.from(
+  { length: 8 },
+  (_, index) => assetUrl(`images/motion/hatching/orb-${String(index + 1).padStart(2, '0')}.png`),
+);
+const SOUL_ORB_TIMING_STYLE = {
+  '--loading-sequence-duration': `${LOADING_SEQUENCE_DURATION_MS}ms`,
+} as CSSProperties;
 
 const ANALYSIS_STEPS = [
   { threshold: 0, label: '마음의 대답을 모으고 있어요' },
@@ -42,22 +49,27 @@ export function LoadingScreen() {
   const [progress, setProgress] = useState(0);
   const activeStep = getActiveStep(progress);
   const hatchStage = getHatchStage(progress);
-  const hatchImages = useMemo(() => Array.from(
-    { length: 8 },
-    (_, index) => assetUrl(`images/motion/hatching/orb-${String(index + 1).padStart(2, '0')}.png`),
-  ), []);
 
   useEffect(() => {
-    const tickMs = 80;
     const startedAt = Date.now();
-    const timer = window.setInterval(() => {
-      setProgress(Math.min(
+    let frameId = 0;
+
+    const updateProgress = () => {
+      const nextProgress = Math.min(
         100,
         ((Date.now() - startedAt) / LOADING_SEQUENCE_DURATION_MS) * 100,
-      ));
-    }, tickMs);
+      );
 
-    return () => window.clearInterval(timer);
+      setProgress(nextProgress);
+
+      if (nextProgress < 100) {
+        frameId = window.requestAnimationFrame(updateProgress);
+      }
+    };
+
+    frameId = window.requestAnimationFrame(updateProgress);
+
+    return () => window.cancelAnimationFrame(frameId);
   }, []);
 
   return (
@@ -67,30 +79,35 @@ export function LoadingScreen() {
         <h1>가장 선명한 흔적을<br />찾고 있어요</h1>
       </header>
 
-      <div className="soul-orb" aria-hidden="true" data-stage={hatchStage}>
-        <img className="soul-orb__rays" src={assetUrl('images/loading/rays.svg')} alt="" />
-        <img className="soul-orb__halo" src={assetUrl('images/loading/halo.svg')} alt="" />
-        <img className="soul-orb__shockwave" src={assetUrl('images/loading/shockwave.svg')} alt="" />
-        <div className="soul-orb__hatch">
-          {hatchImages.map((src, index) => (
-            <img
-              key={src}
-              className={`soul-orb__stage${hatchStage === index + 1 ? ' soul-orb__stage--active' : ''}`}
-              src={src}
-              alt=""
-            />
-          ))}
-        </div>
-        <img className="soul-orb__ring" src={assetUrl('images/loading/ring-inner.svg')} alt="" />
+      <div
+        className="soul-orb"
+        style={SOUL_ORB_TIMING_STYLE}
+        aria-hidden="true"
+        data-stage={hatchStage}
+      >
         <img className="soul-orb__character" src={assetUrl('images/loading/soul-character.svg')} alt="" />
+        <img className="soul-orb__ring" src={assetUrl('images/loading/ring-inner.svg')} alt="" />
         <img className="soul-orb__highlight" src={assetUrl('images/loading/orb-highlight.svg')} alt="" />
+        <div className="soul-orb__hatch">
+          <div className="soul-orb__halo" />
+          <div className="soul-orb__core">
+            {HATCH_IMAGES.map((src, index) => (
+              <img
+                key={src}
+                className={`soul-orb__stage soul-orb__stage--${index + 1}`}
+                src={src}
+                alt=""
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="loading-screen__copy">
         <p>잠시만 기다려주세요.<br />마음에 남은 흔적들이 빛을 따라 모이고 있어요.</p>
       </div>
 
-      <ProgressBar current={Math.round(progress)} total={100} label="결과 분석 진행률" />
+      <ProgressBar current={progress} total={100} label="결과 분석 진행률" />
 
       <section className="loading-status" aria-live="polite" aria-atomic="true">
         <h2>{ANALYSIS_STEPS[activeStep].label}</h2>

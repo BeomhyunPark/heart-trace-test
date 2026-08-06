@@ -164,7 +164,7 @@ export const RESULT_TYPES = {
     separatorSrc: assetUrl('images/characters/express-separator.svg'),
     resultCardSrc: assetUrl('images/result-cards/result-express.png'),
     theme: {
-      background: 'linear-gradient(100deg, #12091e 0%, #2a0c18 34%, #651b24 70%, #3a1326 100%)',
+      background: 'linear-gradient(90deg, #12091d 0%, #3c0e14 70%, #3a1225 100%)',
       accent: '#ffc069',
       text: '#fff5ea',
       muted: '#ffd7c0',

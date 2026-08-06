@@ -21,7 +21,11 @@ export type SelectedAnswer = {
   optionId: ChoiceId;
 };
 
-export type Answer = SelectedAnswer;
+export type SkippedAnswer = {
+  kind: 'skipped';
+};
+
+export type Answer = SelectedAnswer | SkippedAnswer;
 
 export type Answers = Partial<Record<number, Answer>>;
 

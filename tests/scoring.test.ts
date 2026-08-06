@@ -98,7 +98,10 @@ describe('점수 계산', () => {
       pause: 0,
       express: 1,
     });
-    expect(firstAnswers[QUESTIONS[0].id]?.optionId).toBe('A');
+    expect(firstAnswers[QUESTIONS[0].id]).toEqual({
+      kind: 'selected',
+      optionId: 'A',
+    });
   });
 
   it('같은 문항을 여러 번 변경해도 최종 선택 한 건만 점수에 포함한다', () => {
@@ -123,6 +126,22 @@ describe('점수 계산', () => {
 
     expect(getTotalScore(scores)).toBe(2);
     expect(answers[QUESTIONS[1].id]).toBeUndefined();
+  });
+
+  it('패스한 문항을 점수에서 제외한다', () => {
+    const answers: Answers = {
+      [QUESTIONS[0].id]: {
+        kind: 'skipped',
+      },
+      [QUESTIONS[1].id]: {
+        kind: 'selected',
+        optionId: 'A',
+      },
+    };
+    const scores = calculateScores(QUESTIONS, answers);
+
+    expect(getTotalScore(scores)).toBe(1);
+    expect(scores.pause).toBe(1);
   });
 
   it('잘못된 optionId와 존재하지 않는 문항 ID를 명확한 오류로 처리한다', () => {

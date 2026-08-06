@@ -2,6 +2,10 @@ import { useEffect, useReducer, useState } from 'react';
 
 import { QUESTIONS } from '../data/questions';
 import { RESULT_TYPES } from '../data/resultTypes';
+import {
+  MAX_SKIPPED_ANSWERS,
+  countSkippedAnswers,
+} from '../domain/answers';
 import { createTieBreakerQuestion } from '../domain/tieBreaker';
 import type { ResultTypeId } from '../domain/types';
 import { GuideScreen } from '../screens/GuideScreen';
@@ -68,16 +72,26 @@ export function App() {
 
   if (state.phase === 'question') {
     const question = QUESTIONS[state.currentQuestionIndex];
+    const currentAnswer = state.answers[question.id];
 
     return (
       <QuestionScreen
         question={question}
         questionIndex={state.currentQuestionIndex}
-        selectedOptionId={state.answers[question.id]?.optionId ?? null}
+        selectedOptionId={currentAnswer?.kind === 'selected'
+          ? currentAnswer.optionId
+          : null}
+        isSkipped={currentAnswer?.kind === 'skipped'}
+        skippedCount={countSkippedAnswers(state.answers)}
+        maxSkippedCount={MAX_SKIPPED_ANSWERS}
         onAnswer={(optionId) => dispatch({
           type: 'ANSWER',
           questionId: question.id,
           optionId,
+        })}
+        onSkip={() => dispatch({
+          type: 'SKIP',
+          questionId: question.id,
         })}
         onPrevious={() => dispatch({ type: 'PREVIOUS' })}
       />

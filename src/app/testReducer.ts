@@ -1,4 +1,8 @@
 import { QUESTIONS } from '../data/questions';
+import {
+  MAX_SKIPPED_ANSWERS,
+  countSkippedAnswers,
+} from '../domain/answers';
 import { calculateResult } from '../domain/scoring';
 import { resolveTie } from '../domain/tieBreaker';
 import {
@@ -24,6 +28,10 @@ export type TestAction =
       type: 'ANSWER';
       questionId: number;
       optionId: ChoiceId;
+    }
+  | {
+      type: 'SKIP';
+      questionId: number;
     }
   | { type: 'PREVIOUS' }
   | {
@@ -100,6 +108,47 @@ export function testReducer(
         [action.questionId]: {
           kind: 'selected',
           optionId: action.optionId,
+        },
+      };
+
+      if (state.currentQuestionIndex === TEST_QUESTION_COUNT - 1) {
+        return finishTest(state, answers);
+      }
+
+      return {
+        ...state,
+        currentQuestionIndex: state.currentQuestionIndex + 1,
+        answers,
+        result: null,
+        tiedTypes: [],
+      };
+    }
+
+    case 'SKIP': {
+      const currentQuestion = QUESTIONS[state.currentQuestionIndex];
+
+      if (
+        state.phase !== 'question' ||
+        !currentQuestion ||
+        action.questionId !== currentQuestion.id
+      ) {
+        return state;
+      }
+
+      const currentAnswer = state.answers[action.questionId];
+      const skippedCount = countSkippedAnswers(state.answers);
+
+      if (
+        currentAnswer?.kind !== 'skipped' &&
+        skippedCount >= MAX_SKIPPED_ANSWERS
+      ) {
+        return state;
+      }
+
+      const answers: Answers = {
+        ...state.answers,
+        [action.questionId]: {
+          kind: 'skipped',
         },
       };
 

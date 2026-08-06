@@ -192,6 +192,50 @@ describe('앱 화면 흐름과 접근성', () => {
     }) as HTMLInputElement).checked).toBe(true);
   });
 
+  it('패스 상태와 사용량을 복원하고 세 개 사용 후 추가 패스를 차단한다', () => {
+    render(<App />);
+    startQuestionFlow();
+
+    expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', {
+      name: '딱 맞는 답이 없어요 · 건너뛰기',
+    }));
+
+    expect(screen.getByText('Q2')).toBeTruthy();
+    expect(screen.getByText('건너뛰기 1 / 3')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    const skippedButton = screen.getByRole('button', {
+      name: '건너뛴 문항이에요 · 다음으로',
+    });
+    expect(skippedButton.getAttribute('aria-pressed')).toBe('true');
+    expect(
+      screen.getAllByRole('radio').every((radio) => !(radio as HTMLInputElement).checked),
+    ).toBe(true);
+
+    answerWithOptionId(0, 'A');
+    expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
+
+    for (const questionNumber of [3, 4, 5]) {
+      fireEvent.click(screen.getByRole('button', {
+        name: '딱 맞는 답이 없어요 · 건너뛰기',
+      }));
+      expect(screen.getByText(`Q${questionNumber}`)).toBeTruthy();
+    }
+
+    expect(screen.getByText('건너뛰기 3 / 3')).toBeTruthy();
+    expect(screen.getByText(
+      '정확한 결과를 위해 이번 문항은 가장 가까운 답을 선택해 주세요.',
+    )).toBeTruthy();
+
+    const blockedButton = screen.getByRole('button', {
+      name: '딱 맞는 답이 없어요 · 건너뛰기',
+    }) as HTMLButtonElement;
+    expect(blockedButton.disabled).toBe(true);
+    fireEvent.click(blockedButton);
+    expect(screen.getByText('Q5')).toBeTruthy();
+  });
+
   it('동점일 때 동점 유형만 표시하고 선택한 결과로 이동한다', async () => {
     mockResultImageFetch();
     const { container } = render(<App />);

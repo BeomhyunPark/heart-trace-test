@@ -32,7 +32,7 @@ export function calculateScores(
 
     const answer = answers[question.id];
 
-    if (!answer) {
+    if (!answer || answer.kind === 'skipped') {
       return currentScores;
     }
 

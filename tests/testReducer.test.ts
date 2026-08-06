@@ -6,6 +6,10 @@ import {
   type TestState,
 } from '../src/app/testReducer';
 import { QUESTIONS } from '../src/data/questions';
+import {
+  MAX_SKIPPED_ANSWERS,
+  countSkippedAnswers,
+} from '../src/domain/answers';
 import { calculateScores } from '../src/domain/scoring';
 import {
   RESULT_TYPE_IDS,
@@ -48,6 +52,13 @@ function answerCurrent(
     type: 'ANSWER',
     questionId: QUESTIONS[questionIndex].id,
     optionId,
+  });
+}
+
+function skipCurrent(state: TestState, questionIndex: number): TestState {
+  return testReducer(state, {
+    type: 'SKIP',
+    questionId: QUESTIONS[questionIndex].id,
   });
 }
 
@@ -126,6 +137,80 @@ describe('검사 상태 흐름', () => {
     expect(changed.currentQuestionIndex).toBe(1);
   });
 
+  it('첫 세 문항을 문항 ID별 skipped 상태로 저장하고 이동한다', () => {
+    const afterFirstSkip = skipCurrent(startTest(), 0);
+    const afterSecondSkip = skipCurrent(afterFirstSkip, 1);
+    const afterThirdSkip = skipCurrent(afterSecondSkip, 2);
+
+    expect(afterThirdSkip.currentQuestionIndex).toBe(3);
+    expect(afterThirdSkip.answers).toMatchObject({
+      [QUESTIONS[0].id]: { kind: 'skipped' },
+      [QUESTIONS[1].id]: { kind: 'skipped' },
+      [QUESTIONS[2].id]: { kind: 'skipped' },
+    });
+    expect(countSkippedAnswers(afterThirdSkip.answers)).toBe(
+      MAX_SKIPPED_ANSWERS,
+    );
+  });
+
+  it('네 번째 패스 시 이동하거나 기존 답변 상태를 변경하지 않는다', () => {
+    const afterThreeSkips = skipCurrent(
+      skipCurrent(skipCurrent(startTest(), 0), 1),
+      2,
+    );
+    const blocked = skipCurrent(afterThreeSkips, 3);
+
+    expect(blocked).toBe(afterThreeSkips);
+    expect(blocked.currentQuestionIndex).toBe(3);
+    expect(blocked.answers[QUESTIONS[3].id]).toBeUndefined();
+    expect(countSkippedAnswers(blocked.answers)).toBe(MAX_SKIPPED_ANSWERS);
+  });
+
+  it('답변한 문항을 패스하면 selected를 skipped 하나로 덮어쓴다', () => {
+    const afterAnswer = answerCurrent(startTest(), 0, 'A');
+    const previous = testReducer(afterAnswer, { type: 'PREVIOUS' });
+    const skipped = skipCurrent(previous, 0);
+
+    expect(skipped.answers[QUESTIONS[0].id]).toEqual({ kind: 'skipped' });
+    expect(countSkippedAnswers(skipped.answers)).toBe(1);
+    expect(skipped.currentQuestionIndex).toBe(1);
+  });
+
+  it('패스 문항에 답하면 selected로 바뀌고 사용량이 감소해 다시 패스할 수 있다', () => {
+    const afterSkip = skipCurrent(startTest(), 0);
+    const previous = testReducer(afterSkip, { type: 'PREVIOUS' });
+    const answered = answerCurrent(previous, 0, 'E');
+
+    expect(answered.answers[QUESTIONS[0].id]).toEqual({
+      kind: 'selected',
+      optionId: 'E',
+    });
+    expect(countSkippedAnswers(answered.answers)).toBe(0);
+
+    const skippedAnotherQuestion = skipCurrent(answered, 1);
+    expect(skippedAnotherQuestion.answers[QUESTIONS[1].id]).toEqual({
+      kind: 'skipped',
+    });
+    expect(countSkippedAnswers(skippedAnotherQuestion.answers)).toBe(1);
+  });
+
+  it('패스와 답변 변경을 반복해도 점수와 패스 개수가 최종 상태와 일치한다', () => {
+    const firstSkip = skipCurrent(startTest(), 0);
+    const previous = testReducer(firstSkip, { type: 'PREVIOUS' });
+    const firstAnswer = answerCurrent(previous, 0, 'A');
+    const secondSkip = skipCurrent(firstAnswer, 1);
+    const previousAgain = testReducer(secondSkip, { type: 'PREVIOUS' });
+    const changedAnswer = answerCurrent(previousAgain, 1, 'B');
+    const thirdSkip = skipCurrent(changedAnswer, 2);
+    const scores = calculateScores(QUESTIONS, thirdSkip.answers);
+
+    expect(countSkippedAnswers(thirdSkip.answers)).toBe(1);
+    expect(RESULT_TYPE_IDS.reduce(
+      (total, resultType) => total + scores[resultType],
+      0,
+    )).toBe(2);
+  });
+
   it('첫 문항에서는 PREVIOUS가 상태를 바꾸지 않는다', () => {
     const firstQuestion = startTest();
     expect(testReducer(firstQuestion, { type: 'PREVIOUS' })).toBe(
@@ -154,6 +239,41 @@ describe('검사 상태 흐름', () => {
       result: null,
       tiedTypes: RESULT_TYPE_IDS,
     });
+  });
+
+  it('패스 세 개가 포함된 답변도 기존 동점 추가 질문으로 연결한다', () => {
+    const resultTypes: ResultTypeId[] = [
+      ...Array<ResultTypeId>(4).fill('bear'),
+      ...Array<ResultTypeId>(4).fill('spring'),
+      ...Array<ResultTypeId>(3).fill('effort'),
+      ...Array<ResultTypeId>(3).fill('pause'),
+      ...Array<ResultTypeId>(3).fill('express'),
+    ];
+    const afterSelections = resultTypes.reduce(
+      (state, resultType, questionIndex) => {
+        const option = QUESTIONS[questionIndex].options.find(
+          (candidate) => candidate.resultType === resultType,
+        );
+
+        if (!option) {
+          throw new Error(`${questionIndex + 1}번 문항의 선택지를 찾지 못했습니다.`);
+        }
+
+        return answerCurrent(state, questionIndex, option.id);
+      },
+      startTest(),
+    );
+    const completed = skipCurrent(
+      skipCurrent(skipCurrent(afterSelections, 17), 18),
+      19,
+    );
+
+    expect(completed).toMatchObject({
+      phase: 'tie-breaker',
+      result: null,
+      tiedTypes: ['bear', 'spring'],
+    });
+    expect(countSkippedAnswers(completed.answers)).toBe(3);
   });
 
   it('동점 후보를 선택하면 해당 결과로 확정한다', () => {
@@ -235,5 +355,18 @@ describe('검사 상태 흐름', () => {
     expect(testReducer(completed, { type: 'RESTART' })).toEqual(
       createInitialTestState(),
     );
+  });
+
+  it('새 초기 상태는 진행 중인 패스와 무관하게 항상 비어 있다', () => {
+    const progressed = skipCurrent(skipCurrent(startTest(), 0), 1);
+
+    expect(countSkippedAnswers(progressed.answers)).toBe(2);
+    expect(createInitialTestState()).toEqual({
+      phase: 'intro',
+      currentQuestionIndex: 0,
+      answers: {},
+      result: null,
+      tiedTypes: [],
+    });
   });
 });

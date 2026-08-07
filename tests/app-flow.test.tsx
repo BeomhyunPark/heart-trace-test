@@ -9,6 +9,7 @@ import { App } from '../src/app/App';
 import { RESULT_REVEAL_DELAY_MS } from '../src/app/timing';
 import { QUESTIONS } from '../src/data/questions';
 import { RESULT_TYPES } from '../src/data/resultTypes';
+import { TIE_BREAKER_OPTION_LABELS } from '../src/domain/tieBreaker';
 import {
   RESULT_TYPE_IDS,
   type ChoiceId,
@@ -267,9 +268,9 @@ describe('앱 화면 흐름과 접근성', () => {
     }
 
     expect(screen.getByText('건너뛰기 3 / 3')).toBeTruthy();
-    expect(screen.getByText(
+    expect(screen.getByRole('status').textContent).toBe(
       '정확한 결과를 위해 이번 문항은 가장 가까운 답을 선택해 주세요.',
-    )).toBeTruthy();
+    );
 
     const blockedButton = screen.getByRole('button', {
       name: '딱 맞는 답이 없어요 · 건너뛰기',
@@ -297,11 +298,15 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(tieOptions.map((option) => option.getAttribute('value'))).toEqual(
       RESULT_TYPE_IDS,
     );
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe(
+      String(QUESTIONS.length + 1),
+    );
+    expect(screen.getByText('마지막 질문')).toBeTruthy();
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     vi.useFakeTimers();
     fireEvent.click(screen.getByRole('radio', {
-      name: RESULT_TYPES.spring.name,
+      name: TIE_BREAKER_OPTION_LABELS.spring,
     }));
 
     expect(screen.getByRole('heading', { name: /가장 선명한 흔적을.*찾고 있어요/ })).toBeTruthy();

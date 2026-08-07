@@ -110,6 +110,7 @@ export function App() {
       return (
         <TieBreakerScreen
           question={tieBreakerQuestion}
+          questionNumber={QUESTIONS.length + 1}
           onSelect={(answer) => dispatch({ type: 'SELECT_TIE_BREAKER', answer })}
           onPrevious={() => dispatch({ type: 'PREVIOUS' })}
         />

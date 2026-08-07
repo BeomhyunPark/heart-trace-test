@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  TIE_BREAKER_OPTION_LABELS,
   TIE_BREAKER_PROMPT,
   createTieBreakerQuestion,
   resolveTie,
@@ -11,8 +12,8 @@ describe('동점 추가 질문', () => {
     expect(createTieBreakerQuestion(['bear', 'express'])).toEqual({
       prompt: TIE_BREAKER_PROMPT,
       options: [
-        { id: 'bear', label: '곰곰이' },
-        { id: 'express', label: '톡톡이' },
+        { id: 'bear', label: TIE_BREAKER_OPTION_LABELS.bear },
+        { id: 'express', label: TIE_BREAKER_OPTION_LABELS.express },
       ],
     });
   });

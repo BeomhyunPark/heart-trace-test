@@ -84,7 +84,7 @@ export function QuestionScreen({
         </button>
         {skipLimitReached ? (
           <p className="question-skip__notice" role="status">
-            정확한 결과를 위해 이번 문항은 가장 가까운 답을 선택해 주세요.
+            정확한 결과를 위해 이번 문항은{' '}<br />가장 가까운 답을 선택해 주세요.
           </p>
         ) : (
           <p className="question-skip__helper">

@@ -57,7 +57,7 @@ export const RESULT_TYPES = {
     ],
     engravedTraces: ['사랑', '담대함', '정체성'],
     mindSentence: '사람의 시선보다, 하나님이 바라보시는 시선을 기억하기.',
-    todayMessage: '오늘은 괜찮은 척했던 마음 하나를 예수님께 솔직히 말해볼래?',
+    todayMessage: '오늘은 괜찮은 척했던 마음 하나를 주님께 솔직히 말해볼래?',
     imageSrc: assetUrl('images/characters/spring-hero.png'),
     separatorSrc: assetUrl('images/characters/spring-separator.svg'),
     resultCardSrc: assetUrl('images/result-cards/result-spring.png'),
@@ -74,7 +74,7 @@ export const RESULT_TYPES = {
     id: 'effort',
     name: '낑낑이',
     trace: '애씀의 흔적',
-    descriptor: '흔적을 자신의 탓으로 돌리는 사람',
+    descriptor: '흔적의 원인을 자신에게서 먼저 찾는 사람',
     intro: [
       '낑낑이는 일이 뜻대로 되지 않을 때 자신의 부족함부터 떠올리는 사람이에요.',
       '문제가 생기면 상황이나 다른 이유를 살피기보다 “내가 더 잘했어야 했나?” 하며 자신의 책임부터 돌아봐요. 때로는 자신의 몫이 아닌 일까지 끌어안으며 마음을 무겁게 하기도 해요.',
@@ -142,10 +142,11 @@ export const RESULT_TYPES = {
     id: 'express',
     name: '톡톡이',
     trace: '표출의 흔적',
-    descriptor: '감정을 바로 드러내는 사람',
+    descriptor: '생각과 감정을 바로 드러내는 사람',
     intro: [
-      '톡톡이는 불편한 상황을 그냥 두기보다 자신의 감정과 생각을 솔직하게 드러내고, 직접 나서서 해결하려는 사람이에요.',
-      '빠르게 상황을 파악하고 필요한 일을 척척 해내지만, 마음이 앞서다 보면 감정에 쉽게 휩쓸리거나 혼자 많은 것을 감당한 뒤 금세 지칠 때도 있어요.',
+      '톡톡이는 마음에 느껴지는 감정과 생각을 속으로만 담아두기보다 솔직하게 표현하는 사람이에요.',
+      '답답하거나 불편한 일이 생기면 자신의 생각을 분명하게 이야기하고, 필요한 경우 직접 나서서 상황을 바꾸려고 해요.',
+      '기쁘거나 고마운 마음도 잘 표현하지만, 감정이 커질 때는 마음보다 말이 먼저 나가 상대에게 강하게 전달될 때도 있어요.'
     ],
     strengths: [
       '자신의 생각과 감정을 솔직하게 표현하고, 필요한 말을 바로 할 줄 알아요.',

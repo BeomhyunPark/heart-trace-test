@@ -17,6 +17,8 @@ import {
 } from '../src/domain/types';
 import { LoadingScreen } from '../src/screens/LoadingScreen';
 
+const INTRO_START_BUTTON_NAME = '나와 닮은 흔적이를 찾아볼까요?';
+
 afterEach(() => {
   cleanup();
   document.documentElement.scrollTop = 0;
@@ -26,8 +28,15 @@ afterEach(() => {
 });
 
 function startQuestionFlow() {
-  fireEvent.click(screen.getByRole('button', { name: '테스트 시작하기' }));
+  revealIntroStartButton();
+  fireEvent.click(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME }));
   fireEvent.click(screen.getByRole('button', { name: '알겠어요' }));
+}
+
+function revealIntroStartButton() {
+  fireEvent.keyDown(screen.getByRole('region', { name: '흔적이 소개 글' }), {
+    key: 'End',
+  });
 }
 
 function getOptionText(questionIndex: number, resultType: ResultTypeId): string {
@@ -134,7 +143,10 @@ describe('앱 화면 흐름과 접근성', () => {
     render(<App />);
 
     await user.tab();
-    expect(document.activeElement?.textContent).toContain('테스트 시작하기');
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('흔적이 소개 글');
+    await user.keyboard('{End}');
+    await user.tab();
+    expect(document.activeElement?.textContent).toContain(INTRO_START_BUTTON_NAME);
     await user.keyboard('{Enter}');
 
     await user.tab();
@@ -151,12 +163,51 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByText('Q2')).toBeTruthy();
   });
 
+  it('흔적이 소개를 마지막까지 넘긴 뒤에만 시작 버튼을 보여준다', () => {
+    render(<App />);
+
+    expect(screen.queryByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeNull();
+
+    const messageTrack = screen.getByRole('region', { name: '흔적이 소개 글' });
+
+    Object.defineProperties(messageTrack, {
+      clientWidth: { configurable: true, value: 320 },
+      scrollWidth: { configurable: true, value: 960 },
+      scrollLeft: { configurable: true, value: 500 },
+    });
+    fireEvent.scroll(messageTrack);
+
+    expect(screen.queryByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeNull();
+
+    Object.defineProperty(messageTrack, 'scrollLeft', {
+      configurable: true,
+      value: 640,
+    });
+    fireEvent.scroll(messageTrack);
+
+    expect(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeTruthy();
+  });
+
+  it('하단 버튼만으로 소개를 넘기고 시작 버튼까지 도달할 수 있다', () => {
+    render(<App />);
+
+    const nextButtonName = '다음';
+
+    fireEvent.click(screen.getByRole('button', { name: nextButtonName }));
+
+    fireEvent.click(screen.getByRole('button', { name: nextButtonName }));
+
+    fireEvent.click(screen.getByRole('button', { name: nextButtonName }));
+    expect(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeTruthy();
+  });
+
   it('화면과 문항을 이동할 때 이전 스크롤 위치를 남기지 않는다', () => {
     render(<App />);
 
     document.documentElement.scrollTop = 320;
     document.body.scrollTop = 320;
-    fireEvent.click(screen.getByRole('button', { name: '테스트 시작하기' }));
+    revealIntroStartButton();
+    fireEvent.click(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME }));
     expect(document.documentElement.scrollTop).toBe(0);
     expect(document.body.scrollTop).toBe(0);
 
@@ -337,7 +388,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('heading', { name: RESULT_TYPES.bear.name })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '처음부터 다시 하기' }));
 
-    expect(screen.getByRole('heading', { name: /흔적을 대하는 자세는/ })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
     expect(screen.queryByRole('radio')).toBeNull();
   });
 

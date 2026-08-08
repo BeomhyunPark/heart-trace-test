@@ -37,7 +37,7 @@ describe('결과 이미지', () => {
     }
   });
 
-  it.each(RESULT_TYPE_IDS)('%s 저장 이미지가 유효한 고해상도 PNG다', (resultTypeId) => {
+  it.each(RESULT_TYPE_IDS)('%s 저장 이미지가 유효한 모바일용 PNG다', (resultTypeId) => {
     const resultType = RESULT_TYPES[resultTypeId];
     const imagePath = resolve('public', resultType.resultCardSrc.replace(/^\//, ''));
     const image = readFileSync(imagePath);
@@ -46,8 +46,8 @@ describe('결과 이미지', () => {
     const height = image.readUInt32BE(20);
 
     expect(pngSignature).toBe('89504e470d0a1a0a');
-    expect(width).toBeGreaterThanOrEqual(800);
-    expect(height).toBeGreaterThanOrEqual(1900);
+    expect(width).toBeGreaterThanOrEqual(540);
+    expect(height).toBeGreaterThanOrEqual(1170);
     expect(image.byteLength).toBeLessThanOrEqual(3 * 1024 * 1024);
   });
 

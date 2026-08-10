@@ -210,8 +210,8 @@ export const QUESTIONS = [
     options: [
       { id: 'A', text: '남은 시간에 할 수 있는 일이나 도울 일이 있는지 찾아본다.', resultType: 'effort' },
       { id: 'B', text: '지금까지의 시간을 천천히 돌아본다.', resultType: 'bear' },
-      { id: 'C', text: '함께 있는 사람들이 무엇을 하고 싶은지 먼저 물어보고 그에 맞춘다.', resultType: 'spring' },
-      { id: 'D', text: '다같이 무엇을 하고 싶은지 먼저 물어보고 그에 맞춘다.', resultType: 'express' },
+      { id: 'C', text: '다같이 무엇을 하고 싶은지 먼저 물어보고 그에 맞춘다.', resultType: 'spring' },
+      { id: 'D', text: '자유시간이 생겨 좋다고 표현하며 하고 싶은 일을 제안한다.', resultType: 'express' },
       { id: 'E', text: '조용한 곳에서 혼자 쉬거나 산책한다.', resultType: 'pause' },
     ],
   },

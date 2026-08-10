@@ -8,10 +8,10 @@ const VERIFIED_GOOGLE_DOCS_SOURCE = {
   title: '26여수 아이스브레이킹',
   documentId: '1-35-57d5TKdNZOC0-aCS2_JGg7wo6Ndwn9ZXLTo2Pa0',
   tabId: 't.gp9cfhyqeusg',
-  verifiedAt: '2026-08-09',
+  verifiedAt: '2026-08-10',
   questionCount: 20,
   optionCount: 100,
-  sha256: 'd05ce5e074780c1b0c116c7517dc3d3960ca2589b8a0b3a936dae6d1d4549c1a',
+  sha256: '4a5ac2430c753739aab35311ac38ca722723775f66c4da5d56b5074b1404e620',
 } as const;
 
 function normalizeText(value: string): string {

@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useReducer, useState } from 'react';
 
+import type { ActivityId } from '../data/activities';
 import { QUESTIONS } from '../data/questions';
 import { RESULT_TYPES } from '../data/resultTypes';
 import {
@@ -9,6 +10,7 @@ import {
 import { createTieBreakerQuestion } from '../domain/tieBreaker';
 import type { ResultTypeId } from '../domain/types';
 import { GuideScreen } from '../screens/GuideScreen';
+import { HomeScreen } from '../screens/HomeScreen';
 import { IntroScreen } from '../screens/IntroScreen';
 import { LoadingScreen } from '../screens/LoadingScreen';
 import { QuestionScreen } from '../screens/QuestionScreen';
@@ -19,6 +21,7 @@ import { createInitialTestState, testReducer } from './testReducer';
 import { RESULT_REVEAL_DELAY_MS } from './timing';
 
 export function App() {
+  const [activeActivity, setActiveActivity] = useState<ActivityId | null>(null);
   const [state, dispatch] = useReducer(
     testReducer,
     undefined,
@@ -30,7 +33,20 @@ export function App() {
   useLayoutEffect(() => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-  }, [introStep, revealedResult, state.currentQuestionIndex, state.phase]);
+  }, [activeActivity, introStep, revealedResult, state.currentQuestionIndex, state.phase]);
+
+  const handleSelectActivity = (activityId: ActivityId) => {
+    if (activityId === 'heart-trace') {
+      setActiveActivity(activityId);
+    }
+  };
+
+  const handleBackHome = () => {
+    setActiveActivity(null);
+    setIntroStep('intro');
+    setRevealedResult(null);
+    dispatch({ type: 'RESTART' });
+  };
 
   const handleRestart = () => {
     setIntroStep('intro');
@@ -67,12 +83,26 @@ export function App() {
     });
   }, [state.result]);
 
+  if (activeActivity === null) {
+    return <HomeScreen onSelectActivity={handleSelectActivity} />;
+  }
+
   if (state.phase === 'intro') {
     if (introStep === 'guide') {
-      return <GuideScreen onStart={() => dispatch({ type: 'START' })} />;
+      return (
+        <GuideScreen
+          onStart={() => dispatch({ type: 'START' })}
+          onBackHome={handleBackHome}
+        />
+      );
     }
 
-    return <IntroScreen onContinue={() => setIntroStep('guide')} />;
+    return (
+      <IntroScreen
+        onContinue={() => setIntroStep('guide')}
+        onBackHome={handleBackHome}
+      />
+    );
   }
 
   if (state.phase === 'question') {
@@ -123,8 +153,19 @@ export function App() {
       return <LoadingScreen />;
     }
 
-    return <ResultScreen resultId={revealedResult} onRestart={handleRestart} />;
+    return (
+      <ResultScreen
+        resultId={revealedResult}
+        onRestart={handleRestart}
+        onBackHome={handleBackHome}
+      />
+    );
   }
 
-  return <IntroScreen onContinue={() => setIntroStep('guide')} />;
+  return (
+    <IntroScreen
+      onContinue={() => setIntroStep('guide')}
+      onBackHome={handleBackHome}
+    />
+  );
 }

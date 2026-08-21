@@ -12,6 +12,7 @@ import {
 type ResultScreenProps = {
   resultId: ResultTypeId;
   onRestart: () => void;
+  onBackHome: () => void;
 };
 
 type ResultStyle = CSSProperties & {
@@ -23,7 +24,7 @@ type ResultStyle = CSSProperties & {
   '--result-button-text': string;
 };
 
-export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
+export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenProps) {
   const result = RESULT_TYPES[resultId];
   const [resultFile, setResultFile] = useState<File | null>(null);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
@@ -217,7 +218,10 @@ export function ResultScreen({ resultId, onRestart }: ResultScreenProps) {
 
         <p className="result-disclaimer">이 결과는 당신을 규정하거나 저장하지 않아요.</p>
 
-        <button className="result-restart-button" type="button" onClick={onRestart}>처음부터 다시 하기</button>
+        <div className="result-navigation">
+          <button className="result-restart-button" type="button" onClick={onRestart}>처음부터 다시 하기</button>
+          <button className="result-home-button" type="button" onClick={onBackHome}>다른 놀거리 보기</button>
+        </div>
       </div>
 
       {showIosHelp ? (

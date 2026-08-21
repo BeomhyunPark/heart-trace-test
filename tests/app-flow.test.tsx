@@ -18,6 +18,7 @@ import {
 import { LoadingScreen } from '../src/screens/LoadingScreen';
 
 const INTRO_START_BUTTON_NAME = '나와 닮은 흔적이를 찾아볼까요?';
+const HEART_TRACE_CARD_NAME = /마음속 흔적 찾기/;
 
 afterEach(() => {
   cleanup();
@@ -31,6 +32,12 @@ function startQuestionFlow() {
   revealIntroStartButton();
   fireEvent.click(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME }));
   fireEvent.click(screen.getByRole('button', { name: '알겠어요' }));
+}
+
+function renderHeartTraceApp() {
+  const rendered = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+  return rendered;
 }
 
 function revealIntroStartButton() {
@@ -92,6 +99,33 @@ async function getAccessibilityViolations(container: HTMLElement) {
 }
 
 describe('앱 화면 흐름과 접근성', () => {
+  it('홈에서 여러 놀거리와 이용 가능한 콘텐츠를 구분해 보여준다', async () => {
+    const { container } = render(<App />);
+
+    expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '극과 극 밸런스 게임' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '우리끼리 최애 월드컵' })).toBeTruthy();
+    expect(screen.getAllByText('SOON')).toHaveLength(2);
+    fireEvent.click(screen.getByText('창작자에게 연락하기'));
+    expect(screen.getByRole('link', { name: /이메일/ }).getAttribute('href')).toBe(
+      'mailto:cmpsr123@naver.com',
+    );
+    expect(screen.getByRole('link', { name: /카카오톡 오픈채팅/ }).getAttribute('href')).toBe(
+      'https://open.kakao.com/me/BeomhyunPark',
+    );
+    expect(screen.getByRole('link', {
+      name: /GitHub/,
+    }).getAttribute('href')).toBe('https://github.com/BeomhyunPark');
+    expect(await getAccessibilityViolations(container)).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+    expect(screen.getByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
+    expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
+  });
+
   it('결과 로딩 진행률과 분석 단계가 시간에 따라 실제로 바뀐다', async () => {
     vi.useFakeTimers();
     const { container } = render(<LoadingScreen />);
@@ -131,7 +165,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('시작 화면과 질문 화면에 자동 접근성 위반이 없다', async () => {
-    const { container } = render(<App />);
+    const { container } = renderHeartTraceApp();
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     startQuestionFlow();
@@ -140,8 +174,10 @@ describe('앱 화면 흐름과 접근성', () => {
 
   it('키보드만으로 시작 화면과 안내 화면을 통과할 수 있다', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderHeartTraceApp();
 
+    await user.tab();
+    expect(document.activeElement?.textContent).toContain('홈');
     await user.tab();
     expect(document.activeElement?.getAttribute('aria-label')).toBe('흔적이 소개 글');
     await user.keyboard('{End}');
@@ -149,6 +185,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(document.activeElement?.textContent).toContain(INTRO_START_BUTTON_NAME);
     await user.keyboard('{Enter}');
 
+    await user.tab();
+    expect(document.activeElement?.textContent).toContain('놀이터 홈');
     await user.tab();
     expect(document.activeElement?.textContent).toContain('알겠어요');
     await user.keyboard(' ');
@@ -164,7 +202,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('흔적이 소개를 마지막까지 넘긴 뒤에만 시작 버튼을 보여준다', () => {
-    render(<App />);
+    renderHeartTraceApp();
 
     expect(screen.queryByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeNull();
 
@@ -189,7 +227,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('하단 버튼만으로 소개를 넘기고 시작 버튼까지 도달할 수 있다', () => {
-    render(<App />);
+    renderHeartTraceApp();
 
     const nextButtonName = '다음';
 
@@ -202,7 +240,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('화면과 문항을 이동할 때 이전 스크롤 위치를 남기지 않는다', () => {
-    render(<App />);
+    renderHeartTraceApp();
 
     document.documentElement.scrollTop = 320;
     document.body.scrollTop = 320;
@@ -233,7 +271,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('문항별 선택을 독립적으로 복원하고 기존 답변을 하나의 새 선택으로 교체한다', () => {
-    render(<App />);
+    renderHeartTraceApp();
     startQuestionFlow();
 
     answerWithOptionId(0, 'A');
@@ -288,7 +326,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('패스 상태와 사용량을 복원하고 세 개 사용 후 추가 패스를 차단한다', () => {
-    render(<App />);
+    renderHeartTraceApp();
     startQuestionFlow();
 
     expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
@@ -333,7 +371,7 @@ describe('앱 화면 흐름과 접근성', () => {
 
   it('동점일 때 동점 유형만 표시하고 선택한 결과로 이동한다', async () => {
     mockResultImageFetch();
-    const { container } = render(<App />);
+    const { container } = renderHeartTraceApp();
     startQuestionFlow();
 
     const balancedAnswers = RESULT_TYPE_IDS.flatMap((resultType) =>
@@ -374,7 +412,7 @@ describe('앱 화면 흐름과 접근성', () => {
   it('완료 후 다시 하기를 누르면 모든 상태와 안내 단계를 초기화한다', async () => {
     vi.useFakeTimers();
     mockResultImageFetch();
-    render(<App />);
+    renderHeartTraceApp();
     startQuestionFlow();
 
     QUESTIONS.forEach((_, questionIndex) => {
@@ -405,7 +443,7 @@ describe('앱 화면 흐름과 접근성', () => {
       finishImageRequest = resolve;
     })));
 
-    render(<App />);
+    renderHeartTraceApp();
     startQuestionFlow();
 
     QUESTIONS.forEach((_, questionIndex) => {

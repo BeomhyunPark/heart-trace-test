@@ -11,6 +11,7 @@ import { StartSoulOrb } from '../components/StartSoulOrb';
 
 type IntroScreenProps = {
   onContinue: () => void;
+  onBackHome: () => void;
 };
 
 const INTRO_MESSAGES = [
@@ -31,7 +32,7 @@ const INTRO_MESSAGES = [
   ]
 ] as const;
 
-export function IntroScreen({ onContinue }: IntroScreenProps) {
+export function IntroScreen({ onContinue, onBackHome }: IntroScreenProps) {
   const messageTrackRef = useRef<HTMLDivElement>(null);
   const [activeMessageIndex, setActiveMessageIndex] = useState(0);
   const [hasReadAllMessages, setHasReadAllMessages] = useState(false);
@@ -107,8 +108,11 @@ export function IntroScreen({ onContinue }: IntroScreenProps) {
 
   return (
     <ScreenLayout className="intro-screen">
+      <button className="test-home-button" type="button" onClick={onBackHome}>
+        <span aria-hidden="true">←</span> 홈
+      </button>
       <header className="intro-screen__header">
-        <p className="eyebrow">2026 드림공동체 여름수련회 · STIGMA</p>
+        <p className="eyebrow">온기 · 성격검사</p>
         <div>
           <h1>마음속 흔적 찾기</h1>
           <p className="intro-screen__subtitle">나와 닮은 흔적이는 누구일까?</p>

@@ -108,6 +108,9 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('heading', { name: '우리끼리 최애 월드컵' })).toBeTruthy();
     expect(screen.getAllByText('SOON')).toHaveLength(2);
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
+    expect(screen.getByRole('link', { name: /YouTube/ }).getAttribute('href')).toBe(
+      'https://www.youtube.com/@bumi_daily_worship',
+    );
     expect(screen.getByRole('link', { name: /이메일/ }).getAttribute('href')).toBe(
       'mailto:cmpsr123@naver.com',
     );

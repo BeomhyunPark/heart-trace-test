@@ -111,11 +111,22 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
             <i aria-hidden="true">▾</i>
           </summary>
           <div className="creator-contact__links">
-            <a href="mailto:cmpsr123@naver.com">
-              <span className="creator-contact__icon" aria-hidden="true">@</span>
+            <a
+              href="https://www.youtube.com/@bumi_daily_worship"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span
+                className="creator-contact__icon creator-contact__icon--youtube"
+                aria-hidden="true"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" />
+                </svg>
+              </span>
               <span>
-                <strong>이메일</strong>
-                <small>cmpsr123@naver.com</small>
+                <strong>YouTube</strong>
+                <small>Bumi Daily Worship</small>
               </span>
             </a>
             <a
@@ -142,6 +153,13 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
               <span>
                 <strong>GitHub</strong>
                 <small>BeomhyunPark</small>
+              </span>
+            </a>
+            <a href="mailto:cmpsr123@naver.com">
+              <span className="creator-contact__icon" aria-hidden="true">@</span>
+              <span>
+                <strong>이메일</strong>
+                <small>cmpsr123@naver.com</small>
               </span>
             </a>
           </div>

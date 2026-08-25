@@ -1,4 +1,5 @@
 import { ACTIVITIES, type ActivityId } from '../data/activities';
+import { BrandMark } from '../components/BrandMark';
 import { ScreenLayout } from '../components/ScreenLayout';
 
 type HomeScreenProps = {
@@ -8,7 +9,7 @@ type HomeScreenProps = {
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '',
   'balance-game': 'VS',
-  'ideal-world-cup': '🏆',
+  'ideal-world-cup': '★',
 };
 
 export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
@@ -23,16 +24,19 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
     <ScreenLayout className="home-screen">
       <header className="home-hero">
         <div className="home-brand" aria-label="온기">
-          <span className="home-brand__spark" aria-hidden="true"></span>
-          <span>온기</span>
+          <BrandMark />
+          <span className="home-brand__copy">
+            <strong>온기</strong>
+            <small>우리 사이에 온기를</small>
+          </span>
         </div>
-        <div>
+        <div className="home-hero__message">
           <p className="home-hero__kicker">ICE BREAKING</p>
           <h1>우리 사이에 온기를</h1>
           <p className="home-hero__description">
             어색함은 조금 덜고,<br />
             서로의 마음은 조금 더 알아가는 시간.<br />
-            하나님 안에서 만난 우리 사이에<br />온기를 더해보세요.
+            하나님 안에서 만난 우리 사이에 온기를 더해보세요.
           </p>
         </div>
         <ul className="home-categories" aria-label="콘텐츠 종류">
@@ -43,60 +47,52 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
       </header>
 
       <section className="home-section" aria-labelledby="featured-title">
-        <div className="home-section__heading">
-          <div>
-            <p>지금 바로 해봐요</p>
-            <h2 id="featured-title">추천 콘텐츠</h2>
-          </div>
+        <div className="home-section__meta">
+          <p>지금 바로 해봐요</p>
           <span aria-hidden="true">01</span>
         </div>
+        <h2 id="featured-title">추천 콘텐츠</h2>
 
         <button
-          className="activity-card activity-card--featured"
+          className="featured-activity"
           type="button"
+          aria-label={featuredActivity.title}
           disabled={!featuredActivity.available}
           onClick={() => onSelectActivity(featuredActivity.id)}
         >
-          <span className="activity-card__topline">
-            <span className="activity-card__kind">{featuredActivity.kind}</span>
-            <span className="activity-card__badge">{featuredActivity.badge}</span>
-          </span>
-          <span className="activity-card__visual" aria-hidden="true">
-            <i>{ACTIVITY_MARKS[featuredActivity.id]}</i>
-          </span>
-          <span className="activity-card__copy">
-            <strong>{featuredActivity.title}</strong>
-            <span>{featuredActivity.description}</span>
-          </span>
-          <span className="activity-card__footer">
+          <span className="activity-card activity-card--featured">
+            <span className="activity-card__kind">
+              {featuredActivity.kind} · {featuredActivity.badge}
+            </span>
+            <strong>마음의 흔적</strong>
+            <span className="activity-card__description">
+              내 마음과 가장 닮은 흔적이는<br />누구일까요?
+            </span>
             <small>{featuredActivity.meta}</small>
-            <b>시작하기 <i aria-hidden="true">→</i></b>
           </span>
+          <b>시작하기&nbsp; →</b>
         </button>
       </section>
 
       <section className="home-section home-section--upcoming" aria-labelledby="upcoming-title">
-        <div className="home-section__heading">
-          <div>
-            <p>하나씩 채워갈게요</p>
-            <h2 id="upcoming-title">다음 놀거리</h2>
-          </div>
+        <div className="home-section__meta">
+          <p>하나씩 채워갈게요</p>
           <span aria-hidden="true">02</span>
         </div>
+        <h2 id="upcoming-title">다음 놀거리</h2>
 
         <div className="activity-grid">
           {upcomingActivities.map((activity) => (
             <article className={`activity-card activity-card--${activity.id}`} key={activity.id}>
               <div className="activity-card__topline">
                 <span className="activity-card__kind">{activity.kind}</span>
-                <span className="activity-card__badge">{activity.badge}</span>
+                <span>{activity.badge}</span>
               </div>
               <span className="activity-card__mini-visual" aria-hidden="true">
                 {ACTIVITY_MARKS[activity.id]}
               </span>
               <h3>{activity.title}</h3>
               <p>{activity.description}</p>
-              <small>{activity.meta}</small>
             </article>
           ))}
         </div>

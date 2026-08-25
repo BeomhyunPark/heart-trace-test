@@ -15,12 +15,14 @@ import { IntroScreen } from '../screens/IntroScreen';
 import { LoadingScreen } from '../screens/LoadingScreen';
 import { QuestionScreen } from '../screens/QuestionScreen';
 import { ResultScreen } from '../screens/ResultScreen';
+import { SplashScreen } from '../screens/SplashScreen';
 import { TieBreakerScreen } from '../screens/TieBreakerScreen';
 import { getResultImageFilename, preloadResultImage } from '../utils/resultImage';
 import { createInitialTestState, testReducer } from './testReducer';
 import { RESULT_REVEAL_DELAY_MS } from './timing';
 
 export function App() {
+  const [showSplash, setShowSplash] = useState(import.meta.env.MODE !== 'test');
   const [activeActivity, setActiveActivity] = useState<ActivityId | null>(null);
   const [state, dispatch] = useReducer(
     testReducer,
@@ -29,6 +31,16 @@ export function App() {
   );
   const [introStep, setIntroStep] = useState<'intro' | 'guide'>('intro');
   const [revealedResult, setRevealedResult] = useState<ResultTypeId | null>(null);
+
+  useEffect(() => {
+    if (!showSplash) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setShowSplash(false), 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [showSplash]);
 
   useLayoutEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -82,6 +94,10 @@ export function App() {
       // 결과 화면에서 다시 시도할 수 있도록 프리로드 실패는 조용히 넘긴다.
     });
   }, [state.result]);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   if (activeActivity === null) {
     return <HomeScreen onSelectActivity={handleSelectActivity} />;

@@ -1,4 +1,16 @@
 :root {
+  --ongi-ink-950: #1b1420;
+  --ongi-ink-900: #241827;
+  --ongi-plum-800: #39223f;
+  --ongi-cream-50: #fff7ef;
+  --ongi-ember-500: #ff8c68;
+  --ongi-apricot-300: #ffc98f;
+  --ongi-rose-400: #f48faa;
+  --ongi-lavender-400: #b4a0ff;
+  --ongi-text-secondary: #d8c7d2;
+  --ongi-border-accent: #ffaa7a;
+  --ongi-radius-card: 1.5rem;
+  --ongi-radius-small: 0.75rem;
   --color-background: #050816;
   --color-text: #f8f7ff;
   --color-text-muted: #c9c9df;

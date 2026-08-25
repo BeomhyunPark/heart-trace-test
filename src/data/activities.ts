@@ -28,7 +28,7 @@ export const ACTIVITIES: readonly Activity[] = [
     id: 'balance-game',
     kind: 'VS 놀이',
     title: '극과 극 밸런스 게임',
-    description: '고르기 어려울수록 더 재미있는 우리들의 선택',
+    description: '어려운 선택일수록 더 재미있는 우리 이야기',
     meta: '같이 하면 더 재밌어요',
     badge: 'SOON',
     available: false,

@@ -1,5 +1,6 @@
 import { ACTIVITIES, type ActivityId } from '../data/activities';
 import { BrandMark } from '../components/BrandMark';
+import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { ScreenLayout } from '../components/ScreenLayout';
 
 type HomeScreenProps = {
@@ -97,6 +98,8 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
           ))}
         </div>
       </section>
+
+      <InstallAppPrompt />
 
       <footer className="home-footer">
         <span aria-hidden="true">✦</span>

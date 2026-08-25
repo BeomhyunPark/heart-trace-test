@@ -1,0 +1,25 @@
+{
+  "name": "온기 | 우리 사이에 온기를",
+  "short_name": "온기",
+  "description": "어색함은 조금 덜고, 서로의 마음은 조금 더 가까이.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1b1420",
+  "theme_color": "#1b1420",
+  "categories": ["entertainment", "social"],
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

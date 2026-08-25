@@ -531,6 +531,34 @@ button.activity-card {
   margin-top: 0.5rem;
 }
 
+.home-footer__actions {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.home-footer__actions .creator-contact {
+  width: auto;
+  margin-top: 0;
+}
+
+.home-footer__actions .creator-contact[open] {
+  min-width: 0;
+  flex: 1;
+}
+
+.home-footer__actions .creator-contact[open] summary {
+  margin-left: auto;
+}
+
+.home-footer__actions .share-app__button {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
 .creator-contact summary {
   display: inline-flex;
   min-height: 2.25rem;
@@ -2333,12 +2361,13 @@ button.activity-card {
 }
 
 .share-app {
+  position: relative;
   display: flex;
   min-height: 2.5rem;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: 0.75rem;
+  margin: 0;
 }
 
 .share-app__button {
@@ -2385,11 +2414,23 @@ button.activity-card {
 }
 
 .share-app__message {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 2rem));
   margin: 0;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.5rem;
+  background: var(--ongi-ink-900);
   color: var(--ongi-apricot-300);
   font-size: 0.6875rem;
   line-height: 1rem;
   text-align: right;
+}
+
+.share-app__message:empty {
+  display: none;
 }
 
 .install-guide {
@@ -3079,7 +3120,7 @@ button.activity-card {
 
 .home-footer .creator-contact {
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 0;
 }
 
 .home-footer .creator-contact summary {

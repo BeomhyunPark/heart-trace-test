@@ -107,6 +107,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('heading', { name: '극과 극 밸런스 게임' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: '우리끼리 최애 월드컵' })).toBeTruthy();
     expect(screen.getAllByText('SOON')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
     expect(screen.getByRole('link', { name: /YouTube/ }).getAttribute('href')).toBe(
       'https://www.youtube.com/@bumi_daily_worship',

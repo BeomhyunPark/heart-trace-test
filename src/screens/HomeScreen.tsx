@@ -101,70 +101,72 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
       </section>
 
       <InstallAppPrompt />
-      <ShareApp />
 
       <footer className="home-footer">
         <span aria-hidden="true">✦</span>
         <p>아이스브레이킹앱, by hyunee</p>
-        <details className="creator-contact">
-          <summary>
-            <span>창작자에게 연락하기</span>
-            <i aria-hidden="true">▾</i>
-          </summary>
-          <div className="creator-contact__links">
-            <a
-              href="https://www.youtube.com/@bumi_daily_worship"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span
-                className="creator-contact__icon creator-contact__icon--youtube"
-                aria-hidden="true"
+        <div className="home-footer__actions">
+          <details className="creator-contact">
+            <summary>
+              <span>창작자에게 연락하기</span>
+              <i aria-hidden="true">▾</i>
+            </summary>
+            <div className="creator-contact__links">
+              <a
+                href="https://www.youtube.com/@bumi_daily_worship"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <svg viewBox="0 0 24 24">
-                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" />
-                </svg>
-              </span>
-              <span>
-                <strong>YouTube</strong>
-                <small>Bumi Daily Worship</small>
-              </span>
-            </a>
-            <a
-              href="https://open.kakao.com/me/BeomhyunPark"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="creator-contact__icon creator-contact__icon--kakao" aria-hidden="true">K</span>
-              <span>
-                <strong>카카오톡 오픈채팅</strong>
-                <small>메시지 보내기</small>
-              </span>
-            </a>
-            <a
-              href="https://github.com/BeomhyunPark"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="creator-contact__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.69a9.6 9.6 0 0 1 2.5.34c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
-                </svg>
-              </span>
-              <span>
-                <strong>GitHub</strong>
-                <small>BeomhyunPark</small>
-              </span>
-            </a>
-            <a href="mailto:cmpsr123@naver.com">
-              <span className="creator-contact__icon" aria-hidden="true">@</span>
-              <span>
-                <strong>이메일</strong>
-                <small>cmpsr123@naver.com</small>
-              </span>
-            </a>
-          </div>
-        </details>
+                <span
+                  className="creator-contact__icon creator-contact__icon--youtube"
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" />
+                  </svg>
+                </span>
+                <span>
+                  <strong>YouTube</strong>
+                  <small>Bumi Daily Worship</small>
+                </span>
+              </a>
+              <a
+                href="https://open.kakao.com/me/BeomhyunPark"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="creator-contact__icon creator-contact__icon--kakao" aria-hidden="true">K</span>
+                <span>
+                  <strong>카카오톡 오픈채팅</strong>
+                  <small>메시지 보내기</small>
+                </span>
+              </a>
+              <a
+                href="https://github.com/BeomhyunPark"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="creator-contact__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.69a9.6 9.6 0 0 1 2.5.34c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
+                  </svg>
+                </span>
+                <span>
+                  <strong>GitHub</strong>
+                  <small>BeomhyunPark</small>
+                </span>
+              </a>
+              <a href="mailto:cmpsr123@naver.com">
+                <span className="creator-contact__icon" aria-hidden="true">@</span>
+                <span>
+                  <strong>이메일</strong>
+                  <small>cmpsr123@naver.com</small>
+                </span>
+              </a>
+            </div>
+          </details>
+          <ShareApp />
+        </div>
       </footer>
     </ScreenLayout>
   );

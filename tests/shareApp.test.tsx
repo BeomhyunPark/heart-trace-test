@@ -1,0 +1,71 @@
+// @vitest-environment jsdom
+
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { ShareApp } from '../src/components/ShareApp';
+
+beforeEach(() => {
+  const canonical = document.createElement('link');
+  canonical.rel = 'canonical';
+  canonical.href = 'https://ongi.greengroove.app/';
+  document.head.append(canonical);
+});
+
+afterEach(() => {
+  cleanup();
+  document.querySelector('link[rel="canonical"]')?.remove();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+describe('온기 링크 공유', () => {
+  it('지원되는 브라우저에서는 시스템 공유창에 canonical URL을 전달한다', async () => {
+    const share = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
+
+    render(<ShareApp />);
+    fireEvent.click(screen.getByRole('button', { name: '공유하기' }));
+
+    await waitFor(() => expect(share).toHaveBeenCalledWith(expect.objectContaining({
+      title: '온기 | 우리 사이에 온기를',
+      url: 'https://ongi.greengroove.app/',
+    })));
+    expect(await screen.findByText('온기 링크를 공유했어요.')).toBeTruthy();
+  });
+
+  it('링크 복사 버튼으로 canonical URL을 클립보드에 복사한다', async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    render(<ShareApp />);
+    fireEvent.click(screen.getByRole('button', { name: '링크 복사' }));
+
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith('https://ongi.greengroove.app/'));
+    expect(await screen.findByText('온기 링크를 복사했어요.')).toBeTruthy();
+  });
+
+  it('시스템 공유를 지원하지 않으면 공유 버튼도 링크 복사로 대체된다', async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: undefined,
+    });
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    render(<ShareApp />);
+    fireEvent.click(screen.getByRole('button', { name: '공유하기' }));
+
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith('https://ongi.greengroove.app/'));
+    expect(await screen.findByText('온기 링크를 복사했어요.')).toBeTruthy();
+  });
+});

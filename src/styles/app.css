@@ -2333,103 +2333,63 @@ button.activity-card {
 }
 
 .share-app {
-  margin-top: 0.75rem;
-  padding: 1rem;
-  border: 1px solid #4b2b4f;
-  border-radius: 1.25rem;
-  background:
-    radial-gradient(circle at 100% 0, rgba(255, 140, 104, 0.12), transparent 55%),
-    var(--ongi-ink-900);
-  box-shadow: 0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.24);
-}
-
-.share-app__heading {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.share-app__heading > span:last-child {
   display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 0.125rem;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
-.share-app__heading strong {
-  color: var(--ongi-cream-50);
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-}
-
-.share-app__heading small {
-  color: var(--ongi-text-secondary);
-  font-size: 0.6875rem;
-  line-height: 1rem;
-}
-
-.share-app__icon {
+.share-app__button {
   display: grid;
   width: 2.5rem;
   height: 2.5rem;
+  flex: 0 0 auto;
+  padding: 0;
   place-items: center;
-  border-radius: 0.75rem;
-  background: rgba(255, 140, 104, 0.12);
+  border: 1px solid rgba(255, 170, 122, 0.24);
+  border-radius: 50%;
+  background: rgba(255, 140, 104, 0.08);
   color: var(--ongi-apricot-300);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.share-app__icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
+.share-app__button svg {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
   fill: currentColor;
 }
 
-.share-app__icon path {
+.share-app__button path {
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-width: 1.75;
 }
 
-.share-app__actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin-top: 0.875rem;
+.share-app__button:hover {
+  border-color: rgba(255, 170, 122, 0.48);
+  background: rgba(255, 140, 104, 0.14);
 }
 
-.share-app__actions button {
-  min-height: 2.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 700;
+.share-app__button:active {
+  transform: scale(0.94);
 }
 
-.share-app__share {
-  border: 0;
-  background: var(--ongi-ember-500);
-  color: #28151e;
-}
-
-.share-app__copy {
-  border: 1px solid rgba(255, 170, 122, 0.36);
-  background: rgba(255, 140, 104, 0.08);
-  color: var(--ongi-apricot-300);
-}
-
-.share-app__actions button:hover {
-  filter: brightness(1.08);
+.share-app__button:focus-visible {
+  outline: 2px solid var(--ongi-apricot-300);
+  outline-offset: 3px;
 }
 
 .share-app__message {
-  min-height: 1rem;
-  margin: 0.5rem 0 -0.25rem;
+  margin: 0;
   color: var(--ongi-apricot-300);
   font-size: 0.6875rem;
   line-height: 1rem;
-  text-align: center;
+  text-align: right;
 }
 
 .install-guide {

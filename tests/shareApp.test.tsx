@@ -37,18 +37,12 @@ describe('온기 링크 공유', () => {
     expect(await screen.findByText('온기 링크를 공유했어요.')).toBeTruthy();
   });
 
-  it('링크 복사 버튼으로 canonical URL을 클립보드에 복사한다', async () => {
-    const writeText = vi.fn(async () => undefined);
-    Object.defineProperty(window.navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText },
-    });
-
+  it('화면에는 공유 아이콘 버튼만 노출한다', () => {
     render(<ShareApp />);
-    fireEvent.click(screen.getByRole('button', { name: '링크 복사' }));
 
-    await waitFor(() => expect(writeText).toHaveBeenCalledWith('https://ongi.greengroove.app/'));
-    expect(await screen.findByText('온기 링크를 복사했어요.')).toBeTruthy();
+    const button = screen.getByRole('button', { name: '공유하기' });
+    expect(button.textContent).toBe('');
+    expect(screen.queryByRole('button', { name: '링크 복사' })).toBeNull();
   });
 
   it('시스템 공유를 지원하지 않으면 공유 버튼도 링크 복사로 대체된다', async () => {

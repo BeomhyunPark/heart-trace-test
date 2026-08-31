@@ -637,6 +637,13 @@
   line-height: 1.125rem;
 }
 
+.home-footer p small {
+  margin-left: 0.25rem;
+  color: rgba(211, 190, 206, 0.55);
+  font-size: 0.625rem;
+  font-weight: 500;
+}
+
 .home-footer .creator-contact {
   position: static;
   display: block;

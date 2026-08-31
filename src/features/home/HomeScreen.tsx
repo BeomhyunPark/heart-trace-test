@@ -160,7 +160,7 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
 
       <footer className="home-footer">
         <span aria-hidden="true">✦</span>
-        <p>아이스브레이킹앱, by hyunee</p>
+        <p>아이스브레이킹앱, by hyunee <small>v{__APP_VERSION__}</small></p>
         <div className="home-footer__actions">
           <details className="creator-contact">
             <summary>

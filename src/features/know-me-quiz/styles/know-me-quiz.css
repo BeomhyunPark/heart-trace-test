@@ -443,13 +443,6 @@
   font-size: 2.75rem;
 }
 
-.know-me-result > .screen-layout__content > p:not(.eyebrow),
-.know-me-result > p:not(.eyebrow) {
-  margin: 0.75rem 0 0;
-  color: #d4c6dc;
-  font-size: 0.8125rem;
-}
-
 .know-me-result__answers {
   display: grid;
   gap: 0.625rem;

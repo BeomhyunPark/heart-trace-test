@@ -39,6 +39,7 @@ describe('나를 맞혀봐', () => {
 
     expect(screen.getByRole('heading', { name: '민지의 답을 숨겼어요' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '이제 맞혀볼게요' }));
+    expect(screen.getByText('민지의 선택은?')).toBeTruthy();
 
     for (let index = 0; index < 5; index += 1) {
       fireEvent.click(within(screen.getByRole('group')).getAllByRole('button')[0]);
@@ -52,6 +53,8 @@ describe('나를 맞혀봐', () => {
     });
 
     expect(screen.getByRole('heading', { name: '5개 중 5개 정답' })).toBeTruthy();
+    expect(screen.queryByText('민지의 선택 결과')).toBeNull();
+    expect(screen.queryByText(/우리는 민지를/)).toBeNull();
     expect(screen.queryByText('우리 예상')).toBeNull();
     expect(screen.getByRole('button', { name: '결과 이미지 공유하기' })).toBeTruthy();
   });

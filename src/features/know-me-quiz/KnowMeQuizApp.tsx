@@ -210,7 +210,7 @@ export function KnowMeQuizApp({ onBackHome }: KnowMeQuizAppProps) {
     return (
       <ScreenLayout className="know-me-screen know-me-checking">
         <div className="know-me-checking__cards" aria-hidden="true"><i /><i /><i /></div>
-        <p className="eyebrow">{protagonistName} 맞히기</p>
+        <p className="eyebrow">{protagonistName}의 선택 확인 중</p>
         <h1>답을 맞춰보고 있어요</h1>
         <div className="know-me-checking__dots" aria-hidden="true"><i /><i /><i /></div>
         <p className="know-me-sr-only" role="status">모든 답을 비교하고 있어요</p>
@@ -225,7 +225,6 @@ export function KnowMeQuizApp({ onBackHome }: KnowMeQuizAppProps) {
       setShareMessage('');
       try {
         const file = await createKnowMeResultFile({
-          protagonistName,
           score,
           entries: selectedQuestions.map((question) => ({
             prompt: question.prompt,
@@ -246,9 +245,7 @@ export function KnowMeQuizApp({ onBackHome }: KnowMeQuizAppProps) {
     return (
       <ScreenLayout className="know-me-screen know-me-result">
         <div className="know-me-result__mark" aria-hidden="true">ME</div>
-        <p className="eyebrow">{protagonistName} 맞히기 결과</p>
         <h1 aria-label={`${selectedQuestions.length}개 중 ${score}개 정답`}>{selectedQuestions.length}개 중<br /><strong>{score}개</strong> 정답</h1>
-        <p>우리는 {protagonistName}를 이만큼 알고 있었어요.</p>
 
         <div className="know-me-result__answers">
           {selectedQuestions.map((question) => {
@@ -329,7 +326,7 @@ export function KnowMeQuizApp({ onBackHome }: KnowMeQuizAppProps) {
 
   return (
     <ScreenLayout className="know-me-screen know-me-play is-guessing">
-      <QuizTopBar label={`${protagonistName} 맞히기`} current={currentIndex + 1} total={selectedQuestions.length} onBackHome={onBackHome} />
+      <QuizTopBar label={`${protagonistName}의 선택은?`} current={currentIndex + 1} total={selectedQuestions.length} onBackHome={onBackHome} />
       <p className="know-me-question-number">Q{currentIndex + 1}</p>
       <h1>{activeQuestion.prompt}</h1>
 

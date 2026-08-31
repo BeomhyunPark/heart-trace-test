@@ -8,7 +8,6 @@ export type KnowMeResultEntry = {
 };
 
 type KnowMeResultImageInput = {
-  protagonistName: string;
   score: number;
   entries: readonly KnowMeResultEntry[];
 };
@@ -42,7 +41,6 @@ export function getKnowMeResultImageSize(questionCount: number): { width: number
 }
 
 export async function createKnowMeResultFile({
-  protagonistName,
   score,
   entries,
 }: KnowMeResultImageInput): Promise<File> {
@@ -72,11 +70,8 @@ export async function createKnowMeResultFile({
   context.fillStyle = '#d7c2ff';
   context.font = '700 22px "Noto Sans KR", sans-serif';
   context.fillText('온기 · 나를 맞혀봐', 52, 68);
-  context.fillStyle = '#fff7ef';
-  context.font = '700 42px "Noto Sans KR", sans-serif';
-  context.fillText(`${protagonistName} 맞히기`, 52, 128, 616);
 
-  roundedRect(context, 52, 160, 616, 116, 28);
+  roundedRect(context, 52, 104, 616, 92, 28);
   context.fillStyle = 'rgba(255, 255, 255, 0.07)';
   context.fill();
   context.strokeStyle = 'rgba(215, 194, 255, 0.4)';
@@ -85,14 +80,11 @@ export async function createKnowMeResultFile({
   context.textAlign = 'center';
   context.fillStyle = '#ffca9f';
   context.font = '700 28px "Noto Sans KR", sans-serif';
-  context.fillText(`${entries.length}개 중 ${score}개 정답`, 360, 212);
-  context.fillStyle = 'rgba(255, 247, 239, 0.72)';
-  context.font = '500 18px "Noto Sans KR", sans-serif';
-  context.fillText(`우리는 ${protagonistName}를 이만큼 알고 있었어요`, 360, 244);
+  context.fillText(`${entries.length}개 중 ${score}개 정답`, 360, 160);
 
   entries.forEach((entry, index) => {
     const x = 52;
-    const y = 312 + index * 116;
+    const y = 232 + index * 116;
     roundedRect(context, x, y, 616, 98, 18);
     context.fillStyle = entry.matched
       ? 'rgba(128, 222, 190, 0.12)'

@@ -1,0 +1,559 @@
+.world-cup-screen {
+  --world-cup-gold: #ffd36e;
+  --world-cup-sky: #86d9f2;
+  --world-cup-surface: rgba(32, 28, 49, 0.9);
+  background:
+    radial-gradient(circle at 86% 7%, rgba(255, 211, 110, 0.2), transparent 30%),
+    radial-gradient(circle at 8% 65%, rgba(76, 155, 211, 0.18), transparent 36%),
+    linear-gradient(180deg, #171826 0%, #202039 50%, #231a35 100%);
+  color: var(--ongi-cream-50);
+}
+
+.world-cup-setup,
+.world-cup-round-complete,
+.world-cup-champion {
+  overflow-y: auto;
+}
+
+.world-cup-screen .app-background {
+  opacity: 0.22;
+}
+
+.world-cup-screen .test-home-button {
+  border-color: rgba(255, 211, 110, 0.32);
+  background: rgba(32, 28, 49, 0.78);
+  color: var(--world-cup-gold);
+}
+
+.world-cup-screen .test-home-button:hover {
+  border-color: var(--world-cup-gold);
+  background: rgba(49, 43, 70, 0.94);
+}
+
+.world-cup-screen .primary-button {
+  border-color: rgba(255, 246, 212, 0.48);
+  background: linear-gradient(100deg, #f0ad52 0%, var(--world-cup-gold) 55%, #b7e6e9 100%);
+  box-shadow: 0 0.625rem 1.75rem rgba(240, 173, 82, 0.24);
+  color: #201827;
+}
+
+.world-cup-screen .primary-button:hover:not(:disabled) {
+  filter: brightness(1.04) saturate(1.06);
+}
+
+.world-cup-hero {
+  padding: 1.75rem 0 0.75rem;
+}
+
+.world-cup-hero h1,
+.world-cup-round-complete h1,
+.world-cup-champion h1,
+.world-cup-match__question h1 {
+  margin: 0.625rem 0 0;
+  font-family: var(--font-family-display);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.world-cup-hero h1 {
+  font-size: clamp(2.75rem, 13vw, 3.5rem);
+  line-height: 1.02;
+}
+
+.world-cup-hero > p:last-child {
+  margin: 1rem 0 0;
+  color: var(--ongi-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+.world-cup-resume {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 211, 110, 0.32);
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, rgba(78, 60, 62, 0.92), rgba(35, 31, 55, 0.94));
+}
+
+.world-cup-resume > span,
+.world-cup-step {
+  color: var(--world-cup-gold);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.world-cup-resume h2 {
+  margin: 0.25rem 0 0;
+  font-size: 1.125rem;
+}
+
+.world-cup-resume p {
+  margin: 0.35rem 0 0;
+  color: var(--ongi-text-secondary);
+  font-size: 0.75rem;
+}
+
+.world-cup-resume > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.625rem;
+  align-items: center;
+  margin-top: 0.875rem;
+}
+
+.world-cup-resume .primary-button {
+  min-height: 2.875rem;
+  font-size: 0.875rem;
+}
+
+.world-cup-resume > div > button:last-child,
+.world-cup-champion__actions > button:not(.primary-button),
+.world-cup-round-complete__actions > button:last-child {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ongi-text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.world-cup-setup__section {
+  margin-top: 1.75rem;
+}
+
+.world-cup-setup__section h2 {
+  margin: 0.35rem 0 0.875rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.world-cup-topic-card {
+  display: grid;
+  min-height: 5rem;
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 0.625rem;
+  border: 1px solid rgba(255, 211, 110, 0.44);
+  border-radius: 1.25rem;
+  background: var(--world-cup-surface);
+  box-shadow: 0 0.75rem 1.75rem rgba(8, 7, 18, 0.2);
+}
+
+.world-cup-topic-card img {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: cover;
+  border-radius: 0.875rem;
+}
+
+.world-cup-topic-card span,
+.world-cup-topic-card small,
+.world-cup-topic-card strong {
+  display: block;
+}
+
+.world-cup-topic-card small {
+  color: var(--world-cup-sky);
+  font-size: 0.6875rem;
+}
+
+.world-cup-topic-card strong {
+  margin-top: 0.15rem;
+  font-size: 1rem;
+}
+
+.world-cup-topic-card b {
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--world-cup-gold);
+  color: #2b2130;
+  font-size: 0.75rem;
+}
+
+.world-cup-size-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.world-cup-size-options button {
+  display: flex;
+  min-height: 6rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.125rem;
+  background: rgba(24, 24, 39, 0.76);
+  color: rgba(255, 247, 239, 0.64);
+  cursor: pointer;
+  opacity: 0.72;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease,
+    opacity 160ms ease;
+}
+
+.world-cup-size-options button.is-selected {
+  border-color: var(--world-cup-gold);
+  background:
+    radial-gradient(circle at 82% 14%, rgba(134, 217, 242, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(93, 70, 59, 0.96), rgba(43, 38, 60, 0.96));
+  box-shadow: 0 0 1.25rem rgba(255, 211, 110, 0.16);
+  color: var(--ongi-cream-50);
+  opacity: 1;
+}
+
+.world-cup-size-options strong {
+  font-size: 1.125rem;
+}
+
+.world-cup-size-options small {
+  margin-top: 0.35rem;
+  color: inherit;
+  font-size: 0.625rem;
+  line-height: 1rem;
+}
+
+.world-cup-start {
+  margin-top: 1.75rem;
+}
+
+.world-cup-match .screen-layout__content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.world-cup-match__progress {
+  margin-top: 1rem;
+}
+
+.world-cup-match__progress > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+}
+
+.world-cup-match__progress strong {
+  color: var(--world-cup-gold);
+  font-size: 0.9375rem;
+}
+
+.world-cup-match__progress span,
+.world-cup-match__progress small {
+  color: var(--ongi-text-secondary);
+  font-size: 0.6875rem;
+}
+
+.world-cup-match__progress small {
+  display: block;
+  margin-top: 0.375rem;
+  text-align: right;
+}
+
+.world-cup-match .progress-bar__value {
+  background: linear-gradient(90deg, var(--world-cup-sky), var(--world-cup-gold));
+  box-shadow: 0 0 0.75rem rgba(255, 211, 110, 0.36);
+}
+
+.world-cup-match__question {
+  padding: 1.5rem 0 1.125rem;
+  text-align: center;
+}
+
+.world-cup-match__question .eyebrow {
+  color: var(--world-cup-sky);
+}
+
+.world-cup-match__question h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.world-cup-duel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem;
+  align-items: stretch;
+}
+
+.world-cup-duel__side {
+  position: relative;
+  min-width: 0;
+}
+
+.world-cup-duel__side > button {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 13rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.5rem 0.875rem;
+  border: 1px solid rgba(134, 217, 242, 0.3);
+  border-radius: 1.5rem;
+  background: rgba(30, 29, 49, 0.94);
+  box-shadow: 0 0.75rem 1.75rem rgba(5, 7, 18, 0.28);
+  color: var(--ongi-cream-50);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.world-cup-duel__side > button:hover {
+  border-color: var(--world-cup-gold);
+  box-shadow: 0 0 1.75rem rgba(255, 211, 110, 0.16);
+  transform: translateY(-0.2rem);
+}
+
+.world-cup-duel__side img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 1.1rem;
+  user-select: none;
+}
+
+.world-cup-duel__side strong {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1.35rem;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.world-cup-duel__vs {
+  position: absolute;
+  z-index: 2;
+  top: 45%;
+  right: -1.875rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgba(255, 211, 110, 0.4);
+  border-radius: 50%;
+  background: #242039;
+  color: var(--world-cup-gold);
+  font-family: var(--font-family-display);
+  font-size: 0.75rem;
+  transform: translateY(-50%);
+}
+
+.world-cup-match__footer {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  text-align: center;
+}
+
+.world-cup-undo {
+  min-width: 9.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ongi-text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.world-cup-undo:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.world-cup-round-complete .screen-layout__content,
+.world-cup-champion .screen-layout__content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.world-cup-round-complete__mark,
+.world-cup-champion__crown {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--world-cup-gold), #f09b55);
+  box-shadow: 0 0 2.5rem rgba(255, 211, 110, 0.25);
+  color: #2d202b;
+}
+
+.world-cup-round-complete__mark {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-top: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.world-cup-round-complete .eyebrow,
+.world-cup-champion .eyebrow {
+  margin-top: 1.25rem;
+  color: var(--world-cup-gold);
+}
+
+.world-cup-round-complete h1 {
+  font-size: 2.75rem;
+}
+
+.world-cup-round-complete > .screen-layout__content > p:not(.eyebrow),
+.world-cup-champion > .screen-layout__content > p:not(.eyebrow) {
+  margin: 0.875rem 0 0;
+  color: var(--ongi-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.4rem;
+}
+
+.world-cup-advance-preview {
+  display: grid;
+  width: min(17rem, 100%);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.world-cup-advance-preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid rgba(255, 211, 110, 0.24);
+  border-radius: 0.875rem;
+}
+
+.world-cup-round-complete__actions,
+.world-cup-champion__actions {
+  display: grid;
+  width: 100%;
+  gap: 0.625rem;
+  margin-top: 1.75rem;
+}
+
+.world-cup-champion__crown {
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: 1.125rem;
+}
+
+.world-cup-champion h1 {
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+.world-cup-champion__image {
+  width: min(17rem, 86%);
+  margin-top: 1.25rem;
+  padding: 0.375rem;
+  border: 1px solid rgba(255, 211, 110, 0.54);
+  border-radius: 1.75rem;
+  background: rgba(255, 211, 110, 0.08);
+  box-shadow: 0 0 2.5rem rgba(255, 211, 110, 0.16);
+}
+
+.world-cup-champion__image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 1.4rem;
+}
+
+.world-cup-champion__path {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+.world-cup-champion__path h2 {
+  margin: 0;
+  color: var(--world-cup-sky);
+  font-size: 0.75rem;
+}
+
+.world-cup-champion__path > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  justify-content: center;
+  margin-top: 0.625rem;
+}
+
+.world-cup-champion__path span {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid rgba(134, 217, 242, 0.2);
+  border-radius: 999px;
+  background: rgba(134, 217, 242, 0.06);
+  color: var(--ongi-text-secondary);
+  font-size: 0.625rem;
+}
+
+@media (max-width: 23rem) {
+  .world-cup-hero {
+    padding-top: 1.25rem;
+  }
+
+  .world-cup-size-options {
+    gap: 0.45rem;
+  }
+
+  .world-cup-size-options button {
+    min-height: 5.25rem;
+  }
+
+  .world-cup-duel {
+    gap: 1.25rem;
+  }
+
+  .world-cup-duel__side > button {
+    min-height: 11.5rem;
+    padding: 0.4rem 0.4rem 0.7rem;
+  }
+
+  .world-cup-duel__side strong {
+    font-size: 0.875rem;
+  }
+
+  .world-cup-duel__vs {
+    right: -1.625rem;
+  }
+}
+
+@media (max-height: 46rem) {
+  .world-cup-match__progress {
+    margin-top: 0.5rem;
+  }
+
+  .world-cup-match__question {
+    padding-block: 0.875rem 0.75rem;
+  }
+
+  .world-cup-match__question h1 {
+    font-size: 1.625rem;
+  }
+
+  .world-cup-duel__side > button {
+    min-height: 10.5rem;
+  }
+
+  .world-cup-match__footer {
+    padding-top: 0.75rem;
+  }
+}

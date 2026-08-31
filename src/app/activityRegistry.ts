@@ -24,6 +24,12 @@ const loadBalanceGameApp = async () => {
   return { default: module.BalanceGameApp };
 };
 const BalanceGameApp = lazy(loadBalanceGameApp);
+const loadIdealWorldCupApp = async () => {
+  const module = await import('../features/ideal-world-cup/IdealWorldCupApp');
+
+  return { default: module.IdealWorldCupApp };
+};
+const IdealWorldCupApp = lazy(loadIdealWorldCupApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -35,6 +41,11 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     id: 'balance-game',
     Component: BalanceGameApp,
     preload: loadBalanceGameApp,
+  },
+  'ideal-world-cup': {
+    id: 'ideal-world-cup',
+    Component: IdealWorldCupApp,
+    preload: loadIdealWorldCupApp,
   },
 };
 

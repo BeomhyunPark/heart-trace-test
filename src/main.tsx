@@ -4,7 +4,13 @@ import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
 import './styles/tokens.css';
 import './styles/globals.css';
-import './styles/app.css';
+import './styles/shared.css';
+import './features/home/styles/home-base.css';
+import './features/heart-trace/styles/flow.css';
+import './features/heart-trace/styles/result.css';
+import './features/heart-trace/styles/motion.css';
+import './styles/responsive.css';
+import './features/home/styles/home.css';
 
 const rootElement = document.getElementById('root');
 

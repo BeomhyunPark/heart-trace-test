@@ -1,0 +1,156 @@
+.screen-layout {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  isolation: isolate;
+  overflow: hidden;
+  padding: calc(1.5rem + env(safe-area-inset-top))
+    calc(var(--space-page) + env(safe-area-inset-right))
+    calc(2rem + env(safe-area-inset-bottom))
+    calc(var(--space-page) + env(safe-area-inset-left));
+  background: linear-gradient(180deg, #0c253f 0%, #1a334f 24%, #221556 85%, #26114f 100%);
+}
+
+.screen-layout__content,
+.screen-layout__footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+}
+
+.screen-layout__content {
+  flex: 1;
+}
+
+.screen-layout__footer {
+  padding-top: 1.25rem;
+}
+
+.app-background {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.app-background::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 18, 34, 0.02), rgba(19, 8, 64, 0.12));
+  content: "";
+}
+
+.app-background img {
+  position: absolute;
+  max-width: none;
+}
+
+.app-background__nebula {
+  opacity: 1;
+}
+
+.app-background__nebula--cyan {
+  top: -9.25rem;
+  left: -11.75rem;
+  width: 26.625rem;
+  height: 24.75rem;
+}
+
+.app-background__nebula--violet {
+  top: 1rem;
+  left: 11.625rem;
+  width: 26.75rem;
+  height: 24.25rem;
+}
+
+.app-background__nebula--blue {
+  top: 17.25rem;
+  left: 1.625rem;
+  width: 22.375rem;
+  height: 18.625rem;
+}
+
+.app-background__nebula--rose {
+  top: 39.25rem;
+  left: -5.75rem;
+  width: 36.5rem;
+  height: 27.75rem;
+}
+
+.app-background__flow {
+  opacity: 1;
+}
+
+.app-background__flow--cyan {
+  top: 33rem;
+  left: -7.625rem;
+  width: 40.25rem;
+  height: 24rem;
+}
+
+.app-background__flow--violet {
+  top: 37.625rem;
+  left: -4.875rem;
+  width: 34.75rem;
+  height: 19.75rem;
+}
+
+.app-background__star {
+  width: 1.0625rem;
+  height: 1.0625rem;
+  opacity: 1;
+}
+
+.app-background__star--one {
+  top: 7.0625rem;
+  left: 1.9375rem;
+}
+
+.app-background__star--two {
+  top: 10.0625rem;
+  left: 21.0625rem;
+}
+
+.app-background__star--three {
+  top: 16.75rem;
+  left: 4.3125rem;
+}
+
+.app-background__star--four {
+  top: 19.6875rem;
+  left: 18.9375rem;
+}
+
+.app-background__star--five {
+  top: 29.5625rem;
+  left: 2.3125rem;
+}
+
+.app-background__star--six {
+  top: 32.0625rem;
+  left: 21.8125rem;
+}
+
+.app-background__star--seven {
+  top: 42.0625rem;
+  left: 5.9375rem;
+}
+
+.app-background__star--eight {
+  top: 45.9375rem;
+  left: 17.8125rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: rgba(209, 219, 255, 0.82);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.0125rem;
+  line-height: 1.25rem;
+}

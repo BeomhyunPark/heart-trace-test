@@ -19,6 +19,8 @@ body {
   min-height: 100dvh;
   margin: 0;
   background: #050816;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 button,

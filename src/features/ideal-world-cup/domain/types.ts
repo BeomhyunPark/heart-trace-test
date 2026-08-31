@@ -2,19 +2,32 @@ export const TOURNAMENT_SIZES = [16, 32, 64] as const;
 
 export type TournamentSize = (typeof TOURNAMENT_SIZES)[number];
 export type TournamentPhase = 'match' | 'round-complete' | 'champion';
-export type WorldCupCategoryId = 'meal' | 'dessert' | 'late-night' | 'travel';
+export type WorldCupCategoryId =
+  | 'meal'
+  | 'dessert'
+  | 'late-night'
+  | 'travel'
+  | 'free-pass'
+  | 'life-cheat';
 
-export type WorldCupCandidate = {
+export type CandidateVisualTone = 'gold' | 'coral' | 'mint' | 'sky' | 'violet';
+
+type WorldCupCandidateBase = {
   id: string;
   name: string;
-  image: string;
 };
+
+export type WorldCupCandidate = WorldCupCandidateBase & (
+  | { image: string; symbol?: never; visualTone?: never }
+  | { image?: never; symbol: string; visualTone: CandidateVisualTone }
+);
 
 export type WorldCupCategory = {
   id: WorldCupCategoryId;
   title: string;
   image: string;
   candidateIds: readonly string[];
+  closingMessage: string;
 };
 
 export type MatchRecord = {

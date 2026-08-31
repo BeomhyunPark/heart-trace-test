@@ -33,7 +33,7 @@
 ## 3. 권장 폴더 구조
 
 ```text
-heart-trace-test/
+ongi-icebreaking-app/
 ├─ public/
 │  ├─ images/
 │  │  ├─ characters/       # 캐릭터 및 화면용 이미지

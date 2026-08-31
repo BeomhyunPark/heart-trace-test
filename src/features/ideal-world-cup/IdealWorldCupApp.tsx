@@ -37,6 +37,10 @@ type IdealWorldCupAppProps = {
   onBackHome: () => void;
 };
 
+type CandidateVisualProps = {
+  candidate: WorldCupCandidate;
+};
+
 const CANDIDATE_IDS = WORLD_CUP_CANDIDATES.map((candidate) => candidate.id);
 const VALID_CANDIDATE_IDS = new Set(CANDIDATE_IDS);
 const VALID_CATEGORY_IDS = new Set(WORLD_CUP_CATEGORIES.map((category) => category.id));
@@ -66,6 +70,25 @@ function findCategory(categoryId: WorldCupCategoryId): WorldCupCategory {
   }
 
   return category;
+}
+
+function CandidateVisual({ candidate }: CandidateVisualProps) {
+  if (candidate.image) {
+    return (
+      <span className="world-cup-candidate-visual world-cup-candidate-visual--image" aria-hidden="true">
+        <img src={candidate.image} alt="" draggable="false" />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={`world-cup-candidate-visual world-cup-candidate-visual--symbol is-${candidate.visualTone}`}
+      aria-hidden="true"
+    >
+      <span>{candidate.symbol}</span>
+    </span>
+  );
 }
 
 function createSession(
@@ -243,7 +266,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
 
         <div className="world-cup-advance-preview" aria-label={`${nextRoundLabel} 진출 후보 미리보기`}>
           {previewCandidates.map((candidate) => (
-            <img src={candidate.image} alt={candidate.name} loading="lazy" key={candidate.id} />
+            <CandidateVisual candidate={candidate} key={candidate.id} />
           ))}
         </div>
 
@@ -272,7 +295,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         <p className="eyebrow">{activeCategory.title} 월드컵 우승</p>
         <h1>{champion.name}</h1>
         <div className="world-cup-champion__image">
-          <img src={champion.image} alt={champion.name} />
+          <CandidateVisual candidate={champion} />
         </div>
         <p>{state.tournamentSize}강에서 마지막까지 살아남은 오늘의 최애예요.</p>
 
@@ -284,6 +307,11 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
             ))}
           </div>
         </section>
+
+        <aside className="world-cup-closing-note" aria-label="끝으로 한마디">
+          <span>끝으로 한마디</span>
+          <p>{activeCategory.closingMessage}</p>
+        </aside>
 
         <div className="world-cup-champion__actions">
           <PrimaryButton onClick={() => startNewTournament(activeSession.categoryId, state.tournamentSize)}>
@@ -339,7 +367,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
                 previous: session.current,
               } : session)}
             >
-              <img src={candidate.image} alt="" draggable="false" />
+              <CandidateVisual candidate={candidate} />
               <strong>{candidate.name}</strong>
             </button>
             {index === 0 ? <span className="world-cup-duel__vs" aria-hidden="true">VS</span> : null}

@@ -254,12 +254,16 @@ export function KnowMeQuizApp({ onBackHome }: KnowMeQuizAppProps) {
           {selectedQuestions.map((question) => {
             const matched = answers[question.id] === guesses[question.id];
             return (
-              <div className={matched ? 'is-correct' : undefined} key={question.id}>
+              <div className={matched ? 'is-correct' : 'is-wrong'} key={question.id}>
                 <span>{matched ? '○' : '×'}</span>
                 <section>
                   <small>{question.prompt}</small>
-                  <p><i>우리 예상</i>{question.options[guesses[question.id]]}</p>
-                  <p><i>{protagonistName}의 답</i><strong>{question.options[answers[question.id]]}</strong></p>
+                  {matched ? null : (
+                    <>
+                      <p><i>우리 예상</i>{question.options[guesses[question.id]]}</p>
+                      <p><i>정답</i><strong>{question.options[answers[question.id]]}</strong></p>
+                    </>
+                  )}
                 </section>
               </div>
             );

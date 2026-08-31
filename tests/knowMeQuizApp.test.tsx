@@ -52,8 +52,34 @@ describe('나를 맞혀봐', () => {
     });
 
     expect(screen.getByRole('heading', { name: '5개 중 5개 정답' })).toBeTruthy();
-    expect(screen.getAllByText('우리 예상')).toHaveLength(5);
-    expect(screen.getAllByText('민지의 답')).toHaveLength(5);
+    expect(screen.queryByText('우리 예상')).toBeNull();
     expect(screen.getByRole('button', { name: '결과 이미지 공유하기' })).toBeTruthy();
+  });
+
+  it('오답인 문항에만 우리 예상과 정답을 표시한다', async () => {
+    vi.useFakeTimers();
+    render(<KnowMeQuizApp onBackHome={vi.fn()} />);
+    fireEvent.change(screen.getByLabelText('오늘의 주인공 이름'), { target: { value: '민지' } });
+    const questionPicker = document.querySelector('.know-me-question-picker');
+    if (!questionPicker) throw new Error('질문 선택 영역을 찾지 못했습니다.');
+    within(questionPicker as HTMLElement).getAllByRole('button').slice(0, 5).forEach((button) => fireEvent.click(button));
+    fireEvent.click(screen.getByRole('button', { name: '민지의 답 정하기' }));
+
+    for (let index = 0; index < 5; index += 1) {
+      fireEvent.click(within(screen.getByRole('group')).getAllByRole('button')[0]);
+      fireEvent.click(screen.getByRole('button', { name: index === 4 ? '답 숨기기' : '다음 질문' }));
+    }
+    fireEvent.click(screen.getByRole('button', { name: '이제 맞혀볼게요' }));
+
+    for (let index = 0; index < 5; index += 1) {
+      fireEvent.click(within(screen.getByRole('group')).getAllByRole('button')[index === 0 ? 1 : 0]);
+      fireEvent.click(screen.getByRole('button', { name: index === 4 ? '정답 확인하기' : '다음 문제' }));
+    }
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1600);
+    });
+
+    expect(screen.getAllByText('우리 예상')).toHaveLength(1);
+    expect(screen.getAllByText('정답')).toHaveLength(1);
   });
 });

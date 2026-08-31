@@ -105,14 +105,20 @@ export async function createKnowMeResultFile({
 
     context.textAlign = 'left';
     context.fillStyle = 'rgba(255, 247, 239, 0.68)';
-    context.font = '500 17px "Noto Sans KR", sans-serif';
+    context.font = '600 19px "Noto Sans KR", sans-serif';
     context.fillText(entry.prompt, x + 20, y + 25, 560);
-    context.fillStyle = 'rgba(255, 247, 239, 0.68)';
-    context.font = '500 18px "Noto Sans KR", sans-serif';
-    context.fillText(`우리 예상  ${entry.guess}`, x + 20, y + 55, 560);
-    context.fillStyle = entry.matched ? '#a7efd7' : '#ffca9f';
-    context.font = '700 19px "Noto Sans KR", sans-serif';
-    context.fillText(`${entry.matched ? '○' : '×'}  정답  ${entry.answer}`, x + 20, y + 82, 560);
+    if (entry.matched) {
+      context.fillStyle = '#a7efd7';
+      context.font = '700 21px "Noto Sans KR", sans-serif';
+      context.fillText('○  정답', x + 20, y + 67, 560);
+    } else {
+      context.fillStyle = 'rgba(255, 247, 239, 0.72)';
+      context.font = '500 20px "Noto Sans KR", sans-serif';
+      context.fillText(`우리 예상  ${entry.guess}`, x + 20, y + 55, 560);
+      context.fillStyle = '#ffca9f';
+      context.font = '700 21px "Noto Sans KR", sans-serif';
+      context.fillText(`정답  ${entry.answer}`, x + 20, y + 82, 560);
+    }
   });
 
   context.textAlign = 'center';

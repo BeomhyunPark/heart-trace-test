@@ -458,11 +458,10 @@
 
 .know-me-result__answers > div {
   display: grid;
-  min-height: 7rem;
   grid-template-columns: 2rem minmax(0, 1fr);
   gap: 0.75rem;
-  align-items: start;
-  padding: 0.875rem;
+  align-items: center;
+  padding: 0.8125rem 0.875rem;
   border: 1px solid rgba(255, 174, 155, 0.2);
   border-radius: 1rem;
   background: rgba(62, 37, 68, 0.56);
@@ -474,6 +473,10 @@
   border-color: rgba(154, 230, 206, 0.4);
   background: rgba(45, 92, 81, 0.4);
   color: var(--know-mint);
+}
+
+.know-me-result__answers > div.is-wrong {
+  align-items: start;
 }
 
 .know-me-result__answers span {
@@ -496,10 +499,14 @@
   display: block;
   margin-bottom: 0.625rem;
   color: #fff8f2;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  line-height: 1.25rem;
+  line-height: 1.4rem;
   word-break: keep-all;
+}
+
+.know-me-result__answers .is-correct small {
+  margin-bottom: 0;
 }
 
 .know-me-result__answers p {
@@ -508,21 +515,21 @@
   gap: 0.5rem;
   margin: 0.25rem 0 0;
   color: #ddd0e6;
-  font-size: 0.75rem;
-  line-height: 1.2rem;
+  font-size: 0.875rem;
+  line-height: 1.3rem;
   word-break: keep-all;
 }
 
 .know-me-result__answers i {
   color: rgba(222, 208, 232, 0.58);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-style: normal;
 }
 
 .know-me-result__answers strong {
   color: #fff8f2;
-  font-size: 0.75rem;
-  line-height: 1.2rem;
+  font-size: 0.875rem;
+  line-height: 1.3rem;
 }
 
 .know-me-result__actions {

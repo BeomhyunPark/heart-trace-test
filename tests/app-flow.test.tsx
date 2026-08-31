@@ -110,9 +110,11 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '최애 월드컵' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '오늘은 누구?' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '나를 맞혀봐' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent).toContain('NEW');
     expect(screen.getByRole('button', { name: '최애 월드컵' }).textContent).toContain('NEW');
     expect(screen.getByRole('button', { name: '오늘은 누구?' }).textContent).toContain('NEW');
+    expect(screen.getByRole('button', { name: '나를 맞혀봐' }).textContent).toContain('NEW');
     expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }).textContent).not.toContain('NEW');
     expect(screen.queryByText('SOON')).toBeNull();
     expect(
@@ -120,7 +122,7 @@ describe('앱 화면 흐름과 접근성', () => {
     ).toContain('극과 극 밸런스 게임');
     const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
     expect(featuredSection).not.toBeNull();
-    expect(['극과 극 밸런스 게임', '최애 월드컵', '오늘은 누구?']).toContain(
+    expect(['극과 극 밸런스 게임', '최애 월드컵', '오늘은 누구?', '나를 맞혀봐']).toContain(
       within(featuredSection as HTMLElement).getByRole('button').getAttribute('aria-label'),
     );
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
@@ -145,6 +147,15 @@ describe('앱 화면 흐름과 접근성', () => {
       level: 1,
     })).toBeTruthy();
     expect(screen.getByText('창작자 · hyunee')).toBeTruthy();
+    expect(await getAccessibilityViolations(container)).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
+
+    fireEvent.click(screen.getByRole('button', { name: '나를 맞혀봐' }));
+    expect(await screen.findByRole('heading', {
+      name: '나를 맞혀봐',
+      level: 1,
+    })).toBeTruthy();
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     fireEvent.click(screen.getByRole('button', { name: '홈' }));

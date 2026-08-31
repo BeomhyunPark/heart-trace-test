@@ -1,6 +1,6 @@
-export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker';
+export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'know-me-quiz';
 
-export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구';
+export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '맞히기 게임';
 
 export type Activity = {
   id: ActivityId;
@@ -45,6 +45,15 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '오늘은 누구?',
     description: '사다리부터 기도와 나눔 순서까지 한 번에',
     meta: '사다리 · 제비 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
+    badge: 'NEW',
+    available: true,
+  },
+  {
+    id: 'know-me-quiz',
+    kind: '맞히기 게임',
+    title: '나를 맞혀봐',
+    description: '주인공의 선택을 얼마나 잘 알고 있을까요?',
+    meta: '한 명의 정답 · 함께 예상 · 결과 공유',
     badge: 'NEW',
     available: true,
   },

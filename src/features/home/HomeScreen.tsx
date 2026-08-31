@@ -15,6 +15,7 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'balance-game': 'VS',
   'ideal-world-cup': '★',
   'group-picker': '?',
+  'know-me-quiz': 'ME',
 };
 
 let previousFeaturedActivityId: ActivityId | null = null;
@@ -74,6 +75,7 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
           <li>VS 놀이</li>
           <li>토너먼트</li>
           <li>모임 도구</li>
+          <li>맞히기</li>
         </ul>
       </header>
 

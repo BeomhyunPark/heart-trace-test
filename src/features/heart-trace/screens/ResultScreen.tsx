@@ -1,13 +1,8 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 
 import { RESULT_TYPES } from '../data/resultTypes';
 import type { ResultTypeId } from '../domain/types';
-import {
-  getResultImageFilename,
-  loadResultImageFile,
-  saveResultImageFile,
-  type ResultImageAction,
-} from '../services/resultImage';
+import { useResultImage } from '../hooks/useResultImage';
 
 type ResultScreenProps = {
   resultId: ResultTypeId;
@@ -26,11 +21,18 @@ type ResultStyle = CSSProperties & {
 
 export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenProps) {
   const result = RESULT_TYPES[resultId];
-  const [resultFile, setResultFile] = useState<File | null>(null);
-  const [imageLoadFailed, setImageLoadFailed] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [showIosHelp, setShowIosHelp] = useState(false);
+  const {
+    imageLoadFailed,
+    isSaving,
+    resultFile,
+    saveMessage,
+    saveResultImage,
+    setShowIosHelp,
+    showIosHelp,
+  } = useResultImage({
+    resultId: result.id,
+    imageSrc: result.resultCardSrc,
+  });
   const closeHelpButtonRef = useRef<HTMLButtonElement>(null);
   const style: ResultStyle = {
     '--result-background': result.theme.background,
@@ -40,35 +42,6 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
     '--result-button-gradient': result.theme.buttonGradient,
     '--result-button-text': result.theme.buttonText,
   };
-
-  useEffect(() => {
-    let isCurrent = true;
-
-    setResultFile(null);
-    setImageLoadFailed(false);
-    setSaveMessage(null);
-
-    void loadResultImageFile(
-      result.resultCardSrc,
-      getResultImageFilename(result.id),
-    )
-      .then((file) => {
-        if (isCurrent) {
-          setImageLoadFailed(false);
-          setResultFile(file);
-        }
-      })
-      .catch(() => {
-        if (isCurrent) {
-          setImageLoadFailed(true);
-          setSaveMessage('이미지를 준비하지 못했어요. 잠시 후 다시 시도해 주세요.');
-        }
-      });
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [result.id, result.resultCardSrc]);
 
   useEffect(() => {
     if (!showIosHelp) {
@@ -96,54 +69,6 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
       }
     };
   }, [showIosHelp]);
-
-  const handleImageAction = (action: ResultImageAction) => {
-    switch (action) {
-      case 'shared':
-        setSaveMessage('결과 이미지를 공유했어요.');
-        break;
-      case 'downloaded':
-        setSaveMessage('결과 이미지 다운로드를 시작했어요.');
-        break;
-      case 'ios-help':
-        setSaveMessage(null);
-        setShowIosHelp(true);
-        break;
-      case 'cancelled':
-        setSaveMessage(null);
-        break;
-    }
-  };
-
-  const handleSave = async () => {
-    if (isSaving) {
-      return;
-    }
-
-    setIsSaving(true);
-    setSaveMessage(null);
-
-    try {
-      const file = resultFile ?? await loadResultImageFile(
-        result.resultCardSrc,
-        getResultImageFilename(result.id),
-      );
-
-      setResultFile(file);
-      setImageLoadFailed(false);
-
-      const action = await saveResultImageFile(
-        file,
-        result.resultCardSrc,
-      );
-      handleImageAction(action);
-    } catch {
-      setImageLoadFailed(true);
-      setSaveMessage('이미지를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   return (
     <main className={`result-screen result-screen--${result.id}`} style={style}>
@@ -204,7 +129,7 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
           className="result-save-button"
           type="button"
           disabled={(resultFile === null && !imageLoadFailed) || isSaving}
-          onClick={handleSave}
+          onClick={saveResultImage}
         >
           {isSaving
             ? '저장 준비 중…'

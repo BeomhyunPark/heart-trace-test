@@ -1,64 +1,20 @@
 import { useState } from 'react';
 
-const SHARE_TITLE = '온기 | 우리 사이에 온기를';
-
-function getShareUrl(): string {
-  return document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href
-    ?? window.location.href;
-}
-
-async function copyText(text: string): Promise<void> {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.setAttribute('readonly', '');
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.append(textarea);
-  textarea.select();
-
-  const copied = document.execCommand('copy');
-  textarea.remove();
-
-  if (!copied) {
-    throw new Error('Copy command failed');
-  }
-}
+import { shareAppLink, type ShareAppLinkResult } from '../services/shareAppLink';
 
 export function ShareApp() {
   const [message, setMessage] = useState<string | null>(null);
 
-  const handleCopy = async () => {
-    try {
-      await copyText(getShareUrl());
-      setMessage('온기 링크를 복사했어요.');
-    } catch {
-      setMessage('링크를 복사하지 못했어요. 주소창의 URL을 복사해 주세요.');
-    }
-  };
-
   const handleShare = async () => {
-    if (typeof navigator.share !== 'function') {
-      await handleCopy();
-      return;
-    }
+    const result = await shareAppLink();
+    const messages: Partial<Record<ShareAppLinkResult, string>> = {
+      shared: '온기 링크를 공유했어요.',
+      copied: '온기 링크를 복사했어요.',
+      failed: '링크를 복사하지 못했어요. 주소창의 URL을 복사해 주세요.',
+    };
 
-    try {
-      await navigator.share({
-        title: SHARE_TITLE,
-        url: getShareUrl(),
-      });
-      setMessage('온기 링크를 공유했어요.');
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-
-      await handleCopy();
+    if (result !== 'cancelled') {
+      setMessage(messages[result] ?? null);
     }
   };
 

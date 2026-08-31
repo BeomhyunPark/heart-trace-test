@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './app/App';
+import { registerServiceWorker } from './platform/registerServiceWorker';
 import './styles/tokens.css';
 import './styles/globals.css';
 import './styles/shared.css';
@@ -24,8 +25,4 @@ createRoot(rootElement).render(
   </StrictMode>,
 );
 
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    void navigator.serviceWorker.register('/sw.js');
-  });
-}
+registerServiceWorker();

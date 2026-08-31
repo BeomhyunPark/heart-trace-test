@@ -1,88 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
 
-type InstallPlatform = 'android' | 'ios' | 'other';
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-};
-
-type NavigatorWithStandalone = Navigator & {
-  standalone?: boolean;
-};
-
-const INSTALL_PROMPT_READY_EVENT = 'ongi:install-prompt-ready';
-let capturedInstallPrompt: BeforeInstallPromptEvent | null = null;
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault();
-    capturedInstallPrompt = event as BeforeInstallPromptEvent;
-    window.dispatchEvent(new Event(INSTALL_PROMPT_READY_EVENT));
-  });
-}
-
-function getInstallPlatform(): InstallPlatform {
-  const userAgent = navigator.userAgent;
-  const isIPadDesktopMode = navigator.platform === 'MacIntel'
-    && navigator.maxTouchPoints > 1;
-
-  if (/iPad|iPhone|iPod/i.test(userAgent) || isIPadDesktopMode) {
-    return 'ios';
-  }
-
-  if (/Android/i.test(userAgent)) {
-    return 'android';
-  }
-
-  return 'other';
-}
-
-function isRunningStandalone(): boolean {
-  return window.matchMedia?.('(display-mode: standalone)').matches
-    || Boolean((navigator as NavigatorWithStandalone).standalone);
-}
-
-function isIosSafari(): boolean {
-  return /Safari/i.test(navigator.userAgent)
-    && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(navigator.userAgent);
-}
+import {
+  getCapturedInstallPrompt,
+  getInstallEnvironment,
+  promptToInstall,
+  subscribeToInstallEvents,
+  type BeforeInstallPromptEvent,
+  type InstallPlatform,
+} from '../services/installApp';
 
 export function InstallAppPrompt() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [platform, setPlatform] = useState<InstallPlatform>('other');
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(capturedInstallPrompt);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
+    getCapturedInstallPrompt,
+  );
   const [isInstalled, setIsInstalled] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [usesIosSafari, setUsesIosSafari] = useState(true);
 
   useEffect(() => {
-    setPlatform(getInstallPlatform());
-    setIsInstalled(isRunningStandalone());
-    setUsesIosSafari(isIosSafari());
+    const environment = getInstallEnvironment();
+    setPlatform(environment.platform);
+    setIsInstalled(environment.isInstalled);
+    setUsesIosSafari(environment.usesIosSafari);
 
-    const handleInstallPromptReady = () => {
-      setInstallPrompt(capturedInstallPrompt);
-    };
-
-    const handleInstalled = () => {
+    return subscribeToInstallEvents(setInstallPrompt, () => {
       setIsInstalled(true);
-      capturedInstallPrompt = null;
       setInstallPrompt(null);
       setIsGuideOpen(false);
-    };
-
-    window.addEventListener(INSTALL_PROMPT_READY_EVENT, handleInstallPromptReady);
-    window.addEventListener('appinstalled', handleInstalled);
-
-    return () => {
-      window.removeEventListener(INSTALL_PROMPT_READY_EVENT, handleInstallPromptReady);
-      window.removeEventListener('appinstalled', handleInstalled);
-    };
+    });
   }, []);
 
   useEffect(() => {
@@ -105,12 +53,10 @@ export function InstallAppPrompt() {
 
   const handleInstall = async () => {
     if (platform === 'android' && installPrompt) {
-      await installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
-      capturedInstallPrompt = null;
+      const outcome = await promptToInstall(installPrompt);
       setInstallPrompt(null);
 
-      if (choice.outcome === 'accepted') {
+      if (outcome === 'accepted') {
         setIsInstalled(true);
       }
       return;

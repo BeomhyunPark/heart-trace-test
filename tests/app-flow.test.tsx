@@ -34,9 +34,10 @@ function startQuestionFlow() {
   fireEvent.click(screen.getByRole('button', { name: '알겠어요' }));
 }
 
-function renderHeartTraceApp() {
+async function renderHeartTraceApp() {
   const rendered = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+  await screen.findByRole('heading', { name: '마음속 흔적 찾기' });
   return rendered;
 }
 
@@ -124,7 +125,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
-    expect(screen.getByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '홈' }));
     expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
@@ -169,7 +170,7 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('시작 화면과 질문 화면에 자동 접근성 위반이 없다', async () => {
-    const { container } = renderHeartTraceApp();
+    const { container } = await renderHeartTraceApp();
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     startQuestionFlow();
@@ -178,7 +179,7 @@ describe('앱 화면 흐름과 접근성', () => {
 
   it('키보드만으로 시작 화면과 안내 화면을 통과할 수 있다', async () => {
     const user = userEvent.setup();
-    renderHeartTraceApp();
+    await renderHeartTraceApp();
 
     await user.tab();
     expect(document.activeElement?.textContent).toContain('홈');
@@ -205,8 +206,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByText('Q2')).toBeTruthy();
   });
 
-  it('흔적이 소개를 마지막까지 넘긴 뒤에만 시작 버튼을 보여준다', () => {
-    renderHeartTraceApp();
+  it('흔적이 소개를 마지막까지 넘긴 뒤에만 시작 버튼을 보여준다', async () => {
+    await renderHeartTraceApp();
 
     expect(screen.queryByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeNull();
 
@@ -230,8 +231,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeTruthy();
   });
 
-  it('하단 버튼만으로 소개를 넘기고 시작 버튼까지 도달할 수 있다', () => {
-    renderHeartTraceApp();
+  it('하단 버튼만으로 소개를 넘기고 시작 버튼까지 도달할 수 있다', async () => {
+    await renderHeartTraceApp();
 
     const nextButtonName = '다음';
 
@@ -243,8 +244,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: INTRO_START_BUTTON_NAME })).toBeTruthy();
   });
 
-  it('화면과 문항을 이동할 때 이전 스크롤 위치를 남기지 않는다', () => {
-    renderHeartTraceApp();
+  it('화면과 문항을 이동할 때 이전 스크롤 위치를 남기지 않는다', async () => {
+    await renderHeartTraceApp();
 
     document.documentElement.scrollTop = 320;
     document.body.scrollTop = 320;
@@ -274,8 +275,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(document.body.scrollTop).toBe(0);
   });
 
-  it('문항별 선택을 독립적으로 복원하고 기존 답변을 하나의 새 선택으로 교체한다', () => {
-    renderHeartTraceApp();
+  it('문항별 선택을 독립적으로 복원하고 기존 답변을 하나의 새 선택으로 교체한다', async () => {
+    await renderHeartTraceApp();
     startQuestionFlow();
 
     answerWithOptionId(0, 'A');
@@ -329,8 +330,8 @@ describe('앱 화면 흐름과 접근성', () => {
     }) as HTMLInputElement).checked).toBe(true);
   });
 
-  it('패스 상태와 사용량을 복원하고 세 개 사용 후 추가 패스를 차단한다', () => {
-    renderHeartTraceApp();
+  it('패스 상태와 사용량을 복원하고 세 개 사용 후 추가 패스를 차단한다', async () => {
+    await renderHeartTraceApp();
     startQuestionFlow();
 
     expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
@@ -375,7 +376,7 @@ describe('앱 화면 흐름과 접근성', () => {
 
   it('동점일 때 동점 유형만 표시하고 선택한 결과로 이동한다', async () => {
     mockResultImageFetch();
-    const { container } = renderHeartTraceApp();
+    const { container } = await renderHeartTraceApp();
     startQuestionFlow();
 
     const balancedAnswers = RESULT_TYPE_IDS.flatMap((resultType) =>
@@ -414,9 +415,9 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('완료 후 다시 하기를 누르면 모든 상태와 안내 단계를 초기화한다', async () => {
-    vi.useFakeTimers();
     mockResultImageFetch();
-    renderHeartTraceApp();
+    await renderHeartTraceApp();
+    vi.useFakeTimers();
     startQuestionFlow();
 
     QUESTIONS.forEach((_, questionIndex) => {
@@ -435,8 +436,6 @@ describe('앱 화면 흐름과 접근성', () => {
   });
 
   it('결과 이미지가 느려도 결과를 먼저 보여주고 준비 후 저장을 활성화한다', async () => {
-    vi.useFakeTimers();
-
     let finishImageRequest: ((response: {
       ok: boolean;
       status: number;
@@ -447,7 +446,8 @@ describe('앱 화면 흐름과 접근성', () => {
       finishImageRequest = resolve;
     })));
 
-    renderHeartTraceApp();
+    await renderHeartTraceApp();
+    vi.useFakeTimers();
     startQuestionFlow();
 
     QUESTIONS.forEach((_, questionIndex) => {

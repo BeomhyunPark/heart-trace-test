@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { HomeScreen } from '../features/home/HomeScreen';
 import type { ActivityId } from './activityCatalog';
@@ -35,5 +35,9 @@ export function App() {
 
   const ActivityApp = activity.Component;
 
-  return <ActivityApp onBackHome={() => setActiveActivityId(null)} />;
+  return (
+    <Suspense fallback={<SplashScreen />}>
+      <ActivityApp onBackHome={() => setActiveActivityId(null)} />
+    </Suspense>
+  );
 }

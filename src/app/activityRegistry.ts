@@ -1,7 +1,6 @@
-import type { ComponentType } from 'react';
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 
 import type { ActivityId } from './activityCatalog';
-import { HeartTraceApp } from '../features/heart-trace/HeartTraceApp';
 
 export type ActivityAppProps = {
   onBackHome: () => void;
@@ -9,8 +8,14 @@ export type ActivityAppProps = {
 
 export type ActivityDefinition = {
   id: ActivityId;
-  Component: ComponentType<ActivityAppProps>;
+  Component: LazyExoticComponent<ComponentType<ActivityAppProps>>;
 };
+
+const HeartTraceApp = lazy(async () => {
+  const module = await import('../features/heart-trace/HeartTraceApp');
+
+  return { default: module.HeartTraceApp };
+});
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {

@@ -12,6 +12,7 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '✦',
   'balance-game': 'VS',
   'ideal-world-cup': '★',
+  'group-picker': '?',
 };
 
 export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
@@ -45,6 +46,7 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
           <li>성격검사</li>
           <li>VS 놀이</li>
           <li>토너먼트</li>
+          <li>모임 도구</li>
         </ul>
       </header>
 

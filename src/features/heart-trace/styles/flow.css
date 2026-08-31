@@ -318,8 +318,9 @@
 }
 
 .intro-screen__button-slot {
-  min-height: 3.625rem;
+  min-height: 4.875rem;
   margin-top: auto;
+  padding-top: 1.25rem;
 }
 
 .intro-screen__button {

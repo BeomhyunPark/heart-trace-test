@@ -203,15 +203,15 @@
   font-weight: 500;
   line-height: 1.25rem;
   backdrop-filter: none;
+  flex: 1;
+  min-width: 0;
 }
 
 .home-categories li:nth-child(1),
-.home-categories li:nth-child(3) {
-  width: 5rem;
-}
-
-.home-categories li:nth-child(2) {
-  width: 4.6875rem;
+.home-categories li:nth-child(2),
+.home-categories li:nth-child(3),
+.home-categories li:nth-child(4) {
+  width: auto;
 }
 
 .home-categories li::before {
@@ -310,6 +310,22 @@
   color: #f8d98e;
 }
 
+.featured-activity--group-picker .activity-card--featured {
+  border-color: #78e2c6;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(120, 226, 198, 0.26), transparent 34%),
+    radial-gradient(circle at 5% 96%, rgba(130, 153, 242, 0.16), transparent 36%),
+    linear-gradient(145deg, #1d4146 0%, #25374a 56%, #302841 100%);
+  box-shadow: 0 0.125rem 1.25rem rgba(83, 214, 184, 0.14),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.3);
+}
+
+.featured-activity--group-picker .activity-card__kind,
+.featured-activity--group-picker small,
+.featured-activity--group-picker > b {
+  color: #baf5e6;
+}
+
 .featured-activity:hover .activity-card--featured {
   border-color: #c8b8ff;
   box-shadow: 0 0.125rem 1.375rem rgba(255, 140, 104, 0.13),
@@ -325,6 +341,12 @@
 .featured-activity--ideal-world-cup:hover .activity-card--featured {
   border-color: #ffe09d;
   box-shadow: 0 0.125rem 1.375rem rgba(242, 200, 111, 0.2),
+    0 0.875rem 1.875rem -0.5rem rgba(0, 0, 0, 0.34);
+}
+
+.featured-activity--group-picker:hover .activity-card--featured {
+  border-color: #baf5e6;
+  box-shadow: 0 0.125rem 1.375rem rgba(83, 214, 184, 0.2),
     0 0.875rem 1.875rem -0.5rem rgba(0, 0, 0, 0.34);
 }
 
@@ -367,9 +389,28 @@
 
 .activity-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-columns: minmax(10rem, 78%);
+  grid-auto-flow: column;
+  grid-template-columns: none;
   gap: 0.75rem;
   margin-top: 0.75rem;
+  padding: 0.125rem 1.25rem 0.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  cursor: grab;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline: 0;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.activity-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.activity-grid:active {
+  cursor: grabbing;
 }
 
 .activity-grid .activity-card {
@@ -384,6 +425,8 @@
   background: var(--ongi-plum-800);
   box-shadow: 0 0.125rem 1.125rem rgba(255, 140, 104, 0.08),
     0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.24);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .activity-grid .activity-card--balance-game {
@@ -401,7 +444,7 @@
 .activity-grid .activity-card--available:hover {
   box-shadow: 0 0 1.75rem rgba(244, 143, 170, 0.2),
     0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.3);
-  transform: translateY(-0.2rem);
+  transform: none;
 }
 
 .activity-grid .activity-card--heart-trace.activity-card--available {
@@ -421,7 +464,23 @@
 }
 
 .activity-grid .activity-card--ideal-world-cup {
-  border-color: #79c8f2;
+  border-color: #f2c86f;
+  background:
+    radial-gradient(circle at 86% 12%, rgba(242, 200, 111, 0.2), transparent 34%),
+    radial-gradient(circle at 8% 92%, rgba(113, 143, 215, 0.16), transparent 38%),
+    linear-gradient(150deg, #28324a 0%, #302a46 58%, #2f243d 100%);
+  box-shadow: 0 0.125rem 1.125rem rgba(242, 200, 111, 0.11),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.28);
+}
+
+.activity-grid .activity-card--ideal-world-cup.activity-card--available:hover {
+  border-color: #ffe09d;
+  box-shadow: 0 0 1.75rem rgba(242, 200, 111, 0.2),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.34);
+}
+
+.activity-grid .activity-card--group-picker {
+  border-color: #78e2c6;
 }
 
 .activity-card__topline {
@@ -469,7 +528,18 @@
 }
 
 .activity-card--ideal-world-cup .activity-card__mini-visual {
-  background: #79c8f2;
+  background: linear-gradient(145deg, #f2c86f, #d9925f);
+  color: #392819;
+}
+
+.activity-card--ideal-world-cup .activity-card__topline,
+.activity-card--ideal-world-cup .activity-card__action {
+  color: #f8d98e;
+}
+
+.activity-card--group-picker .activity-card__mini-visual {
+  background: linear-gradient(145deg, #78e2c6, #85a8ed);
+  color: #16343c;
 }
 
 .activity-grid h3 {
@@ -617,7 +687,8 @@
   }
 
   .activity-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-columns: 84%;
+    grid-template-columns: none;
   }
 
   .activity-grid .activity-card {

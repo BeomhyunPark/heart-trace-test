@@ -1,6 +1,6 @@
-export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup';
+export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker';
 
-export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트';
+export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구';
 
 export type Activity = {
   id: ActivityId;
@@ -36,6 +36,14 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '최애 월드컵',
     description: '하나만 남을 때까지 이어지는 취향 토너먼트',
     meta: '한 끼 · 디저트 · 야식 · 32강',
+    available: true,
+  },
+  {
+    id: 'group-picker',
+    kind: '모임 도구',
+    title: '오늘은 누구?',
+    description: '사다리부터 기도와 나눔 순서까지 한 번에',
+    meta: '사다리 · 제비 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
     badge: 'NEW',
     available: true,
     featured: true,

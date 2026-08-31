@@ -30,6 +30,12 @@ const loadIdealWorldCupApp = async () => {
   return { default: module.IdealWorldCupApp };
 };
 const IdealWorldCupApp = lazy(loadIdealWorldCupApp);
+const loadGroupPickerApp = async () => {
+  const module = await import('../features/group-picker/GroupPickerApp');
+
+  return { default: module.GroupPickerApp };
+};
+const GroupPickerApp = lazy(loadGroupPickerApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -46,6 +52,11 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     id: 'ideal-world-cup',
     Component: IdealWorldCupApp,
     preload: loadIdealWorldCupApp,
+  },
+  'group-picker': {
+    id: 'group-picker',
+    Component: GroupPickerApp,
+    preload: loadGroupPickerApp,
   },
 };
 

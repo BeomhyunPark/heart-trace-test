@@ -109,7 +109,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME })).toBeTruthy();
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '최애 월드컵' })).toBeTruthy();
-    expect(screen.getByText(/토너먼트 · NEW/)).toBeTruthy();
+    expect(screen.getByRole('button', { name: '오늘은 누구?' })).toBeTruthy();
+    expect(screen.getByText(/모임 도구 · NEW/)).toBeTruthy();
     expect(screen.queryByText(/성격검사 · NEW/)).toBeNull();
     expect(screen.queryByText('SOON')).toBeNull();
     expect(
@@ -118,7 +119,7 @@ describe('앱 화면 흐름과 접근성', () => {
     const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
     expect(featuredSection).not.toBeNull();
     expect(within(featuredSection as HTMLElement).getByRole('button', {
-      name: '최애 월드컵',
+      name: '오늘은 누구?',
     })).toBeTruthy();
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
@@ -135,6 +136,16 @@ describe('앱 화면 흐름과 접근성', () => {
       name: /GitHub/,
     }).getAttribute('href')).toBe('https://github.com/BeomhyunPark');
     expect(await getAccessibilityViolations(container)).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: '오늘은 누구?' }));
+    expect(await screen.findByRole('heading', {
+      name: '오늘은 누구?',
+      level: 1,
+    })).toBeTruthy();
+    expect(screen.getByText('창작자 · hyunee')).toBeTruthy();
+    expect(await getAccessibilityViolations(container)).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
 
     fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
     expect(await screen.findByRole('heading', {

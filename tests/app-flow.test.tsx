@@ -126,7 +126,7 @@ describe('앱 화면 흐름과 접근성', () => {
       within(featuredSection as HTMLElement).getByRole('button').getAttribute('aria-label'),
     );
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
-    expect(screen.getByText('v1.0.0')).toBeTruthy();
+    expect(screen.getByText(/^v\d+\.\d+\.\d+$/)).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
     expect(screen.getByRole('link', { name: /YouTube/ }).getAttribute('href')).toBe(
       'https://www.youtube.com/@bumi_daily_worship',

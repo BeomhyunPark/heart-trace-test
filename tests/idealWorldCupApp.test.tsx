@@ -12,17 +12,25 @@ afterEach(() => {
 });
 
 describe('음식 최애 월드컵 화면', () => {
-  it('64강, 32강, 16강 가운데 시작 라운드를 고를 수 있다', () => {
+  it('세 주제와 32강, 16강 가운데 시작 구성을 고를 수 있다', () => {
     render(<IdealWorldCupApp onBackHome={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: /64강, 총 63번의 선택/ }).getAttribute('aria-pressed'))
+    expect(screen.getByRole('button', { name: '든든한 한 끼' }).getAttribute('aria-pressed'))
+      .toBe('true');
+    expect(screen.getByRole('button', { name: '디저트' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '야식' })).toBeTruthy();
+    expect(screen.queryByText(/오늘 한 끼로|행복이 필요|밤이 깊을수록/)).toBeNull();
+    expect(screen.getByRole('button', { name: /32강, 총 31번의 선택/ }).getAttribute('aria-pressed'))
       .toBe('true');
 
+    fireEvent.click(screen.getByRole('button', { name: '디저트' }));
     fireEvent.click(screen.getByRole('button', { name: /16강, 총 15번의 선택/ }));
 
+    expect(screen.getByRole('button', { name: '디저트' }).getAttribute('aria-pressed'))
+      .toBe('true');
     expect(screen.getByRole('button', { name: /16강, 총 15번의 선택/ }).getAttribute('aria-pressed'))
       .toBe('true');
-    expect(screen.getByRole('button', { name: '16강 시작하기' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '디저트 16강 시작하기' })).toBeTruthy();
   });
 
   it('한 번 누르면 다음 대결로 가고, 바로 전 선택을 취소할 수 있다', () => {
@@ -30,7 +38,7 @@ describe('음식 최애 월드컵 화면', () => {
     render(<IdealWorldCupApp onBackHome={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /16강, 총 15번의 선택/ }));
-    fireEvent.click(screen.getByRole('button', { name: '16강 시작하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '든든한 한 끼 16강 시작하기' }));
 
     const firstChoice = screen.getAllByRole('button', { name: / 선택$/ })[0];
     const firstChoiceName = firstChoice.getAttribute('aria-label');
@@ -48,14 +56,14 @@ describe('음식 최애 월드컵 화면', () => {
     const firstRender = render(<IdealWorldCupApp onBackHome={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /16강, 총 15번의 선택/ }));
-    fireEvent.click(screen.getByRole('button', { name: '16강 시작하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '든든한 한 끼 16강 시작하기' }));
     fireEvent.click(screen.getAllByRole('button', { name: / 선택$/ })[0]);
     firstRender.unmount();
 
     render(<IdealWorldCupApp onBackHome={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { name: '16강 · 16강' })).toBeTruthy();
-    expect(screen.getByText('1개의 선택이 저장되어 있어요.')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '든든한 한 끼 · 16강' })).toBeTruthy();
+    expect(screen.getByText('16강 · 선택 1개 저장')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '이어하기' }));
     expect(screen.getByText('전체 1 / 15')).toBeTruthy();
   });
@@ -65,7 +73,7 @@ describe('음식 최애 월드컵 화면', () => {
     render(<IdealWorldCupApp onBackHome={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /16강, 총 15번의 선택/ }));
-    fireEvent.click(screen.getByRole('button', { name: '16강 시작하기' }));
+    fireEvent.click(screen.getByRole('button', { name: '든든한 한 끼 16강 시작하기' }));
 
     for (let selection = 0; selection < 15; selection += 1) {
       fireEvent.click(screen.getAllByRole('button', { name: / 선택$/ })[0]);
@@ -76,7 +84,7 @@ describe('음식 최애 월드컵 화면', () => {
       }
     }
 
-    expect(screen.getByText('음식 최애 월드컵 우승')).toBeTruthy();
+    expect(screen.getByText('든든한 한 끼 월드컵 우승')).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 })).toBeTruthy();
     expect(screen.getByRole('button', { name: '16강 다시 하기' })).toBeTruthy();
   });

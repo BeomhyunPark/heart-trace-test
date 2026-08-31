@@ -168,11 +168,15 @@ function isTournamentState(value: unknown, validCandidateIds: ReadonlySet<string
 export function parseWorldCupSession(
   serialized: string,
   validCandidateIds: ReadonlySet<string>,
+  validCategoryIds: ReadonlySet<string>,
 ): WorldCupSession | null {
   try {
     const parsed = JSON.parse(serialized) as Partial<WorldCupSession>;
 
-    if (parsed.version !== 1 || !isTournamentState(parsed.current, validCandidateIds)) {
+    if (parsed.version !== 2
+      || typeof parsed.categoryId !== 'string'
+      || !validCategoryIds.has(parsed.categoryId)
+      || !isTournamentState(parsed.current, validCandidateIds)) {
       return null;
     }
 
@@ -182,7 +186,8 @@ export function parseWorldCupSession(
     }
 
     return {
-      version: 1,
+      version: 2,
+      categoryId: parsed.categoryId,
       current: parsed.current,
       previous: parsed.previous ?? null,
     };

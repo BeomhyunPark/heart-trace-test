@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProgressBar } from '../../components/ProgressBar';
 import { ScreenLayout } from '../../components/ScreenLayout';
+import {
+  WORLD_CUP_CATEGORIES,
+  WORLD_CUP_CATEGORY_BY_ID,
+} from './data/categories';
 import { FOOD_CANDIDATE_BY_ID, FOOD_CANDIDATES } from './data/foods';
 import {
   chooseWinner,
@@ -15,6 +19,8 @@ import {
 import type {
   FoodCandidate,
   TournamentSize,
+  WorldCupCategory,
+  WorldCupCategoryId,
   WorldCupSession,
 } from './domain/types';
 import {
@@ -30,7 +36,8 @@ type IdealWorldCupAppProps = {
 
 const CANDIDATE_IDS = FOOD_CANDIDATES.map((candidate) => candidate.id);
 const VALID_CANDIDATE_IDS = new Set(CANDIDATE_IDS);
-const SIZE_OPTIONS: readonly TournamentSize[] = [64, 32, 16];
+const VALID_CATEGORY_IDS = new Set(WORLD_CUP_CATEGORIES.map((category) => category.id));
+const SIZE_OPTIONS: readonly TournamentSize[] = [32, 16];
 
 const SIZE_COPY: Record<TournamentSize, string> = {
   64: '총 63번의 선택',
@@ -48,18 +55,35 @@ function findCandidate(candidateId: string): FoodCandidate {
   return candidate;
 }
 
-function createSession(tournamentSize: TournamentSize): WorldCupSession {
+function findCategory(categoryId: WorldCupCategoryId): WorldCupCategory {
+  const category = WORLD_CUP_CATEGORY_BY_ID.get(categoryId);
+
+  if (!category) {
+    throw new Error(`월드컵 주제를 찾을 수 없습니다: ${categoryId}`);
+  }
+
+  return category;
+}
+
+function createSession(
+  categoryId: WorldCupCategoryId,
+  tournamentSize: TournamentSize,
+): WorldCupSession {
+  const category = findCategory(categoryId);
+
   return {
-    version: 1,
-    current: createTournament(CANDIDATE_IDS, tournamentSize),
+    version: 2,
+    categoryId,
+    current: createTournament(category.candidateIds, tournamentSize),
     previous: null,
   };
 }
 
 export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
-  const [selectedSize, setSelectedSize] = useState<TournamentSize>(64);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<WorldCupCategoryId>('meal');
+  const [selectedSize, setSelectedSize] = useState<TournamentSize>(32);
   const [savedSession, setSavedSession] = useState<WorldCupSession | null>(
-    () => loadWorldCupSession(VALID_CANDIDATE_IDS),
+    () => loadWorldCupSession(VALID_CANDIDATE_IDS, VALID_CATEGORY_IDS),
   );
   const [activeSession, setActiveSession] = useState<WorldCupSession | null>(null);
 
@@ -69,10 +93,13 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
     }
   }, [activeSession]);
 
-  const startNewTournament = (tournamentSize: TournamentSize) => {
+  const startNewTournament = (
+    categoryId: WorldCupCategoryId,
+    tournamentSize: TournamentSize,
+  ) => {
     clearWorldCupSession();
     setSavedSession(null);
-    setActiveSession(createSession(tournamentSize));
+    setActiveSession(createSession(categoryId, tournamentSize));
   };
 
   const resetToSetup = () => {
@@ -88,7 +115,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
       }
 
       return {
-        version: 1,
+        ...session,
         current: session.previous,
         previous: null,
       };
@@ -97,6 +124,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
 
   if (!activeSession) {
     const savedState = savedSession?.current;
+    const savedCategory = savedSession ? findCategory(savedSession.categoryId) : null;
 
     return (
       <ScreenLayout className="world-cup-screen world-cup-setup">
@@ -106,17 +134,19 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
 
         <header className="world-cup-hero">
           <p className="eyebrow">온기 · 토너먼트</p>
-          <h1 aria-label="음식 최애 월드컵">음식 최애<br />월드컵</h1>
-          <p>오늘 가장 끌리는 음식 하나를 남겨보세요.</p>
+          <h1 aria-label="최애 월드컵">최애<br />월드컵</h1>
+          <p>오늘 가장 끌리는 하나를 남겨보세요.</p>
         </header>
 
         {savedState ? (
           <section className="world-cup-resume" aria-labelledby="resume-title">
             <span>진행 중인 대진</span>
             <h2 id="resume-title">
-              {savedState.tournamentSize}강 · {getRoundLabel(savedState.roundCandidateIds.length)}
+              {savedCategory?.title} · {savedState.tournamentSize}강
             </h2>
-            <p>{savedState.history.length}개의 선택이 저장되어 있어요.</p>
+            <p>
+              {getRoundLabel(savedState.roundCandidateIds.length)} · 선택 {savedState.history.length}개 저장
+            </p>
             <div>
               <PrimaryButton onClick={() => setActiveSession(savedSession)}>이어하기</PrimaryButton>
               <button type="button" onClick={() => {
@@ -132,14 +162,23 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         <section className="world-cup-setup__section" aria-labelledby="topic-title">
           <span className="world-cup-step">01</span>
           <h2 id="topic-title">오늘의 주제</h2>
-          <article className="world-cup-topic-card">
-            <img src="/images/world-cup/food/bibimbap.webp" alt="" />
-            <span>
-              <small>64개 후보</small>
-              <strong>음식 월드컵</strong>
-            </span>
-            <b aria-hidden="true">✓</b>
-          </article>
+          <div className="world-cup-topic-options">
+            {WORLD_CUP_CATEGORIES.map((category) => (
+              <button
+                className={`world-cup-topic-card${selectedCategoryId === category.id ? ' is-selected' : ''}`}
+                type="button"
+                aria-pressed={selectedCategoryId === category.id}
+                onClick={() => setSelectedCategoryId(category.id)}
+                key={category.id}
+              >
+                <img src={category.image} alt="" />
+                <span>
+                  <strong>{category.title}</strong>
+                </span>
+                <b aria-hidden="true">✓</b>
+              </button>
+            ))}
+          </div>
         </section>
 
         <section className="world-cup-setup__section" aria-labelledby="size-title">
@@ -162,14 +201,18 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           </div>
         </section>
 
-        <PrimaryButton className="world-cup-start" onClick={() => startNewTournament(selectedSize)}>
-          {selectedSize}강 시작하기
+        <PrimaryButton
+          className="world-cup-start"
+          onClick={() => startNewTournament(selectedCategoryId, selectedSize)}
+        >
+          {findCategory(selectedCategoryId).title} {selectedSize}강 시작하기
         </PrimaryButton>
       </ScreenLayout>
     );
   }
 
   const state = activeSession.current;
+  const activeCategory = findCategory(activeSession.categoryId);
 
   if (state.phase === 'round-complete') {
     const completedRoundLabel = getRoundLabel(state.roundCandidateIds.length);
@@ -182,9 +225,9 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           <span aria-hidden="true">←</span> 홈
         </button>
         <div className="world-cup-round-complete__mark" aria-hidden="true">★</div>
-        <p className="eyebrow">{completedRoundLabel} 완료</p>
+        <p className="eyebrow">{activeCategory.title} · {completedRoundLabel} 완료</p>
         <h1>{nextRoundLabel} 진출!</h1>
-        <p>{state.winners.length}개의 음식이 다음 대결을 기다리고 있어요.</p>
+        <p>{state.winners.length}개의 후보가 다음 대결을 기다리고 있어요.</p>
 
         <div className="world-cup-advance-preview" aria-label={`${nextRoundLabel} 진출 후보 미리보기`}>
           {previewCandidates.map((candidate) => (
@@ -214,7 +257,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
     return (
       <ScreenLayout className="world-cup-screen world-cup-champion">
         <div className="world-cup-champion__crown" aria-hidden="true">★</div>
-        <p className="eyebrow">음식 최애 월드컵 우승</p>
+        <p className="eyebrow">{activeCategory.title} 월드컵 우승</p>
         <h1>{champion.name}</h1>
         <div className="world-cup-champion__image">
           <img src={champion.image} alt={champion.name} />
@@ -222,7 +265,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         <p>{state.tournamentSize}강에서 마지막까지 살아남은 오늘의 최애예요.</p>
 
         <section className="world-cup-champion__path" aria-labelledby="winner-path-title">
-          <h2 id="winner-path-title">우승까지 만난 음식</h2>
+          <h2 id="winner-path-title">우승까지 만난 후보</h2>
           <div>
             {defeatedCandidates.map((candidate) => (
               <span key={candidate.id}>{candidate.name}</span>
@@ -231,10 +274,10 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         </section>
 
         <div className="world-cup-champion__actions">
-          <PrimaryButton onClick={() => startNewTournament(state.tournamentSize)}>
+          <PrimaryButton onClick={() => startNewTournament(activeSession.categoryId, state.tournamentSize)}>
             {state.tournamentSize}강 다시 하기
           </PrimaryButton>
-          <button type="button" onClick={resetToSetup}>다른 라운드 고르기</button>
+          <button type="button" onClick={resetToSetup}>다른 주제 고르기</button>
           <button type="button" onClick={onBackHome}>놀이터 홈으로</button>
         </div>
       </ScreenLayout>
@@ -256,13 +299,13 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
 
       <header className="world-cup-match__progress">
         <div>
-          <strong>{getRoundLabel(roundSize)}</strong>
+          <strong>{activeCategory.title} · {getRoundLabel(roundSize)}</strong>
           <span>{state.matchIndex + 1} / {roundMatchCount}</span>
         </div>
         <ProgressBar
           current={state.history.length}
           total={totalMatchCount}
-          label="음식 월드컵 전체 진행률"
+          label="최애 월드컵 전체 진행률"
         />
         <small>전체 {state.history.length} / {totalMatchCount}</small>
       </header>
@@ -272,14 +315,14 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         <h1 id="world-cup-match-title">하나만 고른다면</h1>
       </section>
 
-      <div className="world-cup-duel" role="group" aria-label="음식 후보 대결">
+      <div className="world-cup-duel" role="group" aria-label="월드컵 후보 대결">
         {[leftCandidate, rightCandidate].map((candidate, index) => (
           <div className="world-cup-duel__side" key={candidate.id}>
             <button
               type="button"
               aria-label={`${candidate.name} 선택`}
               onClick={() => setActiveSession((session) => session ? {
-                version: 1,
+                ...session,
                 current: chooseWinner(session.current, candidate.id),
                 previous: session.current,
               } : session)}

@@ -48,10 +48,16 @@ describe('최애 월드컵 토너먼트', () => {
 
   it('저장된 진행 상태가 유효할 때만 복원한다', () => {
     const current = createTournament(CANDIDATE_IDS, 16, () => 0);
-    const serialized = JSON.stringify({ version: 1, current, previous: null });
+    const serialized = JSON.stringify({
+      version: 2,
+      categoryId: 'meal',
+      current,
+      previous: null,
+    });
 
-    expect(parseWorldCupSession(serialized, new Set(CANDIDATE_IDS))?.current).toEqual(current);
-    expect(parseWorldCupSession(serialized, new Set(['unknown']))).toBeNull();
-    expect(parseWorldCupSession('{broken', new Set(CANDIDATE_IDS))).toBeNull();
+    expect(parseWorldCupSession(serialized, new Set(CANDIDATE_IDS), new Set(['meal']))?.current)
+      .toEqual(current);
+    expect(parseWorldCupSession(serialized, new Set(['unknown']), new Set(['meal']))).toBeNull();
+    expect(parseWorldCupSession('{broken', new Set(CANDIDATE_IDS), new Set(['meal']))).toBeNull();
   });
 });

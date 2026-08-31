@@ -131,47 +131,72 @@
   line-height: 1.75rem;
 }
 
-.world-cup-topic-card {
+.world-cup-topic-options {
   display: grid;
-  min-height: 5rem;
-  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
-  gap: 0.875rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.world-cup-topic-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 7.5rem;
+  flex-direction: column;
+  gap: 0.5rem;
   align-items: center;
-  padding: 0.625rem;
-  border: 1px solid rgba(255, 211, 110, 0.44);
-  border-radius: 1.25rem;
-  background: var(--world-cup-surface);
+  padding: 0.375rem 0.375rem 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.125rem;
+  background: rgba(24, 24, 39, 0.76);
   box-shadow: 0 0.75rem 1.75rem rgba(8, 7, 18, 0.2);
+  color: rgba(255, 247, 239, 0.68);
+  cursor: pointer;
+  font: inherit;
+  opacity: 0.72;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease,
+    opacity 160ms ease;
+}
+
+.world-cup-topic-card.is-selected {
+  border-color: var(--world-cup-gold);
+  background: var(--world-cup-surface);
+  color: var(--ongi-cream-50);
+  opacity: 1;
 }
 
 .world-cup-topic-card img {
   display: block;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
   border-radius: 0.875rem;
 }
 
 .world-cup-topic-card span,
-.world-cup-topic-card small,
 .world-cup-topic-card strong {
   display: block;
 }
 
-.world-cup-topic-card small {
-  color: var(--world-cup-sky);
-  font-size: 0.6875rem;
+.world-cup-topic-card span {
+  width: 100%;
+  text-align: center;
 }
 
 .world-cup-topic-card strong {
-  margin-top: 0.15rem;
-  font-size: 1rem;
+  min-height: 2rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  word-break: keep-all;
 }
 
 .world-cup-topic-card b {
-  display: grid;
-  width: 1.75rem;
-  height: 1.75rem;
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: none;
+  width: 1.5rem;
+  height: 1.5rem;
   place-items: center;
   border-radius: 50%;
   background: var(--world-cup-gold);
@@ -179,9 +204,13 @@
   font-size: 0.75rem;
 }
 
+.world-cup-topic-card.is-selected b {
+  display: grid;
+}
+
 .world-cup-size-options {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.625rem;
 }
 

@@ -108,7 +108,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
     expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME })).toBeTruthy();
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: '우리끼리 최애 월드컵' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '최애 월드컵' })).toBeTruthy();
     expect(screen.getByText(/토너먼트 · NEW/)).toBeTruthy();
     expect(screen.queryByText(/성격검사 · NEW/)).toBeNull();
     expect(screen.queryByText('SOON')).toBeNull();
@@ -118,7 +118,7 @@ describe('앱 화면 흐름과 접근성', () => {
     const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
     expect(featuredSection).not.toBeNull();
     expect(within(featuredSection as HTMLElement).getByRole('button', {
-      name: '우리끼리 최애 월드컵',
+      name: '최애 월드컵',
     })).toBeTruthy();
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
@@ -153,9 +153,9 @@ describe('앱 화면 흐름과 접근성', () => {
     })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '홈' }));
-    fireEvent.click(screen.getByRole('button', { name: '우리끼리 최애 월드컵' }));
+    fireEvent.click(screen.getByRole('button', { name: '최애 월드컵' }));
     expect(await screen.findByRole('heading', {
-      name: '음식 최애 월드컵',
+      name: '최애 월드컵',
       level: 1,
     })).toBeTruthy();
     expect(await getAccessibilityViolations(container)).toEqual([]);

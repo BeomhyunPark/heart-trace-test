@@ -33,9 +33,9 @@ export const ACTIVITIES: readonly Activity[] = [
   {
     id: 'ideal-world-cup',
     kind: '토너먼트',
-    title: '우리끼리 최애 월드컵',
+    title: '최애 월드컵',
     description: '하나만 남을 때까지 이어지는 취향 토너먼트',
-    meta: '음식 · 16강 · 32강 · 64강',
+    meta: '한 끼 · 디저트 · 야식 · 32강',
     badge: 'NEW',
     available: true,
     featured: true,

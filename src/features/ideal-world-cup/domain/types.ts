@@ -2,11 +2,19 @@ export const TOURNAMENT_SIZES = [16, 32, 64] as const;
 
 export type TournamentSize = (typeof TOURNAMENT_SIZES)[number];
 export type TournamentPhase = 'match' | 'round-complete' | 'champion';
+export type WorldCupCategoryId = 'meal' | 'dessert' | 'late-night';
 
 export type FoodCandidate = {
   id: string;
   name: string;
   image: string;
+};
+
+export type WorldCupCategory = {
+  id: WorldCupCategoryId;
+  title: string;
+  image: string;
+  candidateIds: readonly string[];
 };
 
 export type MatchRecord = {
@@ -28,7 +36,8 @@ export type TournamentState = {
 };
 
 export type WorldCupSession = {
-  version: 1;
+  version: 2;
+  categoryId: WorldCupCategoryId;
   current: TournamentState;
   previous: TournamentState | null;
 };

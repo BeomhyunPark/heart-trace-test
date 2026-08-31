@@ -31,6 +31,10 @@ import {
   loadWorldCupSession,
   saveWorldCupSession,
 } from './services/sessionStorage';
+import {
+  createWorldCupResultFile,
+  shareWorldCupResultFile,
+} from './services/resultImage';
 import './styles/ideal-world-cup.css';
 
 type IdealWorldCupAppProps = {
@@ -112,6 +116,8 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
     () => loadWorldCupSession(VALID_CANDIDATE_IDS, VALID_CATEGORY_IDS),
   );
   const [activeSession, setActiveSession] = useState<WorldCupSession | null>(null);
+  const [isSharingResult, setIsSharingResult] = useState(false);
+  const [shareMessage, setShareMessage] = useState('');
 
   useEffect(() => {
     if (activeSession) {
@@ -125,6 +131,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
   ) => {
     clearWorldCupSession();
     setSavedSession(null);
+    setShareMessage('');
     setActiveSession(createSession(categoryId, tournamentSize));
   };
 
@@ -165,7 +172,8 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         <header className="world-cup-hero">
           <p className="eyebrow">온기 · 토너먼트</p>
           <h1 aria-label="최애 월드컵">최애<br />월드컵</h1>
-          <p>오늘 가장 끌리는 하나를 남겨보세요.</p>
+          <p className="world-cup-hero__subtitle">오늘 가장 끌리는 하나를 남겨보세요.</p>
+          <p className="world-cup-credit">창작자 · hyunee</p>
         </header>
 
         {savedState ? (
@@ -288,6 +296,29 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
     const defeatedCandidates = state.history
       .filter((match) => match.winnerId === champion.id)
       .map((match) => findCandidate(match.leftId === champion.id ? match.rightId : match.leftId));
+    const shareResult = async () => {
+      setIsSharingResult(true);
+      setShareMessage('');
+
+      try {
+        const file = await createWorldCupResultFile({
+          candidate: champion,
+          categoryTitle: activeCategory.title,
+          tournamentSize: state.tournamentSize,
+        });
+        const action = await shareWorldCupResultFile(file);
+
+        setShareMessage(action === 'shared'
+          ? '우승 이미지를 공유했어요.'
+          : action === 'downloaded'
+            ? '우승 이미지를 저장했어요.'
+            : '공유를 취소했어요.');
+      } catch {
+        setShareMessage('이미지를 만들지 못했어요. 잠시 후 다시 시도해 주세요.');
+      } finally {
+        setIsSharingResult(false);
+      }
+    };
 
     return (
       <ScreenLayout className="world-cup-screen world-cup-champion">
@@ -314,11 +345,17 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         </aside>
 
         <div className="world-cup-champion__actions">
-          <PrimaryButton onClick={() => startNewTournament(activeSession.categoryId, state.tournamentSize)}>
-            {state.tournamentSize}강 다시 하기
+          <PrimaryButton disabled={isSharingResult} onClick={shareResult}>
+            {isSharingResult ? '이미지 만드는 중…' : '우승 이미지 공유하기'}
           </PrimaryButton>
+          {shareMessage ? (
+            <p className="world-cup-share-message" aria-live="polite">{shareMessage}</p>
+          ) : null}
+          <button type="button" onClick={() => startNewTournament(activeSession.categoryId, state.tournamentSize)}>
+            {state.tournamentSize}강 다시 하기
+          </button>
           <button type="button" onClick={resetToSetup}>다른 주제 고르기</button>
-          <button type="button" onClick={onBackHome}>놀이터 홈으로</button>
+          <button type="button" onClick={onBackHome}>홈으로</button>
         </div>
       </ScreenLayout>
     );

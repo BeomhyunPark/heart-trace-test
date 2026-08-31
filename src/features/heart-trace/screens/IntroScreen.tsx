@@ -12,6 +12,10 @@ import { StartSoulOrb } from '../../../components/StartSoulOrb';
 type IntroScreenProps = {
   onContinue: () => void;
   onBackHome: () => void;
+  savedAnswerCount: number;
+  savedQuestionNumber: number | null;
+  onResume: () => void;
+  onClearSaved: () => void;
 };
 
 const INTRO_MESSAGES = [
@@ -32,7 +36,14 @@ const INTRO_MESSAGES = [
   ]
 ] as const;
 
-export function IntroScreen({ onContinue, onBackHome }: IntroScreenProps) {
+export function IntroScreen({
+  onContinue,
+  onBackHome,
+  savedAnswerCount,
+  savedQuestionNumber,
+  onResume,
+  onClearSaved,
+}: IntroScreenProps) {
   const messageTrackRef = useRef<HTMLDivElement>(null);
   const [activeMessageIndex, setActiveMessageIndex] = useState(0);
   const [hasReadAllMessages, setHasReadAllMessages] = useState(false);
@@ -113,11 +124,23 @@ export function IntroScreen({ onContinue, onBackHome }: IntroScreenProps) {
       </button>
       <header className="intro-screen__header">
         <p className="eyebrow">온기 · 성격검사</p>
-        <div>
-          <h1>마음속 흔적 찾기</h1>
-          <p className="intro-screen__subtitle">나와 닮은 흔적이는 누구일까?</p>
-        </div>
+        <h1 aria-label="마음속 흔적 찾기">마음속<br />흔적 찾기</h1>
+        <p className="intro-screen__subtitle">나와 닮은 흔적이는 누구일까?</p>
       </header>
+
+      {savedQuestionNumber !== null ? (
+        <section className="intro-resume" aria-labelledby="heart-trace-resume-title">
+          <div>
+            <span>진행 중인 검사</span>
+            <h2 id="heart-trace-resume-title">{savedQuestionNumber}번 문항부터 이어서</h2>
+            <p>{savedAnswerCount}개 응답 저장됨</p>
+          </div>
+          <div className="intro-resume__actions">
+            <PrimaryButton onClick={onResume}>이어하기</PrimaryButton>
+            <button type="button" onClick={onClearSaved}>저장된 응답 지우기</button>
+          </div>
+        </section>
+      ) : null}
 
       <section
         className={`intro-screen__message${isLastMessage ? ' is-last' : ''}${hasInteractedWithMessages ? '' : ' is-pristine'}`}
@@ -176,7 +199,7 @@ export function IntroScreen({ onContinue, onBackHome }: IntroScreenProps) {
         )}
       </div>
       <p className="intro-screen__meta">약 4분 · 20문항 · 5유형</p>
-      <p className="intro-screen__credit">창작자 · 최유민 · 박은성 · 박범현</p>
+      <p className="intro-screen__credit">창작자 · 최유민 · 박은성 · hyunee</p>
     </ScreenLayout>
   );
 }

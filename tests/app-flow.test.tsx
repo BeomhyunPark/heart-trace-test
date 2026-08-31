@@ -141,7 +141,7 @@ describe('앱 화면 흐름과 접근성', () => {
       name: '마음속 흔적 찾기',
       level: 1,
     })).toBeTruthy();
-    expect(screen.getByText('창작자 · 최유민 · 박은성 · 박범현')).toBeTruthy();
+    expect(screen.getByText('창작자 · 최유민 · 박은성 · hyunee')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '홈' }));
     expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
@@ -204,6 +204,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     startQuestionFlow();
+    expect(container.querySelector('.question-prompt')?.className).toBe('question-prompt');
     expect(await getAccessibilityViolations(container)).toEqual([]);
   });
 
@@ -221,7 +222,7 @@ describe('앱 화면 흐름과 접근성', () => {
     await user.keyboard('{Enter}');
 
     await user.tab();
-    expect(document.activeElement?.textContent).toContain('놀이터 홈');
+    expect(document.activeElement?.textContent).toContain('홈');
     await user.tab();
     expect(document.activeElement?.textContent).toContain('알겠어요');
     await user.keyboard(' ');
@@ -229,6 +230,8 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('group', { name: /Q1/ })).toBeTruthy();
     expect(screen.getAllByRole('radio')).toHaveLength(5);
 
+    await user.tab();
+    expect(document.activeElement?.textContent).toContain('홈');
     await user.tab();
     expect(document.activeElement?.getAttribute('type')).toBe('radio');
     await user.keyboard(' ');
@@ -358,6 +361,34 @@ describe('앱 화면 흐름과 접근성', () => {
     expect((screen.getByRole('radio', {
       name: getOptionTextById(0, 'E'),
     }) as HTMLInputElement).checked).toBe(true);
+  });
+
+  it('진행 중인 응답을 저장하고 홈에서 다시 들어와 이어하거나 삭제한다', async () => {
+    await renderHeartTraceApp();
+    startQuestionFlow();
+
+    answerWithOptionId(0, 'A');
+    expect(screen.getByText('Q2')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
+
+    expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+
+    expect(await screen.findByRole('heading', { name: '2번 문항부터 이어서' })).toBeTruthy();
+    expect(screen.getByText('1개 응답 저장됨')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '이어하기' }));
+
+    expect(screen.getByText('Q2')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    expect((screen.getByRole('radio', {
+      name: getOptionTextById(0, 'A'),
+    }) as HTMLInputElement).checked).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
+    fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+    fireEvent.click(await screen.findByRole('button', { name: '저장된 응답 지우기' }));
+
+    expect(screen.queryByRole('button', { name: '이어하기' })).toBeNull();
   });
 
   it('패스 상태와 사용량을 복원하고 세 개 사용 후 추가 패스를 차단한다', async () => {

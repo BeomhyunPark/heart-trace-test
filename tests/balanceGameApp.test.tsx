@@ -35,9 +35,9 @@ describe('밸런스 게임 기능 진입점', () => {
 
     expect(screen.getByRole('progressbar', { name: '밸런스 게임 진행률' }).getAttribute('aria-valuemax')).toBe('5');
     expect(screen.getByRole('heading', { name: '메시지를 받았을 때 나는?' })).toBeTruthy();
+    expect(screen.queryByText(/하나를 고르고|마음속으로 하나|이유를 나눠/)).toBeNull();
 
     fireEvent.click(screen.getByRole('radio', { name: '칼답' }));
-    expect(screen.getByText(/왜 이쪽을 골랐나요/)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '다음 질문' }));
 
     expect(screen.getByRole('heading', { name: '내 생활 방식에 더 가까운 쪽은?' })).toBeTruthy();

@@ -145,7 +145,7 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
 
         <div className="result-navigation">
           <button className="result-restart-button" type="button" onClick={onRestart}>처음부터 다시 하기</button>
-          <button className="result-home-button" type="button" onClick={onBackHome}>다른 놀거리 보기</button>
+          <button className="result-home-button" type="button" onClick={onBackHome}>홈으로</button>
         </div>
       </div>
 

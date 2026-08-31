@@ -22,6 +22,7 @@ describe('최애 월드컵 화면', () => {
     expect(screen.getByRole('button', { name: '여행지' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '평생 무료 이용권' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '인생 치트키' })).toBeTruthy();
+    expect(screen.getByText('창작자 · hyunee')).toBeTruthy();
     expect(screen.queryByText(/오늘 한 끼로|행복이 필요|밤이 깊을수록/)).toBeNull();
     expect(screen.queryByRole('button', { name: /64강/ })).toBeNull();
     expect(screen.getByRole('button', { name: /32강, 총 31번의 선택/ }).getAttribute('aria-pressed'))
@@ -125,6 +126,7 @@ describe('최애 월드컵 화면', () => {
 
     expect(screen.getByText('든든한 한 끼 월드컵 우승')).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '우승 이미지 공유하기' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '16강 다시 하기' })).toBeTruthy();
     expect(screen.getByText(/마음을 살리는 양식은 하나님의 말씀/)).toBeTruthy();
   });

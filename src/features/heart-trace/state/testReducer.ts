@@ -34,6 +34,7 @@ export type TestAction =
       questionId: number;
     }
   | { type: 'PREVIOUS' }
+  | { type: 'RESTORE'; state: TestState }
   | {
       type: 'SELECT_TIE_BREAKER';
       answer: ResultTypeId;
@@ -209,6 +210,9 @@ export function testReducer(
         result,
       };
     }
+
+    case 'RESTORE':
+      return action.state;
 
     case 'RESTART':
       return createInitialTestState();

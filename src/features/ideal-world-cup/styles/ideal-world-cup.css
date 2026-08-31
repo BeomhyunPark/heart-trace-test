@@ -60,11 +60,18 @@
   line-height: 1.02;
 }
 
-.world-cup-hero > p:last-child {
+.world-cup-hero__subtitle {
   margin: 1rem 0 0;
   color: var(--ongi-text-secondary);
   font-size: 0.9375rem;
   line-height: 1.5rem;
+}
+
+.world-cup-hero .world-cup-credit {
+  margin-top: 0.375rem;
+  color: rgba(255, 247, 239, 0.5);
+  font-size: 0.6875rem;
+  line-height: 1rem;
 }
 
 .world-cup-resume {
@@ -526,6 +533,13 @@
   width: 100%;
   gap: 0.625rem;
   margin-top: 1.75rem;
+}
+
+.world-cup-share-message {
+  margin: 0;
+  color: var(--ongi-text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.125rem;
 }
 
 .world-cup-champion__crown {

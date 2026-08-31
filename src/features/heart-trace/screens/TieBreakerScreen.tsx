@@ -9,6 +9,7 @@ type TieBreakerScreenProps = {
   questionNumber: number;
   onSelect: (answer: ResultTypeId) => void;
   onPrevious: () => void;
+  onBackHome: () => void;
 };
 
 export function TieBreakerScreen({
@@ -16,9 +17,14 @@ export function TieBreakerScreen({
   questionNumber,
   onSelect,
   onPrevious,
+  onBackHome,
 }: TieBreakerScreenProps) {
   return (
     <ScreenLayout className="tie-screen">
+      <button className="test-home-button" type="button" onClick={onBackHome}>
+        <span aria-hidden="true">←</span> 홈
+      </button>
+
       <header className="question-progress">
         <div className="question-progress__label">
           <span>마음의 흔적 찾는 중</span>
@@ -31,8 +37,6 @@ export function TieBreakerScreen({
         <span className="question-number">마지막 질문</span>
         <h1>{question.prompt}</h1>
       </header>
-
-      <p className="question-helper">선택하면 결과 화면으로 바로 넘어가요</p>
 
       <div className="answer-list tie-screen__options" role="radiogroup" aria-label="추가 질문 선택지">
         {question.options.map((option, optionIndex) => (

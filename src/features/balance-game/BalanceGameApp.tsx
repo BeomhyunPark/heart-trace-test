@@ -255,7 +255,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         <p>같은 답보다 왜 골랐는지를 나눌 때<br />우리 사이가 조금 더 가까워져요.</p>
         <div className="balance-complete__actions">
           <PrimaryButton onClick={showPicker}>다른 질문 골라보기</PrimaryButton>
-          <button type="button" onClick={onBackHome}>놀이터 홈으로</button>
+          <button type="button" onClick={onBackHome}>홈으로</button>
         </div>
       </ScreenLayout>
     );
@@ -279,7 +279,6 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         <small>{question.topic ?? CATEGORY_LABELS[question.category]}</small>
         <h1 id="balance-question-title">{question.prompt}</h1>
         {question.context ? <p className="balance-play__context">{question.context}</p> : null}
-        <p className="balance-play__guide">하나를 고르고, 서로의 이유를 들어보세요.</p>
       </section>
 
       <div className="balance-choice-list" role="radiogroup" aria-label={question.prompt}>
@@ -293,10 +292,6 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
       </div>
 
       <footer className="balance-play__footer">
-        <div className={`balance-talk-prompt${selectedSide ? ' is-visible' : ''}`} aria-live="polite">
-          {selectedSide ? '왜 이쪽을 골랐나요? 한 사람씩 이유를 나눠보세요.' : '먼저 각자 마음속으로 하나를 골라보세요.'}
-        </div>
-
         <PrimaryButton
           className="balance-play__next"
           disabled={selectedSide === null}

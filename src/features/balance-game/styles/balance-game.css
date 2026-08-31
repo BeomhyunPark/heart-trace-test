@@ -563,11 +563,6 @@
   word-break: keep-all;
 }
 
-.balance-play__question .balance-play__guide {
-  color: var(--ongi-text-secondary);
-  line-height: 1.25rem;
-}
-
 .balance-choice-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2.25rem minmax(0, 1fr);
@@ -669,32 +664,8 @@
   line-height: 1.4rem;
 }
 
-.balance-talk-prompt {
-  display: flex;
-  min-height: 4rem;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0;
-  padding: 0.625rem 1rem;
-  border: 1px dashed rgba(255, 201, 143, 0.24);
-  border-radius: 1rem;
-  color: var(--ongi-text-secondary);
-  font-size: 0.8125rem;
-  line-height: 1.35rem;
-  text-align: center;
-}
-
-.balance-talk-prompt.is-visible {
-  border-color: var(--ongi-apricot-300);
-  color: var(--ongi-cream-50);
-}
-
-.balance-game-screen--deep .balance-talk-prompt.is-visible {
-  border-color: var(--ongi-lavender-400);
-}
-
 .balance-play__next {
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .balance-play__footer {

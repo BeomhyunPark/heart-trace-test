@@ -29,7 +29,7 @@ export function GuideScreen({ onStart, onBackHome }: GuideScreenProps) {
   return (
     <ScreenLayout className="guide-screen">
       <button className="test-home-button" type="button" onClick={onBackHome}>
-        <span aria-hidden="true">←</span> 놀이터 홈
+        <span aria-hidden="true">←</span> 홈
       </button>
       <header className="guide-screen__header">
         <p className="eyebrow">주의사항</p>

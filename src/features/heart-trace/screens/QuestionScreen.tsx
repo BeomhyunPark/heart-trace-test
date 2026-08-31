@@ -13,6 +13,7 @@ type QuestionScreenProps = {
   onAnswer: (optionId: ChoiceId) => void;
   onSkip: () => void;
   onPrevious: () => void;
+  onBackHome: () => void;
 };
 
 export function QuestionScreen({
@@ -25,17 +26,17 @@ export function QuestionScreen({
   onAnswer,
   onSkip,
   onPrevious,
+  onBackHome,
 }: QuestionScreenProps) {
   const questionNumber = questionIndex + 1;
   const skipLimitReached = skippedCount >= maxSkippedCount && !isSkipped;
-  const promptDensity = question.text.length <= 28
-    ? 'standard'
-    : question.text.length <= 48
-      ? 'compact'
-      : 'dense';
 
   return (
     <ScreenLayout className="question-screen">
+      <button className="test-home-button" type="button" onClick={onBackHome}>
+        <span aria-hidden="true">←</span> 홈
+      </button>
+
       <header className="question-progress">
         <div className="question-progress__label">
           <span>마음의 흔적 찾는 중</span>
@@ -45,7 +46,7 @@ export function QuestionScreen({
       </header>
 
       <fieldset className="question-fieldset">
-        <legend className={`question-prompt question-prompt--${promptDensity}`}>
+        <legend className="question-prompt">
           <span className="question-number">Q{questionNumber}</span>
           <span className="question-title">{question.text}</span>
         </legend>

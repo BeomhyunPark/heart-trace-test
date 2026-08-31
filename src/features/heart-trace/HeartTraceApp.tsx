@@ -15,6 +15,11 @@ import { QuestionScreen } from './screens/QuestionScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { TieBreakerScreen } from './screens/TieBreakerScreen';
 import { getResultImageFilename, preloadResultImage } from './services/resultImage';
+import {
+  clearHeartTraceSession,
+  loadHeartTraceSession,
+  saveHeartTraceSession,
+} from './services/sessionStorage';
 import { createInitialTestState, testReducer } from './state/testReducer';
 import { RESULT_REVEAL_DELAY_MS } from './state/timing';
 
@@ -30,6 +35,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
   );
   const [introStep, setIntroStep] = useState<'intro' | 'guide'>('intro');
   const [revealedResult, setRevealedResult] = useState<ResultTypeId | null>(null);
+  const [savedSession, setSavedSession] = useState(() => loadHeartTraceSession());
 
   useLayoutEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -37,10 +43,40 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
   }, [introStep, revealedResult, state.currentQuestionIndex, state.phase]);
 
   const handleRestart = () => {
+    clearHeartTraceSession();
+    setSavedSession(null);
     setIntroStep('intro');
     setRevealedResult(null);
     dispatch({ type: 'RESTART' });
   };
+
+  const handleStart = () => {
+    clearHeartTraceSession();
+    setSavedSession(null);
+    dispatch({ type: 'START' });
+  };
+
+  const handleBackHome = () => {
+    if (state.phase === 'question' || state.phase === 'tie-breaker') {
+      saveHeartTraceSession(state);
+      setSavedSession(state);
+    }
+
+    onBackHome();
+  };
+
+  useEffect(() => {
+    if (state.phase === 'question' || state.phase === 'tie-breaker') {
+      saveHeartTraceSession(state);
+      setSavedSession(state);
+      return;
+    }
+
+    if (state.phase === 'result') {
+      clearHeartTraceSession();
+      setSavedSession(null);
+    }
+  }, [state]);
 
   useEffect(() => {
     if (state.phase !== 'result' || state.result === null) {
@@ -75,7 +111,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
     if (introStep === 'guide') {
       return (
         <GuideScreen
-          onStart={() => dispatch({ type: 'START' })}
+          onStart={handleStart}
           onBackHome={onBackHome}
         />
       );
@@ -85,6 +121,17 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
       <IntroScreen
         onContinue={() => setIntroStep('guide')}
         onBackHome={onBackHome}
+        savedAnswerCount={savedSession ? Object.keys(savedSession.answers).length : 0}
+        savedQuestionNumber={savedSession ? savedSession.currentQuestionIndex + 1 : null}
+        onResume={() => {
+          if (savedSession) {
+            dispatch({ type: 'RESTORE', state: savedSession });
+          }
+        }}
+        onClearSaved={() => {
+          clearHeartTraceSession();
+          setSavedSession(null);
+        }}
       />
     );
   }
@@ -103,6 +150,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
         isSkipped={currentAnswer?.kind === 'skipped'}
         skippedCount={countSkippedAnswers(state.answers)}
         maxSkippedCount={MAX_SKIPPED_ANSWERS}
+        onBackHome={handleBackHome}
         onAnswer={(optionId) => dispatch({
           type: 'ANSWER',
           questionId: question.id,
@@ -125,6 +173,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
         <TieBreakerScreen
           question={tieBreakerQuestion}
           questionNumber={QUESTIONS.length + 1}
+          onBackHome={handleBackHome}
           onSelect={(answer) => dispatch({ type: 'SELECT_TIE_BREAKER', answer })}
           onPrevious={() => dispatch({ type: 'PREVIOUS' })}
         />
@@ -150,6 +199,17 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
     <IntroScreen
       onContinue={() => setIntroStep('guide')}
       onBackHome={onBackHome}
+      savedAnswerCount={savedSession ? Object.keys(savedSession.answers).length : 0}
+      savedQuestionNumber={savedSession ? savedSession.currentQuestionIndex + 1 : null}
+      onResume={() => {
+        if (savedSession) {
+          dispatch({ type: 'RESTORE', state: savedSession });
+        }
+      }}
+      onClearSaved={() => {
+        clearHeartTraceSession();
+        setSavedSession(null);
+      }}
     />
   );
 }

@@ -54,10 +54,6 @@
     padding-inline: 0.75rem;
   }
 
-  .answer-option__text {
-    font-size: 0.875rem;
-  }
-
   .soul-orb {
     width: min(19rem, 100%);
   }
@@ -371,20 +367,6 @@
   .question-prompt,
   .tie-screen__header {
     min-height: 6rem;
-  }
-
-  .question-prompt--dense {
-    min-height: 0;
-  }
-
-  .question-prompt--dense .question-number,
-  .question-prompt--dense .question-title {
-    font-size: 1rem;
-    line-height: 1.375rem;
-  }
-
-  .question-helper {
-    margin-block: 0.5rem;
   }
 
   .answer-list {

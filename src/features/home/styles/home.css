@@ -280,6 +280,25 @@
   transform: none;
 }
 
+.featured-activity--balance-game .activity-card--featured {
+  border-color: #ff9db6;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 201, 143, 0.3), transparent 32%),
+    linear-gradient(145deg, #552d4d 0%, #44263f 52%, #302033 100%);
+  box-shadow: 0 0.125rem 1.25rem rgba(244, 143, 170, 0.16),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.28);
+}
+
+.featured-activity--balance-game:hover .activity-card--featured {
+  border-color: #ffadc2;
+  box-shadow: 0 0.125rem 1.375rem rgba(244, 143, 170, 0.18),
+    0 0.875rem 1.875rem -0.5rem rgba(0, 0, 0, 0.32);
+}
+
+.featured-activity--balance-game .activity-card__kind {
+  color: #ffadc2;
+}
+
 .featured-activity:hover .activity-card--featured {
   border-color: #c8b8ff;
   box-shadow: 0 0.125rem 1.375rem rgba(255, 140, 104, 0.13),
@@ -348,6 +367,36 @@
   border-color: var(--ongi-rose-400);
 }
 
+.activity-grid .activity-card--available {
+  border: 1px solid var(--ongi-rose-400);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.activity-grid .activity-card--available:hover {
+  box-shadow: 0 0 1.75rem rgba(244, 143, 170, 0.2),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.3);
+  transform: translateY(-0.2rem);
+}
+
+.activity-grid .activity-card--heart-trace.activity-card--available {
+  border-color: #79c8f2;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(85, 221, 242, 0.14), transparent 34%),
+    radial-gradient(circle at 8% 92%, rgba(180, 160, 255, 0.12), transparent 38%),
+    linear-gradient(150deg, #3b273f 0%, #35243d 58%, #2e2136 100%);
+  box-shadow: 0 0.125rem 1.125rem rgba(85, 221, 242, 0.1),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.26);
+}
+
+.activity-grid .activity-card--heart-trace.activity-card--available:hover {
+  border-color: #a7e8f3;
+  box-shadow: 0 0 1.75rem rgba(85, 221, 242, 0.2),
+    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.32);
+}
+
 .activity-grid .activity-card--ideal-world-cup {
   border-color: #79c8f2;
 }
@@ -386,6 +435,16 @@
   background: var(--ongi-rose-400);
 }
 
+.activity-card--heart-trace .activity-card__mini-visual {
+  background: linear-gradient(145deg, #55ddf2, #9c8df2);
+  color: #17253f;
+}
+
+.activity-card--heart-trace .activity-card__topline,
+.activity-card--heart-trace .activity-card__action {
+  color: #9fe7f2;
+}
+
 .activity-card--ideal-world-cup .activity-card__mini-visual {
   background: #79c8f2;
 }
@@ -414,6 +473,17 @@
   word-break: keep-all;
 }
 
+.activity-grid .activity-card__action {
+  margin-top: auto;
+  color: var(--ongi-apricot-300);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.activity-grid .activity-card--available small {
+  display: none;
+}
+
 .home-footer {
   gap: 0.5rem;
   margin-top: 1.75rem;
@@ -436,8 +506,23 @@
 }
 
 .home-footer .creator-contact {
+  position: static;
   display: block;
   margin-top: 0;
+}
+
+.home-footer__actions {
+  position: relative;
+  min-height: 2.75rem;
+  align-items: center;
+}
+
+.home-footer__actions .creator-contact[open] {
+  flex: none;
+}
+
+.home-footer__actions .creator-contact[open] summary {
+  margin-left: 0;
 }
 
 .home-footer .creator-contact summary {
@@ -457,9 +542,17 @@
 }
 
 .home-footer .creator-contact__links {
+  position: absolute;
+  z-index: 10;
+  right: auto;
+  bottom: calc(100% + 0.75rem);
+  left: 50%;
+  width: min(20rem, 100%);
+  margin-top: 0;
   border-color: #4b2b4f;
   background: var(--ongi-ink-900);
   box-shadow: 0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.32);
+  transform: translateX(-50%);
 }
 
 .home-footer .creator-contact__links a {

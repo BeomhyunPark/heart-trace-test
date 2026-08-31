@@ -8,7 +8,7 @@ export type Activity = {
   title: string;
   description: string;
   meta: string;
-  badge: string;
+  badge?: string;
   available: boolean;
   featured?: boolean;
 };
@@ -20,18 +20,17 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '마음속 흔적 찾기',
     description: '내 마음과 가장 닮은 흔적이는 누구일까요?',
     meta: '약 4분 · 20문항 · 5가지 결과',
-    badge: 'NEW',
     available: true,
-    featured: true,
   },
   {
     id: 'balance-game',
     kind: 'VS 놀이',
     title: '극과 극 밸런스 게임',
     description: '어려운 선택일수록 더 재미있는 우리 이야기',
-    meta: '같이 하면 더 재밌어요',
-    badge: 'SOON',
-    available: false,
+    meta: '가볍게 · 직접 선택 · 8문항',
+    badge: 'NEW',
+    available: true,
+    featured: true,
   },
   {
     id: 'ideal-world-cup',

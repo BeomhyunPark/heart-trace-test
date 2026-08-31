@@ -176,6 +176,7 @@ export function IntroScreen({ onContinue, onBackHome }: IntroScreenProps) {
         )}
       </div>
       <p className="intro-screen__meta">약 4분 · 20문항 · 5유형</p>
+      <p className="intro-screen__credit">창작자 · 최유민 · 박은성 · 박범현</p>
     </ScreenLayout>
   );
 }

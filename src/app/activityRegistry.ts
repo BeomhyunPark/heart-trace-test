@@ -18,12 +18,23 @@ const loadHeartTraceApp = async () => {
   return { default: module.HeartTraceApp };
 };
 const HeartTraceApp = lazy(loadHeartTraceApp);
+const loadBalanceGameApp = async () => {
+  const module = await import('../features/balance-game/BalanceGameApp');
+
+  return { default: module.BalanceGameApp };
+};
+const BalanceGameApp = lazy(loadBalanceGameApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
     id: 'heart-trace',
     Component: HeartTraceApp,
     preload: loadHeartTraceApp,
+  },
+  'balance-game': {
+    id: 'balance-game',
+    Component: BalanceGameApp,
+    preload: loadBalanceGameApp,
   },
 };
 

@@ -365,12 +365,22 @@
   }
 
   .question-fieldset {
-    margin-top: 0.5rem;
+    margin-top: 0.625rem;
   }
 
   .question-prompt,
   .tie-screen__header {
     min-height: 6rem;
+  }
+
+  .question-prompt--dense {
+    min-height: 0;
+  }
+
+  .question-prompt--dense .question-number,
+  .question-prompt--dense .question-title {
+    font-size: 1rem;
+    line-height: 1.375rem;
   }
 
   .question-helper {
@@ -379,6 +389,7 @@
 
   .answer-list {
     gap: 0.5rem;
+    margin-top: 0.625rem;
   }
 
   .answer-option {
@@ -386,14 +397,12 @@
     padding-block: 0.5rem;
   }
 
-  .question-skip {
-    gap: 0.25rem;
-    margin-top: 0.75rem;
+  .question-actions {
+    padding-top: 0.875rem;
   }
 
   .previous-button {
-    min-height: 2.75rem;
-    margin-top: 1rem;
+    min-height: 2.625rem;
   }
 
   .loading-screen .screen-layout__content {

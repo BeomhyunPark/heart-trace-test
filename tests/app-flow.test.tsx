@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -38,7 +38,7 @@ async function renderHeartTraceApp() {
   const rendered = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
   expect(screen.queryByLabelText('온기 앱을 여는 중')).toBeNull();
-  await screen.findByRole('heading', { name: '마음속 흔적 찾기' });
+  await screen.findByRole('heading', { name: '마음속 흔적 찾기', level: 1 });
   return rendered;
 }
 
@@ -106,9 +106,19 @@ describe('앱 화면 흐름과 접근성', () => {
 
     expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
     expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: '극과 극 밸런스 게임' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' })).toBeTruthy();
+    expect(screen.getByText(/VS 놀이 · NEW/)).toBeTruthy();
+    expect(screen.queryByText(/성격검사 · NEW/)).toBeNull();
+    expect(
+      screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent,
+    ).toContain('극과 극 밸런스 게임');
     expect(screen.getByRole('heading', { name: '우리끼리 최애 월드컵' })).toBeTruthy();
-    expect(screen.getAllByText('SOON')).toHaveLength(2);
+    expect(screen.getAllByText('SOON')).toHaveLength(1);
+    const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
+    expect(featuredSection).not.toBeNull();
+    expect(within(featuredSection as HTMLElement).getByRole('button', {
+      name: '극과 극 밸런스 게임',
+    })).toBeTruthy();
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
     expect(screen.getByRole('link', { name: /YouTube/ }).getAttribute('href')).toBe(
@@ -126,10 +136,21 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
-    expect(await screen.findByRole('heading', { name: '마음속 흔적 찾기' })).toBeTruthy();
+    expect(await screen.findByRole('heading', {
+      name: '마음속 흔적 찾기',
+      level: 1,
+    })).toBeTruthy();
+    expect(screen.getByText('창작자 · 최유민 · 박은성 · 박범현')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '홈' }));
     expect(screen.getByRole('heading', { name: '우리 사이에 온기를' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: '극과 극 밸런스 게임' }));
+    expect(await screen.findByRole('heading', {
+      name: '극과 극 밸런스 게임',
+      level: 1,
+    })).toBeTruthy();
+    expect(await getAccessibilityViolations(container)).toEqual([]);
   });
 
   it('결과 로딩 진행률과 분석 단계가 시간에 따라 실제로 바뀐다', async () => {
@@ -335,17 +356,14 @@ describe('앱 화면 흐름과 접근성', () => {
     await renderHeartTraceApp();
     startQuestionFlow();
 
-    expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', {
-      name: '딱 맞는 답이 없어요 · 건너뛰기',
-    }));
+    fireEvent.click(screen.getByRole('button', { name: '건너뛰기 (0/3)' }));
 
     expect(screen.getByText('Q2')).toBeTruthy();
-    expect(screen.getByText('건너뛰기 1 / 3')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '건너뛰기 (1/3)' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '이전' }));
     const skippedButton = screen.getByRole('button', {
-      name: '건너뛴 문항이에요 · 다음으로',
+      name: '건너뛰기 (1/3)',
     });
     expect(skippedButton.getAttribute('aria-pressed')).toBe('true');
     expect(
@@ -353,22 +371,22 @@ describe('앱 화면 흐름과 접근성', () => {
     ).toBe(true);
 
     answerWithOptionId(0, 'A');
-    expect(screen.getByText('건너뛰기 0 / 3')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '건너뛰기 (0/3)' })).toBeTruthy();
 
-    for (const questionNumber of [3, 4, 5]) {
+    for (const [skippedCount, questionNumber] of [3, 4, 5].entries()) {
       fireEvent.click(screen.getByRole('button', {
-        name: '딱 맞는 답이 없어요 · 건너뛰기',
+        name: `건너뛰기 (${skippedCount}/3)`,
       }));
       expect(screen.getByText(`Q${questionNumber}`)).toBeTruthy();
     }
 
-    expect(screen.getByText('건너뛰기 3 / 3')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '건너뛰기 (3/3)' })).toBeTruthy();
     expect(screen.getByRole('status').textContent).toBe(
-      '정확한 결과를 위해 이번 문항은 가장 가까운 답을 선택해 주세요.',
+      '건너뛰기를 모두 사용했어요.가장 가까운 답을 선택해 주세요.',
     );
 
     const blockedButton = screen.getByRole('button', {
-      name: '딱 맞는 답이 없어요 · 건너뛰기',
+      name: '건너뛰기 (3/3)',
     }) as HTMLButtonElement;
     expect(blockedButton.disabled).toBe(true);
     fireEvent.click(blockedButton);

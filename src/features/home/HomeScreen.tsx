@@ -9,14 +9,14 @@ type HomeScreenProps = {
 };
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
-  'heart-trace': '',
+  'heart-trace': '✦',
   'balance-game': 'VS',
   'ideal-world-cup': '★',
 };
 
 export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
   const featuredActivity = ACTIVITIES.find((activity) => activity.featured);
-  const upcomingActivities = ACTIVITIES.filter((activity) => !activity.featured);
+  const otherActivities = ACTIVITIES.filter((activity) => !activity.featured);
 
   if (!featuredActivity) {
     return null;
@@ -56,7 +56,7 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
         <h2 id="featured-title">추천 콘텐츠</h2>
 
         <button
-          className="featured-activity"
+          className={`featured-activity featured-activity--${featuredActivity.id}`}
           type="button"
           aria-label={featuredActivity.title}
           disabled={!featuredActivity.available}
@@ -64,11 +64,12 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
         >
           <span className="activity-card activity-card--featured">
             <span className="activity-card__kind">
-              {featuredActivity.kind} · {featuredActivity.badge}
+              {featuredActivity.kind}
+              {featuredActivity.badge ? ` · ${featuredActivity.badge}` : null}
             </span>
-            <strong>마음의 흔적</strong>
+            <strong>{featuredActivity.title}</strong>
             <span className="activity-card__description">
-              내 마음과 가장 닮은 흔적이는<br />누구일까요?
+              {featuredActivity.description}
             </span>
             <small>{featuredActivity.meta}</small>
           </span>
@@ -76,27 +77,51 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
         </button>
       </section>
 
-      <section className="home-section home-section--upcoming" aria-labelledby="upcoming-title">
+      <section className="home-section home-section--upcoming" aria-labelledby="more-title">
         <div className="home-section__meta">
-          <p>하나씩 채워갈게요</p>
+          <p>취향대로 골라봐요</p>
           <span aria-hidden="true">02</span>
         </div>
-        <h2 id="upcoming-title">다음 놀거리</h2>
+        <h2 id="more-title">다른 놀거리</h2>
 
         <div className="activity-grid">
-          {upcomingActivities.map((activity) => (
-            <article className={`activity-card activity-card--${activity.id}`} key={activity.id}>
+          {otherActivities.map((activity) => {
+            const content = (
+              <>
               <div className="activity-card__topline">
                 <span className="activity-card__kind">{activity.kind}</span>
-                <span>{activity.badge}</span>
+                {activity.badge ? <span>{activity.badge}</span> : null}
               </div>
               <span className="activity-card__mini-visual" aria-hidden="true">
                 {ACTIVITY_MARKS[activity.id]}
               </span>
               <h3>{activity.title}</h3>
               <p>{activity.description}</p>
-            </article>
-          ))}
+              <small>{activity.meta}</small>
+              {activity.available ? <b className="activity-card__action">시작하기 →</b> : null}
+              </>
+            );
+
+            if (activity.available) {
+              return (
+                <button
+                  className={`activity-card activity-card--${activity.id} activity-card--available`}
+                  type="button"
+                  aria-label={activity.title}
+                  onClick={() => onSelectActivity(activity.id)}
+                  key={activity.id}
+                >
+                  {content}
+                </button>
+              );
+            }
+
+            return (
+              <article className={`activity-card activity-card--${activity.id}`} key={activity.id}>
+                {content}
+              </article>
+            );
+          })}
         </div>
       </section>
 

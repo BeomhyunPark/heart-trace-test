@@ -3,7 +3,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { InstallAppPrompt } from '../src/components/InstallAppPrompt';
+import { InstallAppPrompt } from '../src/features/home/components/InstallAppPrompt';
 
 function mockDevice(userAgent: string, platform: string, maxTouchPoints = 0) {
   vi.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue(userAgent);

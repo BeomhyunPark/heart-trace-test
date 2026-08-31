@@ -1,5 +1,5 @@
+import { assetUrl } from '../../../utils/assetUrl';
 import type { ResultType, ResultTypeId } from '../domain/types';
-import { assetUrl } from '../utils/assetUrl';
 
 export const RESULT_TYPES = {
   bear: {

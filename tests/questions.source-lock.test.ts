@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
 
-import { QUESTIONS, QUESTION_SOURCE } from '../src/data/questions';
+import { QUESTIONS, QUESTION_SOURCE } from '../src/features/heart-trace/data/questions';
 
 const VERIFIED_GOOGLE_DOCS_SOURCE = {
   title: '26여수 아이스브레이킹',

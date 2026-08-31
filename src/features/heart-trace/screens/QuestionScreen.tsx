@@ -1,6 +1,6 @@
-import { AnswerOption } from '../components/AnswerOption';
-import { ProgressBar } from '../components/ProgressBar';
-import { ScreenLayout } from '../components/ScreenLayout';
+import { AnswerOption } from '../../../components/AnswerOption';
+import { ProgressBar } from '../../../components/ProgressBar';
+import { ScreenLayout } from '../../../components/ScreenLayout';
 import { TEST_QUESTION_COUNT, type ChoiceId, type Question } from '../domain/types';
 
 type QuestionScreenProps = {

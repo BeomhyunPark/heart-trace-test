@@ -5,9 +5,9 @@ import {
   type UIEvent,
 } from 'react';
 
-import { PrimaryButton } from '../components/PrimaryButton';
-import { ScreenLayout } from '../components/ScreenLayout';
-import { StartSoulOrb } from '../components/StartSoulOrb';
+import { PrimaryButton } from '../../../components/PrimaryButton';
+import { ScreenLayout } from '../../../components/ScreenLayout';
+import { StartSoulOrb } from '../../../components/StartSoulOrb';
 
 type IntroScreenProps = {
   onContinue: () => void;

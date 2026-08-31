@@ -5,7 +5,7 @@ import {
   TIE_BREAKER_PROMPT,
   createTieBreakerQuestion,
   resolveTie,
-} from '../src/domain/tieBreaker';
+} from '../src/features/heart-trace/domain/tieBreaker';
 
 describe('동점 추가 질문', () => {
   it('동점인 유형만 이름 선택지로 만든다', () => {

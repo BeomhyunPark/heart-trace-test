@@ -3,13 +3,13 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { RESULT_TYPES } from '../src/data/resultTypes';
-import { RESULT_TYPE_IDS } from '../src/domain/types';
+import { RESULT_TYPES } from '../src/features/heart-trace/data/resultTypes';
+import { RESULT_TYPE_IDS } from '../src/features/heart-trace/domain/types';
 import {
   getResultImageFilename,
   isAndroidDevice,
   isIosLikeDevice,
-} from '../src/utils/resultImage';
+} from '../src/features/heart-trace/services/resultImage';
 
 describe('결과 이미지', () => {
   it('시작 Soul Orb의 6개 Phase가 같은 캔버스 크기와 서로 다른 이미지로 구성된다', () => {

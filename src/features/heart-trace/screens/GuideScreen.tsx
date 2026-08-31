@@ -1,5 +1,5 @@
-import { PrimaryButton } from '../components/PrimaryButton';
-import { ScreenLayout } from '../components/ScreenLayout';
+import { PrimaryButton } from '../../../components/PrimaryButton';
+import { ScreenLayout } from '../../../components/ScreenLayout';
 
 type GuideScreenProps = {
   onStart: () => void;

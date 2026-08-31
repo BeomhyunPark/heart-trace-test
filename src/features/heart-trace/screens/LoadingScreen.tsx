@@ -1,9 +1,9 @@
 import { type CSSProperties, useEffect, useState } from 'react';
 
-import { LOADING_SEQUENCE_DURATION_MS } from '../app/timing';
-import { ProgressBar } from '../components/ProgressBar';
-import { ScreenLayout } from '../components/ScreenLayout';
-import { assetUrl } from '../utils/assetUrl';
+import { ProgressBar } from '../../../components/ProgressBar';
+import { ScreenLayout } from '../../../components/ScreenLayout';
+import { assetUrl } from '../../../utils/assetUrl';
+import { LOADING_SEQUENCE_DURATION_MS } from '../state/timing';
 
 const HATCH_STAGE_THRESHOLDS = [0, 25.74, 47.19, 64.35, 78.078, 88.374, 95.667, 100] as const;
 const HATCH_IMAGES = Array.from(

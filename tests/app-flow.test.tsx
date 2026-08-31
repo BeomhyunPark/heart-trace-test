@@ -6,16 +6,16 @@ import axe from 'axe-core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '../src/app/App';
-import { RESULT_REVEAL_DELAY_MS } from '../src/app/timing';
-import { QUESTIONS } from '../src/data/questions';
-import { RESULT_TYPES } from '../src/data/resultTypes';
-import { TIE_BREAKER_OPTION_LABELS } from '../src/domain/tieBreaker';
+import { QUESTIONS } from '../src/features/heart-trace/data/questions';
+import { RESULT_TYPES } from '../src/features/heart-trace/data/resultTypes';
+import { TIE_BREAKER_OPTION_LABELS } from '../src/features/heart-trace/domain/tieBreaker';
 import {
   RESULT_TYPE_IDS,
   type ChoiceId,
   type ResultTypeId,
-} from '../src/domain/types';
-import { LoadingScreen } from '../src/screens/LoadingScreen';
+} from '../src/features/heart-trace/domain/types';
+import { LoadingScreen } from '../src/features/heart-trace/screens/LoadingScreen';
+import { RESULT_REVEAL_DELAY_MS } from '../src/features/heart-trace/state/timing';
 
 const INTRO_START_BUTTON_NAME = '나와 닮은 흔적이를 찾아볼까요?';
 const HEART_TRACE_CARD_NAME = /마음속 흔적 찾기/;

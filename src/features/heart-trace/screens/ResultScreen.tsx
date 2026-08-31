@@ -7,7 +7,7 @@ import {
   loadResultImageFile,
   saveResultImageFile,
   type ResultImageAction,
-} from '../utils/resultImage';
+} from '../services/resultImage';
 
 type ResultScreenProps = {
   resultId: ResultTypeId;

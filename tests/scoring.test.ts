@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { QUESTIONS } from '../src/data/questions';
+import { QUESTIONS } from '../src/features/heart-trace/data/questions';
 import {
   calculateResult,
   calculateScores,
   findTopResultTypes,
-} from '../src/domain/scoring';
+} from '../src/features/heart-trace/domain/scoring';
 import {
   RESULT_TYPE_IDS,
   type Answers,
   type ChoiceId,
   type ResultTypeId,
-} from '../src/domain/types';
+} from '../src/features/heart-trace/domain/types';
 
 function selectAnswer(
   answers: Readonly<Answers>,

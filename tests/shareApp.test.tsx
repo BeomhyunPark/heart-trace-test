@@ -3,7 +3,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ShareApp } from '../src/components/ShareApp';
+import { ShareApp } from '../src/features/home/components/ShareApp';
 
 beforeEach(() => {
   const canonical = document.createElement('link');

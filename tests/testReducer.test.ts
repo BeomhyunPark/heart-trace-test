@@ -4,18 +4,18 @@ import {
   createInitialTestState,
   testReducer,
   type TestState,
-} from '../src/app/testReducer';
-import { QUESTIONS } from '../src/data/questions';
+} from '../src/features/heart-trace/state/testReducer';
+import { QUESTIONS } from '../src/features/heart-trace/data/questions';
 import {
   MAX_SKIPPED_ANSWERS,
   countSkippedAnswers,
-} from '../src/domain/answers';
-import { calculateScores } from '../src/domain/scoring';
+} from '../src/features/heart-trace/domain/answers';
+import { calculateScores } from '../src/features/heart-trace/domain/scoring';
 import {
   RESULT_TYPE_IDS,
   type ChoiceId,
   type ResultTypeId,
-} from '../src/domain/types';
+} from '../src/features/heart-trace/domain/types';
 
 function startTest(): TestState {
   return testReducer(createInitialTestState(), { type: 'START' });

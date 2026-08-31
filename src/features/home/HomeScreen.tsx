@@ -1,8 +1,8 @@
-import { ACTIVITIES, type ActivityId } from '../data/activities';
-import { BrandMark } from '../components/BrandMark';
-import { InstallAppPrompt } from '../components/InstallAppPrompt';
-import { ScreenLayout } from '../components/ScreenLayout';
-import { ShareApp } from '../components/ShareApp';
+import { ACTIVITIES, type ActivityId } from '../../app/activityCatalog';
+import { BrandMark } from '../../components/BrandMark';
+import { ScreenLayout } from '../../components/ScreenLayout';
+import { InstallAppPrompt } from './components/InstallAppPrompt';
+import { ShareApp } from './components/ShareApp';
 
 type HomeScreenProps = {
   onSelectActivity: (activityId: ActivityId) => void;

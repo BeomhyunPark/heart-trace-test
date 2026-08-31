@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { saveResultImageFile } from '../src/utils/resultImage';
+import { saveResultImageFile } from '../src/features/heart-trace/services/resultImage';
 
 afterEach(() => {
   vi.restoreAllMocks();

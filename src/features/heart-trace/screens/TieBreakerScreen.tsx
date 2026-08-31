@@ -1,6 +1,6 @@
-import { AnswerOption } from '../components/AnswerOption';
-import { ProgressBar } from '../components/ProgressBar';
-import { ScreenLayout } from '../components/ScreenLayout';
+import { AnswerOption } from '../../../components/AnswerOption';
+import { ProgressBar } from '../../../components/ProgressBar';
+import { ScreenLayout } from '../../../components/ScreenLayout';
 import type { TieBreakerQuestion } from '../domain/tieBreaker';
 import { ANSWER_OPTION_IDS, type ResultTypeId } from '../domain/types';
 

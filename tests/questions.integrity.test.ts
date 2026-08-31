@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { QUESTIONS } from '../src/data/questions';
-import { calculateResult } from '../src/domain/scoring';
+import { QUESTIONS } from '../src/features/heart-trace/data/questions';
+import { calculateResult } from '../src/features/heart-trace/domain/scoring';
 import {
   ANSWER_OPTION_IDS,
   RESULT_TYPE_IDS,
   TEST_QUESTION_COUNT,
   type Answers,
   type ResultTypeId,
-} from '../src/domain/types';
+} from '../src/features/heart-trace/domain/types';
 
 const EXPECTED_MAPPINGS: readonly (readonly ResultTypeId[])[] = [
   ['bear', 'spring', 'effort', 'pause', 'express'],

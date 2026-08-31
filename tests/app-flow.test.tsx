@@ -37,6 +37,7 @@ function startQuestionFlow() {
 async function renderHeartTraceApp() {
   const rendered = render(<App />);
   fireEvent.click(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }));
+  expect(screen.queryByLabelText('온기 앱을 여는 중')).toBeNull();
   await screen.findByRole('heading', { name: '마음속 흔적 찾기' });
   return rendered;
 }

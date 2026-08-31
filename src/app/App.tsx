@@ -3,11 +3,15 @@ import { Suspense, useEffect, useState } from 'react';
 import { HomeScreen } from '../features/home/HomeScreen';
 import type { ActivityId } from './activityCatalog';
 import { SplashScreen } from './SplashScreen';
-import { getActivityDefinition } from './activityRegistry';
+import { getActivityDefinition, preloadActivity } from './activityRegistry';
 
 export function App() {
   const [showSplash, setShowSplash] = useState(import.meta.env.MODE !== 'test');
   const [activeActivityId, setActiveActivityId] = useState<ActivityId | null>(null);
+
+  useEffect(() => {
+    void preloadActivity('heart-trace');
+  }, []);
 
   useEffect(() => {
     if (!showSplash) {
@@ -36,7 +40,7 @@ export function App() {
   const ActivityApp = activity.Component;
 
   return (
-    <Suspense fallback={<SplashScreen />}>
+    <Suspense fallback={<HomeScreen onSelectActivity={setActiveActivityId} />}>
       <ActivityApp onBackHome={() => setActiveActivityId(null)} />
     </Suspense>
   );

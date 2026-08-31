@@ -3,8 +3,16 @@ import { useMemo, useState } from 'react';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProgressBar } from '../../components/ProgressBar';
 import { ScreenLayout } from '../../components/ScreenLayout';
-import { BALANCE_GAME_QUESTIONS, CURATED_LIGHT_QUESTION_IDS } from './data/questions';
-import type { BalanceGameCategory, BalanceGameQuestion } from './domain/types';
+import {
+  BALANCE_GAME_QUESTIONS,
+  CURATED_DEEP_QUESTION_IDS,
+  CURATED_LIGHT_QUESTION_IDS,
+} from './data/questions';
+import type {
+  BalanceGameCategory,
+  BalanceGameQuestion,
+  BalanceGameWeight,
+} from './domain/types';
 import './styles/balance-game.css';
 
 type BalanceGameAppProps = {
@@ -19,29 +27,47 @@ const CATEGORY_LABELS: Record<BalanceGameCategory, string> = {
   faith: '교회 · 신앙',
 };
 
-const CURATED_QUESTIONS = CURATED_LIGHT_QUESTION_IDS.map((questionId) => {
-  const question = BALANCE_GAME_QUESTIONS.find((candidate) => candidate.id === questionId);
+const FILTER_LABELS: Record<BalanceGameWeight, Record<BalanceGameCategory, string>> = {
+  light: CATEGORY_LABELS,
+  deep: {
+    daily: '일상 · 관계',
+    faith: '신앙 · 공동체',
+  },
+};
 
-  if (!question) {
-    throw new Error(`추천 질문을 찾을 수 없습니다: ${questionId}`);
-  }
+function getQuestions(questionIds: readonly string[]) {
+  return questionIds.map((questionId) => {
+    const question = BALANCE_GAME_QUESTIONS.find((candidate) => candidate.id === questionId);
 
-  return question;
-});
+    if (!question) {
+      throw new Error(`추천 질문을 찾을 수 없습니다: ${questionId}`);
+    }
+
+    return question;
+  });
+}
+
+const CURATED_QUESTIONS: Record<BalanceGameWeight, readonly BalanceGameQuestion[]> = {
+  light: getQuestions(CURATED_LIGHT_QUESTION_IDS),
+  deep: getQuestions(CURATED_DEEP_QUESTION_IDS),
+};
 
 export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   const [phase, setPhase] = useState<Phase>('setup');
+  const [weight, setWeight] = useState<BalanceGameWeight>('light');
   const [filter, setFilter] = useState<QuestionFilter>('all');
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<readonly string[]>([]);
+  const [playedQuestionIds, setPlayedQuestionIds] = useState<readonly string[]>([]);
   const [playQuestions, setPlayQuestions] = useState<readonly BalanceGameQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedSide, setSelectedSide] = useState<'left' | 'right' | null>(null);
 
-  const visibleQuestions = useMemo(
+  const visibleQuestions = useMemo<readonly BalanceGameQuestion[]>(
     () => BALANCE_GAME_QUESTIONS.filter(
-      (question) => filter === 'all' || question.category === filter,
+      (question) => question.weight === weight
+        && (filter === 'all' || question.category === filter),
     ),
-    [filter],
+    [filter, weight],
   );
 
   const startGame = (questions: readonly BalanceGameQuestion[]) => {
@@ -53,7 +79,9 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
 
   const startCustomGame = () => {
     const questions = BALANCE_GAME_QUESTIONS.filter(
-      (question) => selectedQuestionIds.includes(question.id),
+      (question) => question.weight === weight
+        && selectedQuestionIds.includes(question.id)
+        && !playedQuestionIds.includes(question.id),
     );
 
     if (questions.length > 0) {
@@ -72,9 +100,24 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
     setPhase('picker');
   };
 
+  const selectWeight = (nextWeight: BalanceGameWeight) => {
+    setWeight(nextWeight);
+    setFilter('all');
+    setSelectedQuestionIds([]);
+  };
+
+  const completeGame = () => {
+    setPlayedQuestionIds((current) => Array.from(new Set([
+      ...current,
+      ...playQuestions.map((question) => question.id),
+    ])));
+    setSelectedQuestionIds([]);
+    setPhase('complete');
+  };
+
   if (phase === 'setup') {
     return (
-      <ScreenLayout className="balance-game-screen balance-setup">
+      <ScreenLayout className={`balance-game-screen balance-game-screen--${weight} balance-setup balance-setup--${weight}`}>
         <button className="test-home-button" type="button" onClick={onBackHome}>
           <span aria-hidden="true">←</span> 홈
         </button>
@@ -89,15 +132,25 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
           <span className="balance-step">01</span>
           <h2 id="weight-title">오늘 대화의 온도</h2>
           <div className="balance-weight-grid">
-            <button className="balance-weight is-selected" type="button" aria-pressed="true">
+            <button
+              className={`balance-weight balance-weight--light${weight === 'light' ? ' is-selected' : ''}`}
+              type="button"
+              aria-pressed={weight === 'light'}
+              onClick={() => selectWeight('light')}
+            >
               <span aria-hidden="true">☀</span>
               <strong>가볍게</strong>
               <small>처음 만나도 편한 질문</small>
             </button>
-            <button className="balance-weight" type="button" disabled>
+            <button
+              className={`balance-weight balance-weight--deep${weight === 'deep' ? ' is-selected' : ''}`}
+              type="button"
+              aria-pressed={weight === 'deep'}
+              onClick={() => selectWeight('deep')}
+            >
               <span aria-hidden="true">☾</span>
               <strong>조금 깊게</strong>
-              <small>다음 업데이트에서 만나요</small>
+              <small>천천히 이유를 나누는 질문</small>
             </button>
           </div>
         </section>
@@ -106,14 +159,12 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
           <span className="balance-step">02</span>
           <h2 id="mode-title">질문을 고르는 방법</h2>
           <div className="balance-mode-list">
-            <button type="button" onClick={() => startGame(CURATED_QUESTIONS)}>
-              <span className="balance-mode__icon" aria-hidden="true">▶</span>
-              <span><strong>추천 흐름으로 시작</strong><small>가벼운 5문항을 자연스러운 순서로</small></span>
+            <button type="button" onClick={() => startGame(CURATED_QUESTIONS[weight])}>
+              <strong>추천 흐름으로 시작</strong>
               <b aria-hidden="true">→</b>
             </button>
             <button type="button" onClick={showPicker}>
-              <span className="balance-mode__icon" aria-hidden="true">✓</span>
-              <span><strong>직접 골라 담기</strong><small>리더가 모임에 맞는 질문만 선택</small></span>
+              <strong>직접 골라 담기</strong>
               <b aria-hidden="true">→</b>
             </button>
           </div>
@@ -126,7 +177,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   if (phase === 'picker') {
     return (
       <ScreenLayout
-        className="balance-game-screen balance-picker"
+        className={`balance-game-screen balance-game-screen--${weight} balance-picker`}
         footer={(
           <div className="balance-picker__footer">
             <p aria-label={`${selectedQuestionIds.length}개 선택`}><strong>{selectedQuestionIds.length}</strong>개 선택</p>
@@ -140,13 +191,13 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
           <span aria-hidden="true">←</span> 설정
         </button>
         <header className="balance-picker__header">
-          <p className="eyebrow">직접 골라 담기</p>
+          <p className="eyebrow">{weight === 'light' ? '가볍게' : '조금 깊게'} · 직접 골라 담기</p>
           <h1>오늘 나눌 질문</h1>
           <p>순서는 카테고리 안에서 부담 없이 이어지도록 정리해드려요.</p>
         </header>
 
         <div className="balance-filters" role="group" aria-label="질문 카테고리">
-          {([['all', '전체'], ['daily', '일상 · 성향'], ['faith', '교회 · 신앙']] as const)
+          {([['all', '전체'], ['daily', FILTER_LABELS[weight].daily], ['faith', FILTER_LABELS[weight].faith]] as const)
             .map(([id, label]) => (
               <button
                 className={filter === id ? 'is-active' : undefined}
@@ -163,15 +214,29 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         <div className="balance-question-list">
           {visibleQuestions.map((question) => {
             const isSelected = selectedQuestionIds.includes(question.id);
+            const isPlayed = playedQuestionIds.includes(question.id);
 
             return (
-              <label className={`balance-question-card${isSelected ? ' is-selected' : ''}`} key={question.id}>
-                <input type="checkbox" checked={isSelected} onChange={() => toggleQuestion(question.id)} />
+              <label
+                className={`balance-question-card${isSelected ? ' is-selected' : ''}${isPlayed ? ' is-played' : ''}`}
+                key={question.id}
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  disabled={isPlayed}
+                  onChange={() => toggleQuestion(question.id)}
+                />
                 <span className="balance-question-card__check" aria-hidden="true">✓</span>
                 <span className="balance-question-card__copy">
-                  <small>{CATEGORY_LABELS[question.category]}</small>
+                  <small>
+                    {question.topic ?? CATEGORY_LABELS[question.category]}
+                    {isPlayed ? ' · 이미 나눈 질문' : ''}
+                  </small>
                   <strong>{question.prompt}</strong>
-                  <span>{question.left} <b>VS</b> {question.right}</span>
+                  <span>
+                    {question.context ?? <>{question.left} <b>VS</b> {question.right}</>}
+                  </span>
                 </span>
               </label>
             );
@@ -183,7 +248,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
 
   if (phase === 'complete') {
     return (
-      <ScreenLayout className="balance-game-screen balance-complete">
+      <ScreenLayout className={`balance-game-screen balance-game-screen--${weight} balance-complete`}>
         <div className="balance-complete__mark" aria-hidden="true">✦</div>
         <p className="eyebrow">오늘의 밸런스 완료</p>
         <h1>{playQuestions.length}개의 선택,<br />서로 다른 이야기</h1>
@@ -200,7 +265,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   const isLastQuestion = currentQuestionIndex === playQuestions.length - 1;
 
   return (
-    <ScreenLayout className="balance-game-screen balance-play">
+    <ScreenLayout className={`balance-game-screen balance-game-screen--${question.weight} balance-play balance-play--${question.weight}`}>
       <button className="test-home-button" type="button" onClick={showPicker}>
         <span aria-hidden="true">←</span> 질문 선택
       </button>
@@ -211,9 +276,10 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
       </header>
 
       <section className="balance-play__question" aria-labelledby="balance-question-title">
-        <small>{CATEGORY_LABELS[question.category]}</small>
+        <small>{question.topic ?? CATEGORY_LABELS[question.category]}</small>
         <h1 id="balance-question-title">{question.prompt}</h1>
-        <p>하나를 고르고, 서로의 이유를 들어보세요.</p>
+        {question.context ? <p className="balance-play__context">{question.context}</p> : null}
+        <p className="balance-play__guide">하나를 고르고, 서로의 이유를 들어보세요.</p>
       </section>
 
       <div className="balance-choice-list" role="radiogroup" aria-label={question.prompt}>
@@ -226,25 +292,27 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         </button>
       </div>
 
-      <div className={`balance-talk-prompt${selectedSide ? ' is-visible' : ''}`} aria-live="polite">
-        {selectedSide ? '왜 이쪽을 골랐나요? 한 사람씩 이유를 나눠보세요.' : '먼저 각자 마음속으로 하나를 골라보세요.'}
-      </div>
+      <footer className="balance-play__footer">
+        <div className={`balance-talk-prompt${selectedSide ? ' is-visible' : ''}`} aria-live="polite">
+          {selectedSide ? '왜 이쪽을 골랐나요? 한 사람씩 이유를 나눠보세요.' : '먼저 각자 마음속으로 하나를 골라보세요.'}
+        </div>
 
-      <PrimaryButton
-        className="balance-play__next"
-        disabled={selectedSide === null}
-        onClick={() => {
-          if (isLastQuestion) {
-            setPhase('complete');
-            return;
-          }
+        <PrimaryButton
+          className="balance-play__next"
+          disabled={selectedSide === null}
+          onClick={() => {
+            if (isLastQuestion) {
+              completeGame();
+              return;
+            }
 
-          setCurrentQuestionIndex((index) => index + 1);
-          setSelectedSide(null);
-        }}
-      >
-        {isLastQuestion ? '마무리하기' : '다음 질문'}
-      </PrimaryButton>
+            setCurrentQuestionIndex((index) => index + 1);
+            setSelectedSide(null);
+          }}
+        >
+          {isLastQuestion ? '마무리하기' : '다음 질문'}
+        </PrimaryButton>
+      </footer>
     </ScreenLayout>
   );
 }

@@ -1,4 +1,5 @@
 import type { WorldCupCategory } from '../domain/types';
+import { TRAVEL_CANDIDATES } from './travel';
 
 export const WORLD_CUP_CATEGORIES = [
   {
@@ -45,6 +46,12 @@ export const WORLD_CUP_CATEGORIES = [
       'sundae', 'sushi', 'tacos', 'takoyaki',
       'tangsuyuk', 'tteokbokki', 'twigim', 'udon',
     ],
+  },
+  {
+    id: 'travel',
+    title: '여행지',
+    image: '/images/world-cup/categories/travel.webp',
+    candidateIds: TRAVEL_CANDIDATES.map((candidate) => candidate.id),
   },
 ] as const satisfies readonly WorldCupCategory[];
 

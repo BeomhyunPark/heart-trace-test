@@ -1,8 +1,8 @@
-import type { FoodCandidate } from '../domain/types';
+import type { WorldCupCandidate } from '../domain/types';
 
 const FOOD_IMAGE_ROOT = '/images/world-cup/food';
 
-function food(id: string, name: string): FoodCandidate {
+function food(id: string, name: string): WorldCupCandidate {
   return {
     id,
     name,
@@ -99,8 +99,4 @@ export const FOOD_CANDIDATES = [
   food('udon', '우동'),
   food('waffle', '와플'),
   food('yakgwa', '약과'),
-] as const satisfies readonly FoodCandidate[];
-
-export const FOOD_CANDIDATE_BY_ID = new Map(
-  FOOD_CANDIDATES.map((candidate) => [candidate.id, candidate]),
-);
+] as const satisfies readonly WorldCupCandidate[];

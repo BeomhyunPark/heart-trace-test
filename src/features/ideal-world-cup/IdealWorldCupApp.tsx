@@ -7,7 +7,10 @@ import {
   WORLD_CUP_CATEGORIES,
   WORLD_CUP_CATEGORY_BY_ID,
 } from './data/categories';
-import { FOOD_CANDIDATE_BY_ID, FOOD_CANDIDATES } from './data/foods';
+import {
+  WORLD_CUP_CANDIDATE_BY_ID,
+  WORLD_CUP_CANDIDATES,
+} from './data/candidates';
 import {
   chooseWinner,
   createTournament,
@@ -17,8 +20,8 @@ import {
   startNextRound,
 } from './domain/tournament';
 import type {
-  FoodCandidate,
   TournamentSize,
+  WorldCupCandidate,
   WorldCupCategory,
   WorldCupCategoryId,
   WorldCupSession,
@@ -34,10 +37,10 @@ type IdealWorldCupAppProps = {
   onBackHome: () => void;
 };
 
-const CANDIDATE_IDS = FOOD_CANDIDATES.map((candidate) => candidate.id);
+const CANDIDATE_IDS = WORLD_CUP_CANDIDATES.map((candidate) => candidate.id);
 const VALID_CANDIDATE_IDS = new Set(CANDIDATE_IDS);
 const VALID_CATEGORY_IDS = new Set(WORLD_CUP_CATEGORIES.map((category) => category.id));
-const SIZE_OPTIONS: readonly TournamentSize[] = [32, 16];
+const SIZE_OPTIONS: readonly TournamentSize[] = [64, 32, 16];
 
 const SIZE_COPY: Record<TournamentSize, string> = {
   64: '총 63번의 선택',
@@ -45,11 +48,11 @@ const SIZE_COPY: Record<TournamentSize, string> = {
   16: '총 15번의 선택',
 };
 
-function findCandidate(candidateId: string): FoodCandidate {
-  const candidate = FOOD_CANDIDATE_BY_ID.get(candidateId);
+function findCandidate(candidateId: string): WorldCupCandidate {
+  const candidate = WORLD_CUP_CANDIDATE_BY_ID.get(candidateId);
 
   if (!candidate) {
-    throw new Error(`음식 후보를 찾을 수 없습니다: ${candidateId}`);
+    throw new Error(`월드컵 후보를 찾을 수 없습니다: ${candidateId}`);
   }
 
   return candidate;
@@ -125,6 +128,10 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
   if (!activeSession) {
     const savedState = savedSession?.current;
     const savedCategory = savedSession ? findCategory(savedSession.categoryId) : null;
+    const selectedCategory = findCategory(selectedCategoryId);
+    const availableSizes = SIZE_OPTIONS.filter(
+      (size) => size <= selectedCategory.candidateIds.length,
+    );
 
     return (
       <ScreenLayout className="world-cup-screen world-cup-setup">
@@ -168,7 +175,12 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
                 className={`world-cup-topic-card${selectedCategoryId === category.id ? ' is-selected' : ''}`}
                 type="button"
                 aria-pressed={selectedCategoryId === category.id}
-                onClick={() => setSelectedCategoryId(category.id)}
+                onClick={() => {
+                  setSelectedCategoryId(category.id);
+                  if (selectedSize > category.candidateIds.length) {
+                    setSelectedSize(32);
+                  }
+                }}
                 key={category.id}
               >
                 <img src={category.image} alt="" />
@@ -185,7 +197,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           <span className="world-cup-step">02</span>
           <h2 id="size-title">몇 강부터 시작할까요?</h2>
           <div className="world-cup-size-options">
-            {SIZE_OPTIONS.map((size) => (
+            {availableSizes.map((size) => (
               <button
                 className={selectedSize === size ? 'is-selected' : undefined}
                 type="button"
@@ -205,7 +217,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           className="world-cup-start"
           onClick={() => startNewTournament(selectedCategoryId, selectedSize)}
         >
-          {findCategory(selectedCategoryId).title} {selectedSize}강 시작하기
+          {selectedCategory.title} {selectedSize}강 시작하기
         </PrimaryButton>
       </ScreenLayout>
     );

@@ -2,9 +2,9 @@ export const TOURNAMENT_SIZES = [16, 32, 64] as const;
 
 export type TournamentSize = (typeof TOURNAMENT_SIZES)[number];
 export type TournamentPhase = 'match' | 'round-complete' | 'champion';
-export type WorldCupCategoryId = 'meal' | 'dessert' | 'late-night';
+export type WorldCupCategoryId = 'meal' | 'dessert' | 'late-night' | 'travel';
 
-export type FoodCandidate = {
+export type WorldCupCandidate = {
   id: string;
   name: string;
   image: string;

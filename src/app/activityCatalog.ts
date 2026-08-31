@@ -10,7 +10,6 @@ export type Activity = {
   meta: string;
   badge?: string;
   available: boolean;
-  featured?: boolean;
 };
 
 export const ACTIVITIES: readonly Activity[] = [
@@ -28,6 +27,7 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '극과 극 밸런스 게임',
     description: '어려운 선택일수록 더 재미있는 우리 이야기',
     meta: '가볍게 · 직접 선택 · 8문항',
+    badge: 'NEW',
     available: true,
   },
   {
@@ -36,6 +36,7 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '최애 월드컵',
     description: '하나만 남을 때까지 이어지는 취향 토너먼트',
     meta: '한 끼 · 디저트 · 야식 · 32강',
+    badge: 'NEW',
     available: true,
   },
   {
@@ -46,6 +47,5 @@ export const ACTIVITIES: readonly Activity[] = [
     meta: '사다리 · 제비 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
     badge: 'NEW',
     available: true,
-    featured: true,
   },
 ] as const;

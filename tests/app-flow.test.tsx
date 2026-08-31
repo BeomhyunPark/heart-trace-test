@@ -110,17 +110,19 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '최애 월드컵' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '오늘은 누구?' })).toBeTruthy();
-    expect(screen.getByText(/모임 도구 · NEW/)).toBeTruthy();
-    expect(screen.queryByText(/성격검사 · NEW/)).toBeNull();
+    expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent).toContain('NEW');
+    expect(screen.getByRole('button', { name: '최애 월드컵' }).textContent).toContain('NEW');
+    expect(screen.getByRole('button', { name: '오늘은 누구?' }).textContent).toContain('NEW');
+    expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }).textContent).not.toContain('NEW');
     expect(screen.queryByText('SOON')).toBeNull();
     expect(
       screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent,
     ).toContain('극과 극 밸런스 게임');
     const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
     expect(featuredSection).not.toBeNull();
-    expect(within(featuredSection as HTMLElement).getByRole('button', {
-      name: '오늘은 누구?',
-    })).toBeTruthy();
+    expect(['극과 극 밸런스 게임', '최애 월드컵', '오늘은 누구?']).toContain(
+      within(featuredSection as HTMLElement).getByRole('button').getAttribute('aria-label'),
+    );
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
     fireEvent.click(screen.getByText('창작자에게 연락하기'));
     expect(screen.getByRole('link', { name: /YouTube/ }).getAttribute('href')).toBe(

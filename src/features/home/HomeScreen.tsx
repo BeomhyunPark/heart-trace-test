@@ -1,4 +1,6 @@
-import { ACTIVITIES, type ActivityId } from '../../app/activityCatalog';
+import { useState } from 'react';
+
+import { ACTIVITIES, type Activity, type ActivityId } from '../../app/activityCatalog';
 import { BrandMark } from '../../components/BrandMark';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
@@ -15,9 +17,34 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'group-picker': '?',
 };
 
+let previousFeaturedActivityId: ActivityId | null = null;
+
+export function pickFeaturedActivity(
+  activities: readonly Activity[],
+  previousActivityId: ActivityId | null,
+  random = Math.random,
+): Activity | null {
+  const newActivities = activities.filter((activity) => activity.available && activity.badge === 'NEW');
+  const candidates = newActivities.length > 1
+    ? newActivities.filter((activity) => activity.id !== previousActivityId)
+    : newActivities;
+  const fallbackCandidates = activities.filter((activity) => activity.available);
+  const pool = candidates.length > 0 ? candidates : fallbackCandidates;
+
+  if (pool.length === 0) {
+    return null;
+  }
+
+  return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))];
+}
+
 export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
-  const featuredActivity = ACTIVITIES.find((activity) => activity.featured);
-  const otherActivities = ACTIVITIES.filter((activity) => !activity.featured);
+  const [featuredActivity] = useState(() => {
+    const selected = pickFeaturedActivity(ACTIVITIES, previousFeaturedActivityId);
+    previousFeaturedActivityId = selected?.id ?? null;
+    return selected;
+  });
+  const otherActivities = ACTIVITIES.filter((activity) => activity.id !== featuredActivity?.id);
 
   if (!featuredActivity) {
     return null;

@@ -58,6 +58,15 @@ describe('음식 월드컵 후보 데이터', () => {
     }
   });
 
+  it('사진 설명이 아니라 여행지 이름만 노출한다', () => {
+    const nameById = new Map(TRAVEL_CANDIDATES.map((candidate) => [candidate.id, candidate.name]));
+
+    expect(nameById.get('travel-finland-aurora')).toBe('핀란드');
+    expect(nameById.get('travel-egypt-pyramids')).toBe('이집트');
+    expect(nameById.get('travel-kenya-safari')).toBe('케냐');
+    expect(nameById.get('travel-nepal-himalayas')).toBe('네팔');
+  });
+
   it('모든 주제와 후보의 참조가 유효하고 대표 이미지가 존재한다', () => {
     const validIds = new Set(WORLD_CUP_CANDIDATES.map((candidate) => candidate.id));
 

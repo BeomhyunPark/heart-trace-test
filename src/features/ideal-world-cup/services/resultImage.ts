@@ -1,4 +1,8 @@
-import type { TournamentSize, WorldCupCandidate } from '../domain/types';
+import type {
+  CandidateVisualTone,
+  TournamentSize,
+  WorldCupCandidate,
+} from '../domain/types';
 
 export type WorldCupShareAction = 'shared' | 'downloaded' | 'cancelled';
 
@@ -7,6 +11,25 @@ type WorldCupResultImageInput = {
   categoryTitle: string;
   tournamentSize: TournamentSize;
 };
+
+export const WORLD_CUP_EMOJI_FONT_STACK = [
+  '"Apple Color Emoji"',
+  '"Segoe UI Emoji"',
+  '"Noto Color Emoji"',
+  'sans-serif',
+].join(', ');
+
+const SYMBOL_TONE_COLORS: Record<CandidateVisualTone, readonly [string, string]> = {
+  gold: ['#8f642b', '#443456'],
+  coral: ['#a84f5f', '#3a385d'],
+  mint: ['#3e7e78', '#34395f'],
+  sky: ['#3e6f91', '#3b3965'],
+  violet: ['#694d91', '#303d68'],
+};
+
+export function getWorldCupResultMonogram(candidateName: string): string {
+  return Array.from(candidateName.replaceAll(/\s/g, '')).slice(0, 2).join('');
+}
 
 function drawRoundedRect(
   context: CanvasRenderingContext2D,
@@ -41,6 +64,57 @@ function drawCoverImage(
   const sourceY = (image.naturalHeight - sourceSize) / 2;
 
   context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, x, y, size, size);
+}
+
+function drawSymbolArtwork(
+  context: CanvasRenderingContext2D,
+  candidate: WorldCupCandidate,
+  x: number,
+  y: number,
+  size: number,
+): void {
+  const tone = candidate.visualTone ?? 'violet';
+  const [startColor, endColor] = SYMBOL_TONE_COLORS[tone];
+  const centerX = x + size / 2;
+  const centerY = y + size / 2;
+
+  const background = context.createLinearGradient(x, y, x + size, y + size);
+  background.addColorStop(0, startColor);
+  background.addColorStop(1, endColor);
+  context.fillStyle = background;
+  context.fillRect(x, y, size, size);
+
+  context.beginPath();
+  context.arc(centerX, centerY - 35, 205, 0, Math.PI * 2);
+  context.fillStyle = 'rgba(255, 255, 255, 0.08)';
+  context.fill();
+  context.strokeStyle = 'rgba(255, 247, 239, 0.24)';
+  context.lineWidth = 3;
+  context.stroke();
+
+  context.save();
+  context.translate(centerX, centerY - 35);
+  context.rotate(Math.PI / 4);
+  context.strokeStyle = 'rgba(255, 211, 110, 0.34)';
+  context.lineWidth = 8;
+  context.strokeRect(-92, -92, 184, 184);
+  context.restore();
+
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.font = `300px ${WORLD_CUP_EMOJI_FONT_STACK}`;
+  context.fillText(candidate.symbol ?? '', centerX, centerY - 28);
+
+  drawRoundedRect(context, centerX - 78, y + size - 98, 156, 58, 29);
+  context.fillStyle = 'rgba(23, 24, 38, 0.62)';
+  context.fill();
+  context.strokeStyle = 'rgba(255, 247, 239, 0.3)';
+  context.lineWidth = 2;
+  context.stroke();
+  context.fillStyle = '#fff7ef';
+  context.font = '700 28px "Noto Sans KR", sans-serif';
+  context.fillText(getWorldCupResultMonogram(candidate.name), centerX, y + size - 69);
+  context.textBaseline = 'alphabetic';
 }
 
 function canvasToFile(canvas: HTMLCanvasElement, filename: string): Promise<File> {
@@ -115,16 +189,7 @@ export async function createWorldCupResultFile({
     const image = await loadImage(candidate.image);
     drawCoverImage(context, image, visualX, visualY, visualSize);
   } else {
-    const symbolBackground = context.createLinearGradient(visualX, visualY, visualX + visualSize, visualY + visualSize);
-    symbolBackground.addColorStop(0, '#6d4f91');
-    symbolBackground.addColorStop(1, '#253552');
-    context.fillStyle = symbolBackground;
-    context.fillRect(visualX, visualY, visualSize, visualSize);
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.font = '300px "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
-    context.fillText(candidate.symbol ?? '', 540, visualY + visualSize / 2 + 10);
-    context.textBaseline = 'alphabetic';
+    drawSymbolArtwork(context, candidate, visualX, visualY, visualSize);
   }
   context.restore();
 

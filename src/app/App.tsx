@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, startTransition, useEffect, useState } from 'react';
 
 import { HomeScreen } from '../features/home/HomeScreen';
 import type { PickerMode } from '../features/group-picker/domain/types';
@@ -34,27 +34,26 @@ export function App() {
   }
 
   const selectActivity = (id: ActivityId, initialGroupPickerMode?: PickerMode) => {
-    setActiveActivity({ id, initialGroupPickerMode });
+    startTransition(() => {
+      setActiveActivity({ id, initialGroupPickerMode });
+    });
   };
 
-  if (activeActivity === null) {
-    return <HomeScreen onSelectActivity={selectActivity} />;
-  }
-
-  const activity = getActivityDefinition(activeActivity.id);
-
-  if (activity === null) {
-    return <HomeScreen onSelectActivity={selectActivity} />;
-  }
-
-  const ActivityApp = activity.Component;
+  const activity = activeActivity === null
+    ? null
+    : getActivityDefinition(activeActivity.id);
+  const ActivityApp = activity?.Component;
 
   return (
-    <Suspense fallback={<HomeScreen onSelectActivity={selectActivity} />}>
-      <ActivityApp
-        initialGroupPickerMode={activeActivity.initialGroupPickerMode}
-        onBackHome={() => setActiveActivity(null)}
-      />
+    <Suspense fallback={<SplashScreen />}>
+      {ActivityApp && activeActivity ? (
+        <ActivityApp
+          initialGroupPickerMode={activeActivity.initialGroupPickerMode}
+          onBackHome={() => setActiveActivity(null)}
+        />
+      ) : (
+        <HomeScreen onSelectActivity={selectActivity} />
+      )}
     </Suspense>
   );
 }

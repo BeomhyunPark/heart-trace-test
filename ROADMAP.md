@@ -104,7 +104,7 @@
 - 휴대폰·PC 간 명단 동기화
 - 공동체별 명단·설정·진행 코스 공유
 
-백엔드를 도입해도 초기에는 현재 GitHub Pages 프런트엔드를 유지하고, `api.ongi.greengroove.app` 형태의 별도 API와 DB를 추가하는 단계적 방식을 우선 검토한다.
+백엔드를 도입해도 초기에는 현재 GitHub Pages 프런트엔드를 유지하고, `ongi-api.greengroove.app` 형태의 별도 API와 DB를 추가하는 단계적 방식을 우선 검토한다.
 
 ## 5. 백엔드 도입 판단 기준
 
@@ -136,7 +136,7 @@
 
 ```text
 ongi.greengroove.app      → GitHub Pages 프런트엔드
-api.ongi.greengroove.app  → 별도 백엔드 API
+ongi-api.greengroove.app  → 별도 백엔드 API
                            → 데이터베이스
 ```
 

@@ -13,7 +13,7 @@
 └── docs/                architecture documents
 ```
 
-운영 환경에서는 `ongi.greengroove.app`의 GitHub Pages frontend와 `api.ongi.greengroove.app`의 API를 분리합니다.
+운영 환경에서는 `ongi.greengroove.app`의 GitHub Pages frontend와 `ongi-api.greengroove.app`의 API를 분리합니다.
 
 ## 로컬 실행
 
@@ -156,7 +156,7 @@ Invoke-RestMethod http://localhost:8080/actuator/health/readiness
 Cloudflare Tunnel public hostname은 다음과 같이 연결합니다.
 
 ```text
-Hostname: api.ongi.greengroove.app
+Hostname: ongi-api.greengroove.app
 Service:  http://localhost:8080
 ```
 
@@ -169,7 +169,7 @@ http://host.docker.internal:8080
 외부 연결을 확인합니다.
 
 ```powershell
-Invoke-RestMethod https://api.ongi.greengroove.app/actuator/health/readiness
+Invoke-RestMethod https://ongi-api.greengroove.app/actuator/health/readiness
 ```
 
 운영 명령:
@@ -190,7 +190,7 @@ docker compose --env-file .env.home-server -f compose.home-server.yaml down
 Frontend GitHub Pages build에는 repository variable을 설정합니다.
 
 ```text
-VITE_API_BASE_URL=https://api.ongi.greengroove.app
+VITE_API_BASE_URL=https://ongi-api.greengroove.app
 ```
 
 ## Railway 배포
@@ -208,8 +208,8 @@ MVP는 Singapore region의 단일 Backend instance와 같은 project의 PostgreS
 6. `ONGI_SECURE_COOKIE=true`
 7. Health check path를 `/actuator/health/readiness`로 설정합니다.
 8. Serverless/App Sleeping을 끄고 replica를 1개로 유지합니다.
-9. custom domain `api.ongi.greengroove.app`을 연결합니다.
-10. GitHub repository variable `VITE_API_BASE_URL=https://api.ongi.greengroove.app`을 설정합니다.
+9. custom domain `ongi-api.greengroove.app`을 연결합니다.
+10. GitHub repository variable `VITE_API_BASE_URL=https://ongi-api.greengroove.app`을 설정합니다.
 
 현재 SSE subscriber registry는 단일 process 메모리에 있습니다. Backend를 둘 이상의 replica로 늘리기 전에는 PostgreSQL LISTEN/NOTIFY 같은 cross-instance event 전달 수단을 추가해야 합니다.
 

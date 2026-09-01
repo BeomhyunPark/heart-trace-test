@@ -10,7 +10,7 @@ import type {
 } from '../domain/types';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL?.trim()
-  || (import.meta.env.DEV ? 'http://localhost:8080' : 'https://api.ongi.greengroove.app'))
+  || (import.meta.env.DEV ? 'http://localhost:8080' : 'https://ongi-api.greengroove.app'))
   .replace(/\/$/, '');
 
 type ProblemDetail = {

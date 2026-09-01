@@ -113,16 +113,31 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('button', { name: '나를 맞혀봐' })).toBeTruthy();
     expect(screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent).toContain('NEW');
     expect(screen.getByRole('button', { name: '최애 월드컵' }).textContent).toContain('NEW');
-    expect(screen.getByRole('button', { name: '오늘은 누구?' }).textContent).toContain('NEW');
+    expect(screen.getByRole('heading', { name: '공동체를 위한 도구' }).closest('section')?.textContent).toContain('모임 필수 도구');
     expect(screen.getByRole('button', { name: '나를 맞혀봐' }).textContent).toContain('NEW');
     expect(screen.getByRole('button', { name: HEART_TRACE_CARD_NAME }).textContent).not.toContain('NEW');
     expect(screen.queryByText('SOON')).toBeNull();
     expect(
       screen.getByRole('button', { name: '극과 극 밸런스 게임' }).textContent,
     ).toContain('극과 극 밸런스 게임');
-    const featuredSection = screen.getByRole('heading', { name: '추천 콘텐츠' }).closest('section');
+    const communityToolsSection = screen.getByRole('heading', {
+      name: '공동체를 위한 도구',
+    }).closest('section');
+    expect(communityToolsSection).not.toBeNull();
+    expect(within(communityToolsSection as HTMLElement).getByRole('button', {
+      name: /오늘은 누구\?/,
+    })).toBeTruthy();
+    fireEvent.click(within(communityToolsSection as HTMLElement).getByRole('button', {
+      name: '나눔 순서',
+    }));
+    expect((await screen.findByRole('button', {
+      name: '먼저 나눌 사람',
+    }, { timeout: 5000 })).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: '홈' }));
+
+    const featuredSection = screen.getByRole('heading', { name: '추천 놀거리' }).closest('section');
     expect(featuredSection).not.toBeNull();
-    expect(['극과 극 밸런스 게임', '최애 월드컵', '오늘은 누구?', '나를 맞혀봐']).toContain(
+    expect(['극과 극 밸런스 게임', '최애 월드컵', '나를 맞혀봐']).toContain(
       within(featuredSection as HTMLElement).getByRole('button').getAttribute('aria-label'),
     );
     expect(screen.getByRole('button', { name: '공유하기' }).closest('.home-footer__actions')).toBeTruthy();
@@ -184,7 +199,7 @@ describe('앱 화면 흐름과 접근성', () => {
       level: 1,
     })).toBeTruthy();
     expect(await getAccessibilityViolations(container)).toEqual([]);
-  });
+  }, 15_000);
 
   it('결과 로딩 진행률과 분석 단계가 시간에 따라 실제로 바뀐다', async () => {
     vi.useFakeTimers();

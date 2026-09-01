@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { assetUrl } from '../../../utils/assetUrl';
 import {
   getCapturedInstallPrompt,
   getInstallEnvironment,
@@ -77,7 +78,7 @@ export function InstallAppPrompt() {
   return (
     <section className="install-app" aria-labelledby="install-app-title">
       <span className="install-app__icon" aria-hidden="true">
-        <img src="/favicon-192x192.png" alt="" />
+        <img src={assetUrl('favicon-192x192.png')} alt="" />
       </span>
       <span className="install-app__copy">
         <strong id="install-app-title">온기를 홈 화면에</strong>
@@ -99,7 +100,7 @@ export function InstallAppPrompt() {
             <button ref={closeButtonRef} className="install-guide__close" type="button" onClick={closeGuide} aria-label="닫기">
               ×
             </button>
-            <img className="install-guide__icon" src="/apple-touch-icon.png" alt="" />
+            <img className="install-guide__icon" src={assetUrl('apple-touch-icon.png')} alt="" />
             <p className="install-guide__eyebrow">
               {platform === 'ios' ? 'IPHONE · IPAD' : 'ANDROID'}
             </p>

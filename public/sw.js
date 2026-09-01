@@ -1,9 +1,10 @@
-const CACHE_NAME = 'ongi-shell-v1';
+const CACHE_NAME = 'ongi-shell-v2';
+const APP_ROOT = self.registration.scope;
 const APP_SHELL = [
-  '/',
-  '/site.webmanifest',
-  '/favicon-192x192.png',
-  '/favicon-512x512.png',
+  APP_ROOT,
+  new URL('site.webmanifest', APP_ROOT).href,
+  new URL('favicon-192x192.png', APP_ROOT).href,
+  new URL('favicon-512x512.png', APP_ROOT).href,
 ];
 
 self.addEventListener('install', (event) => {
@@ -36,10 +37,10 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          void caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          void caches.open(CACHE_NAME).then((cache) => cache.put(APP_ROOT, copy));
           return response;
         })
-        .catch(() => caches.match('/')),
+        .catch(() => caches.match(APP_ROOT)),
     );
     return;
   }

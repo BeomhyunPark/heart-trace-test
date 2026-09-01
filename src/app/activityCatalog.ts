@@ -1,9 +1,11 @@
 export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'know-me-quiz';
 
 export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '맞히기 게임';
+export type ActivityGroup = 'play' | 'community-tool';
 
 export type Activity = {
   id: ActivityId;
+  group: ActivityGroup;
   kind: ActivityKind;
   title: string;
   description: string;
@@ -15,6 +17,7 @@ export type Activity = {
 export const ACTIVITIES: readonly Activity[] = [
   {
     id: 'heart-trace',
+    group: 'play',
     kind: '성격검사',
     title: '마음속 흔적 찾기',
     description: '내 마음과 가장 닮은 흔적이는 누구일까요?',
@@ -23,6 +26,7 @@ export const ACTIVITIES: readonly Activity[] = [
   },
   {
     id: 'balance-game',
+    group: 'play',
     kind: 'VS 놀이',
     title: '극과 극 밸런스 게임',
     description: '어려운 선택일수록 더 재미있는 우리 이야기',
@@ -32,6 +36,7 @@ export const ACTIVITIES: readonly Activity[] = [
   },
   {
     id: 'ideal-world-cup',
+    group: 'play',
     kind: '토너먼트',
     title: '최애 월드컵',
     description: '하나만 남을 때까지 이어지는 취향 토너먼트',
@@ -41,6 +46,7 @@ export const ACTIVITIES: readonly Activity[] = [
   },
   {
     id: 'group-picker',
+    group: 'community-tool',
     kind: '모임 도구',
     title: '오늘은 누구?',
     description: '사다리부터 기도와 나눔 순서까지 한 번에',
@@ -50,9 +56,10 @@ export const ACTIVITIES: readonly Activity[] = [
   },
   {
     id: 'know-me-quiz',
+    group: 'play',
     kind: '맞히기 게임',
     title: '나를 맞혀봐',
-    description: '주인공의 선택을 얼마나 잘 알고 있을까요?',
+    description: '타인을 얼마나 잘 알고 있을까요?',
     meta: '한 명의 정답 · 함께 예상 · 결과 공유',
     badge: 'NEW',
     available: true,

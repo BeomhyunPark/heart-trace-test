@@ -1,6 +1,7 @@
+import { assetUrl } from '../../../utils/assetUrl';
 import type { WorldCupCandidate } from '../domain/types';
 
-const TRAVEL_IMAGE_ROOT = '/images/world-cup/travel';
+const TRAVEL_IMAGE_ROOT = assetUrl('images/world-cup/travel');
 
 function destination(id: string, name: string, fileName: string): WorldCupCandidate {
   return {

@@ -1,6 +1,7 @@
+import { assetUrl } from '../../../utils/assetUrl';
 import type { WorldCupCandidate } from '../domain/types';
 
-const FOOD_IMAGE_ROOT = '/images/world-cup/food';
+const FOOD_IMAGE_ROOT = assetUrl('images/world-cup/food');
 
 function food(id: string, name: string): WorldCupCandidate {
   return {

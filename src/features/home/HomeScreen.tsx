@@ -3,12 +3,23 @@ import { useState } from 'react';
 import { ACTIVITIES, type Activity, type ActivityId } from '../../app/activityCatalog';
 import { BrandMark } from '../../components/BrandMark';
 import { ScreenLayout } from '../../components/ScreenLayout';
+import type { PickerMode } from '../group-picker/domain/types';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
 
 type HomeScreenProps = {
-  onSelectActivity: (activityId: ActivityId) => void;
+  onSelectActivity: (activityId: ActivityId, initialGroupPickerMode?: PickerMode) => void;
 };
+
+const GROUP_PICKER_SHORTCUTS: readonly { mode: PickerMode; label: string }[] = [
+  { mode: 'ladder', label: '사다리' },
+  { mode: 'lottery', label: '제비' },
+  { mode: 'prayer', label: '기도할 사람' },
+  { mode: 'sharing', label: '나눔 순서' },
+  { mode: 'groups', label: '조 편성' },
+  { mode: 'pairs', label: '원투원' },
+  { mode: 'supporter', label: '기도 후원' },
+];
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '✦',
@@ -25,12 +36,14 @@ export function pickFeaturedActivity(
   previousActivityId: ActivityId | null,
   random = Math.random,
 ): Activity | null {
-  const newActivities = activities.filter((activity) => activity.available && activity.badge === 'NEW');
+  const playActivities = activities.filter((activity) => (
+    activity.available && activity.group === 'play'
+  ));
+  const newActivities = playActivities.filter((activity) => activity.badge === 'NEW');
   const candidates = newActivities.length > 1
     ? newActivities.filter((activity) => activity.id !== previousActivityId)
     : newActivities;
-  const fallbackCandidates = activities.filter((activity) => activity.available);
-  const pool = candidates.length > 0 ? candidates : fallbackCandidates;
+  const pool = candidates.length > 0 ? candidates : playActivities;
 
   if (pool.length === 0) {
     return null;
@@ -45,7 +58,12 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
     previousFeaturedActivityId = selected?.id ?? null;
     return selected;
   });
-  const otherActivities = ACTIVITIES.filter((activity) => activity.id !== featuredActivity?.id);
+  const communityTools = ACTIVITIES.filter((activity) => (
+    activity.available && activity.group === 'community-tool'
+  ));
+  const otherPlayActivities = ACTIVITIES.filter((activity) => (
+    activity.group === 'play' && activity.id !== featuredActivity?.id
+  ));
 
   if (!featuredActivity) {
     return null;
@@ -70,21 +88,72 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
             하나님 안에서 만난 우리 사이에 온기를 더해보세요.
           </p>
         </div>
-        <ul className="home-categories" aria-label="콘텐츠 종류">
-          <li>성격검사</li>
-          <li>VS 놀이</li>
-          <li>토너먼트</li>
-          <li>모임 도구</li>
-          <li>맞히기</li>
-        </ul>
       </header>
+
+      <section className="home-section home-section--community-tools" aria-labelledby="community-tools-title">
+        <div className="home-section__meta">
+          <p>모임마다 다시 찾게 되는</p>
+          <span aria-hidden="true">01</span>
+        </div>
+        <h2 id="community-tools-title">공동체를 위한 도구</h2>
+        <p className="home-section__description">
+          순서를 정하고 조를 나눌 때, 필요한 기능을 바로 꺼내 쓰세요.
+        </p>
+
+        <div className="community-tool-list">
+          {communityTools.map((activity) => (
+            <article
+              className={`community-tool-card community-tool-card--${activity.id}`}
+              key={activity.id}
+            >
+              <button
+                className="community-tool-card__open"
+                type="button"
+                aria-labelledby={`community-tool-title-${activity.id}`}
+                aria-describedby={`community-tool-description-${activity.id} community-tool-features-${activity.id}`}
+                onClick={() => onSelectActivity(activity.id)}
+              />
+              <span className="community-tool-card__topline">
+                <span>{activity.kind}</span>
+                <b>모임 필수 도구</b>
+              </span>
+              <span className="community-tool-card__main">
+                <span className="community-tool-card__visual" aria-hidden="true">
+                  {ACTIVITY_MARKS[activity.id]}
+                </span>
+                <span className="community-tool-card__copy">
+                  <strong id={`community-tool-title-${activity.id}`}>{activity.title}</strong>
+                  <span id={`community-tool-description-${activity.id}`}>{activity.description}</span>
+                </span>
+              </span>
+              <span
+                className="community-tool-card__features"
+                id={`community-tool-features-${activity.id}`}
+              >
+                {GROUP_PICKER_SHORTCUTS.map(({ mode, label }) => (
+                  <button
+                    type="button"
+                    onClick={() => onSelectActivity(activity.id, mode)}
+                    key={mode}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </span>
+              <span className="community-tool-card__action">
+                전체 도구 보기&nbsp; →
+              </span>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="home-section" aria-labelledby="featured-title">
         <div className="home-section__meta">
           <p>지금 바로 해봐요</p>
-          <span aria-hidden="true">01</span>
+          <span aria-hidden="true">02</span>
         </div>
-        <h2 id="featured-title">추천 콘텐츠</h2>
+        <h2 id="featured-title">추천 놀거리</h2>
 
         <button
           className={`featured-activity featured-activity--${featuredActivity.id}`}
@@ -111,25 +180,28 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
       <section className="home-section home-section--upcoming" aria-labelledby="more-title">
         <div className="home-section__meta">
           <p>취향대로 골라봐요</p>
-          <span aria-hidden="true">02</span>
+          <span aria-hidden="true">03</span>
         </div>
         <h2 id="more-title">다른 놀거리</h2>
 
         <div className="activity-grid">
-          {otherActivities.map((activity) => {
+          {otherPlayActivities.map((activity) => {
             const content = (
               <>
-              <div className="activity-card__topline">
-                <span className="activity-card__kind">{activity.kind}</span>
-                {activity.badge ? <span>{activity.badge}</span> : null}
-              </div>
-              <span className="activity-card__mini-visual" aria-hidden="true">
-                {ACTIVITY_MARKS[activity.id]}
-              </span>
-              <h3>{activity.title}</h3>
-              <p>{activity.description}</p>
-              <small>{activity.meta}</small>
-              {activity.available ? <b className="activity-card__action">시작하기 →</b> : null}
+                <span className="activity-card__mini-visual" aria-hidden="true">
+                  {ACTIVITY_MARKS[activity.id]}
+                </span>
+                <span className="activity-card__compact-copy">
+                  <span className="activity-card__topline">
+                    {activity.kind}
+                    {activity.badge ? ` · ${activity.badge}` : null}
+                  </span>
+                  <h3>{activity.title}</h3>
+                  <p>{activity.description}</p>
+                </span>
+                <span className="activity-card__action" aria-hidden="true">
+                  {activity.available ? '→' : '…'}
+                </span>
               </>
             );
 

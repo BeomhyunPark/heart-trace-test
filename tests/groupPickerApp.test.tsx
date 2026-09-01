@@ -27,6 +27,13 @@ async function finishDraw() {
 }
 
 describe('오늘은 누구?', () => {
+  it('홈 바로가기에서 선택한 도구로 시작한다', () => {
+    render(<GroupPickerApp initialGroupPickerMode="groups" onBackHome={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: '나눔 조 짜기' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('button', { name: '나눔 조 편성하기' })).toBeTruthy();
+  });
+
   it('기다리는 화면을 거친 뒤 기도 순서를 보여준다', async () => {
     vi.useFakeTimers();
     render(<GroupPickerApp onBackHome={vi.fn()} />);

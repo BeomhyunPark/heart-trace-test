@@ -19,6 +19,7 @@ import {
   type PrayerSupportAssignment,
 } from './domain/draw';
 import { getSpecialOutcomeValues } from './domain/outcomes';
+import type { PickerMode } from './domain/types';
 import { loadGroupNames, saveGroupNames } from './services/nameStorage';
 import {
   createGroupPickerResultFile,
@@ -27,8 +28,10 @@ import {
 } from './services/resultImage';
 import './styles/group-picker.css';
 
-type GroupPickerAppProps = { onBackHome: () => void };
-type PickerMode = 'prayer' | 'sharing' | 'lottery' | 'ladder' | 'groups' | 'pairs' | 'supporter';
+type GroupPickerAppProps = {
+  onBackHome: () => void;
+  initialGroupPickerMode?: PickerMode;
+};
 type PickerPhase = 'setup' | 'drawing' | 'result';
 
 type DrawResult = {
@@ -248,10 +251,13 @@ function LadderBoard({
   );
 }
 
-export function GroupPickerApp({ onBackHome }: GroupPickerAppProps) {
+export function GroupPickerApp({
+  onBackHome,
+  initialGroupPickerMode = 'prayer',
+}: GroupPickerAppProps) {
   const storedNames = useMemo(loadGroupNames, []);
   const [phase, setPhase] = useState<PickerPhase>('setup');
-  const [mode, setMode] = useState<PickerMode>('prayer');
+  const [mode, setMode] = useState<PickerMode>(initialGroupPickerMode);
   const [names, setNames] = useState<string[]>(storedNames);
   const [nameDraft, setNameDraft] = useState('');
   const [outcomes, setOutcomes] = useState<string[]>([]);

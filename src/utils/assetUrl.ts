@@ -1,5 +1,5 @@
-export function assetUrl(path: string): string {
+export function assetUrl(path: string, baseUrl = import.meta.env.BASE_URL): string {
   const normalizedPath = path.replace(/^\/+/, '');
 
-  return `${import.meta.env.BASE_URL}${normalizedPath}`;
+  return `${baseUrl}${normalizedPath}`;
 }

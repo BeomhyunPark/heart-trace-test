@@ -1,9 +1,11 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 
+import type { PickerMode } from '../features/group-picker/domain/types';
 import type { ActivityId } from './activityCatalog';
 
 export type ActivityAppProps = {
   onBackHome: () => void;
+  initialGroupPickerMode?: PickerMode;
 };
 
 export type ActivityDefinition = {

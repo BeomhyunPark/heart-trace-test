@@ -4,6 +4,7 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    mem_limit: ${ONGI_POSTGRES_MEMORY_LIMIT:-768m}
     environment:
       POSTGRES_DB: ongi
       POSTGRES_USER: ongi
@@ -17,6 +18,10 @@ services:
       retries: 20
     security_opt:
       - no-new-privileges:true
+    ulimits:
+      nofile:
+        soft: 8192
+        hard: 8192
     logging:
       options:
         max-size: "10m"
@@ -27,6 +32,7 @@ services:
       context: ./backend
     image: ongi-backend:home
     restart: unless-stopped
+    mem_limit: ${ONGI_BACKEND_MEMORY_LIMIT:-2g}
     init: true
     depends_on:
       postgres:
@@ -36,13 +42,14 @@ services:
       DB_USERNAME: ongi
       DB_PASSWORD: ${ONGI_POSTGRES_PASSWORD:?Set ONGI_POSTGRES_PASSWORD in .env.home-server}
       DB_POOL_SIZE: ${ONGI_DB_POOL_SIZE:-20}
+      JAVA_TOOL_OPTIONS: ${ONGI_JAVA_TOOL_OPTIONS:--Xms256m -Xmx1g -XX:+ExitOnOutOfMemoryError}
       ONGI_ALLOWED_ORIGINS: ${ONGI_ALLOWED_ORIGINS:-https://ongi.greengroove.app}
       ONGI_SECURE_COOKIE: "true"
       ONGI_TRUST_CLOUDFLARE_CONNECTING_IP: "true"
       ONGI_ROOM_ACTIVE_LIFETIME: ${ONGI_ROOM_ACTIVE_LIFETIME:-12h}
       ONGI_TOMBSTONE_RETENTION: ${ONGI_TOMBSTONE_RETENTION:-24h}
-      ONGI_JOIN_ATTEMPTS_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_MINUTE:-30}
-      ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE:-15}
+      ONGI_JOIN_ATTEMPTS_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_MINUTE:-600}
+      ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE:-30}
     ports:
       - "${ONGI_BACKEND_BIND_ADDRESS:-127.0.0.1}:${ONGI_BACKEND_PORT:-8080}:8080"
     healthcheck:
@@ -53,6 +60,10 @@ services:
       start_period: 45s
     security_opt:
       - no-new-privileges:true
+    ulimits:
+      nofile:
+        soft: 8192
+        hard: 8192
     logging:
       options:
         max-size: "10m"

@@ -10,9 +10,9 @@ import {
 } from '../src/app/shareTargets';
 
 describe('놀이별 공유 메타데이터', () => {
-  it('놀이 4개와 모임 도구 7개를 서로 다른 공유 대상으로 정의한다', () => {
-    expect(SHARE_TARGETS).toHaveLength(11);
-    expect(new Set(SHARE_TARGETS.map(({ slug }) => slug)).size).toBe(11);
+  it('놀이 3개와 모임 도구 7개를 서로 다른 공유 대상으로 정의한다', () => {
+    expect(SHARE_TARGETS).toHaveLength(10);
+    expect(new Set(SHARE_TARGETS.map(({ slug }) => slug)).size).toBe(10);
     expect(SHARE_TARGETS.filter(({ target }) => target.id === 'group-picker')).toHaveLength(7);
   });
 

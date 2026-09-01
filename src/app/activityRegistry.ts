@@ -39,12 +39,6 @@ const loadGroupPickerApp = async () => {
   return { default: module.GroupPickerApp };
 };
 const GroupPickerApp = lazy(loadGroupPickerApp);
-const loadKnowMeQuizApp = async () => {
-  const module = await import('../features/know-me-quiz/KnowMeQuizApp');
-
-  return { default: module.KnowMeQuizApp };
-};
-const KnowMeQuizApp = lazy(loadKnowMeQuizApp);
 const loadAnonymousSharingApp = async () => {
   const module = await import('../features/anonymous-sharing/AnonymousSharingApp');
 
@@ -72,11 +66,6 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     id: 'group-picker',
     Component: GroupPickerApp,
     preload: loadGroupPickerApp,
-  },
-  'know-me-quiz': {
-    id: 'know-me-quiz',
-    Component: KnowMeQuizApp,
-    preload: loadKnowMeQuizApp,
   },
   'anonymous-sharing': {
     id: 'anonymous-sharing',

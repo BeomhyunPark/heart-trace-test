@@ -13,3 +13,6 @@ backend/.gradle
 backend/build
 .env
 .env.home-server
+
+# Load-test output can contain operational timing data.
+tests/load/results/*.json

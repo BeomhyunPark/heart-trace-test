@@ -27,7 +27,6 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'balance-game': 'VS',
   'ideal-world-cup': '★',
   'group-picker': '?',
-  'know-me-quiz': 'ME',
   'anonymous-sharing': '♡',
 };
 
@@ -154,7 +153,9 @@ export function HomeScreen({
                 className="community-tool-card__open"
                 type="button"
                 aria-labelledby={`community-tool-title-${activity.id}`}
-                aria-describedby={`community-tool-description-${activity.id} community-tool-features-${activity.id}`}
+                aria-describedby={activity.id === 'group-picker'
+                  ? `community-tool-description-${activity.id} community-tool-features-${activity.id}`
+                  : `community-tool-description-${activity.id}`}
                 onClick={() => onSelectActivity(activity.id)}
               />
               <span className="community-tool-card__topline">
@@ -170,54 +171,50 @@ export function HomeScreen({
                   <span id={`community-tool-description-${activity.id}`}>{activity.description}</span>
                 </span>
               </span>
-              <span
-                className="community-tool-card__features"
-                id={`community-tool-features-${activity.id}`}
-              >
-                {activity.id === 'group-picker' ? PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
-                  const isFavorite = communityToolPreferences.favoriteModes.includes(mode);
+              {activity.id === 'group-picker' ? (
+                <span
+                  className="community-tool-card__features"
+                  id={`community-tool-features-${activity.id}`}
+                >
+                  {PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
+                    const isFavorite = communityToolPreferences.favoriteModes.includes(mode);
 
-                  return (
-                    <span
-                      className={`community-tool-shortcut${isFavorite ? ' is-favorite' : ''}`}
-                      key={mode}
-                    >
-                      <button
-                        className="community-tool-shortcut__open"
-                        type="button"
-                        onClick={() => onSelectActivity(activity.id, mode)}
+                    return (
+                      <span
+                        className={`community-tool-shortcut${isFavorite ? ' is-favorite' : ''}`}
+                        key={mode}
                       >
-                        {shortcutLabel}
-                      </button>
-                      <button
-                        className="community-tool-shortcut__favorite"
-                        type="button"
-                        aria-label={`${shortcutLabel} 즐겨찾기 ${isFavorite ? '해제' : '추가'}`}
-                        aria-pressed={isFavorite}
-                        onClick={() => {
-                          if (!isFavorite && communityToolPreferences.favoriteModes.length >= MAX_FAVORITE_COMMUNITY_TOOLS) {
-                            setFavoriteMessage(`즐겨찾기는 ${MAX_FAVORITE_COMMUNITY_TOOLS}개까지 고정할 수 있어요.`);
-                            return;
-                          }
+                        <button
+                          className="community-tool-shortcut__open"
+                          type="button"
+                          onClick={() => onSelectActivity(activity.id, mode)}
+                        >
+                          {shortcutLabel}
+                        </button>
+                        <button
+                          className="community-tool-shortcut__favorite"
+                          type="button"
+                          aria-label={`${shortcutLabel} 즐겨찾기 ${isFavorite ? '해제' : '추가'}`}
+                          aria-pressed={isFavorite}
+                          onClick={() => {
+                            if (!isFavorite && communityToolPreferences.favoriteModes.length >= MAX_FAVORITE_COMMUNITY_TOOLS) {
+                              setFavoriteMessage(`즐겨찾기는 ${MAX_FAVORITE_COMMUNITY_TOOLS}개까지 고정할 수 있어요.`);
+                              return;
+                            }
 
-                          onToggleFavoriteCommunityTool(mode);
-                          setFavoriteMessage(isFavorite
-                            ? `${shortcutLabel} 즐겨찾기를 해제했어요.`
-                            : `${shortcutLabel} 즐겨찾기에 추가했어요.`);
-                        }}
-                      >
-                        <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
-                      </button>
-                    </span>
-                  );
-                }) : (
-                  <>
-                    <span>익명 답변</span>
-                    <span>직접 공개</span>
-                    <span>대화 중심</span>
-                  </>
-                )}
-              </span>
+                            onToggleFavoriteCommunityTool(mode);
+                            setFavoriteMessage(isFavorite
+                              ? `${shortcutLabel} 즐겨찾기를 해제했어요.`
+                              : `${shortcutLabel} 즐겨찾기에 추가했어요.`);
+                          }}
+                        >
+                          <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+                        </button>
+                      </span>
+                    );
+                  })}
+                </span>
+              ) : null}
               {activity.id === 'group-picker' ? (
                 <span className="community-tool-card__favorite-message" aria-live="polite">
                   {favoriteMessage}

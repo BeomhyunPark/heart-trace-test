@@ -1,6 +1,6 @@
-export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'know-me-quiz' | 'anonymous-sharing';
+export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'anonymous-sharing';
 
-export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '맞히기 게임' | '소그룹 나눔';
+export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '소그룹 나눔';
 export type ActivityGroup = 'play' | 'community-tool';
 
 export type Activity = {
@@ -60,17 +60,7 @@ export const ACTIVITIES: readonly Activity[] = [
     kind: '소그룹 나눔',
     title: '익명으로 만나는 우리',
     description: '이름보다 이야기를 먼저 만나고, 준비됐을 때 직접 나를 소개해요.',
-    meta: 'Room 참여 · 익명 프로필 · 대화 중심',
-    badge: 'NEW',
-    available: true,
-  },
-  {
-    id: 'know-me-quiz',
-    group: 'play',
-    kind: '맞히기 게임',
-    title: '나를 맞혀봐',
-    description: '타인을 얼마나 잘 알고 있을까요?',
-    meta: '한 명의 정답 · 함께 예상 · 결과 공유',
+    meta: 'Room 참여 · 익명 프로필',
     badge: 'NEW',
     available: true,
   },

@@ -38,7 +38,6 @@ public final class GenerateShareImages {
     target("heart-trace", "마음속 흔적\n찾기", "내 마음과 가장 닮은 흔적이는 누구일까요?", "온기 · 성격검사", "✦", "#f48faa", "#ffc98f", "orbs"),
     target("balance-game", "극과 극\n밸런스 게임", "정답보다 서로의 이유가 더 재미있는 시간이에요.", "온기 · VS 놀이", "VS", "#ff8c68", "#55ddf2", "balance"),
     target("ideal-world-cup", "최애 월드컵", "하나만 남을 때까지 이어지는 취향 토너먼트.", "온기 · 토너먼트", "★", "#ffd36e", "#86d9f2", "trophy"),
-    target("know-me-quiz", "나를 맞혀봐", "서로를 얼마나 잘 알고 있는지 함께 맞혀보세요.", "온기 · 맞히기 게임", "ME", "#c8adff", "#ffc398", "cards"),
     target("tool-ladder", "사다리 타기", "이름과 결과를 넣고 함께 사다리를 타보세요.", "온기 · 모임 도구", "↘", "#78e2c6", "#85a8ed", "ladder"),
     target("tool-lottery", "제비뽑기", "공평하고 간단하게 오늘의 주인공을 뽑아보세요.", "온기 · 모임 도구", "✓", "#80e0c2", "#f7d687", "lottery"),
     target("tool-prayer", "기도할 사람\n정하기", "함께 기도할 한 사람을 따뜻하게 정해보세요.", "온기 · 모임 도구", "✦", "#baf5e6", "#b4a0ff", "prayer"),

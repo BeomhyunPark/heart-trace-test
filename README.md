@@ -54,8 +54,8 @@ Flyway migration은 Backend 시작 시 자동 실행됩니다. 운영 DB에서 m
 | `ONGI_SECURE_COOKIE` | HTTPS 전용 cookie | `false` |
 | `ONGI_ROOM_ACTIVE_LIFETIME` | 활성 Room 만료 | `12h` |
 | `ONGI_TOMBSTONE_RETENTION` | 종료 상태/session hash 유지 | `24h` |
-| `ONGI_JOIN_ATTEMPTS_PER_MINUTE` | IP별 join 시도 제한 | `30` |
-| `ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE` | 같은 IP와 code 조합 제한 | `15` |
+| `ONGI_JOIN_ATTEMPTS_PER_MINUTE` | IP별 join 시도 제한 | 로컬 `30`, 홈서버 `600` |
+| `ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE` | 같은 IP와 code 조합 제한 | 로컬 `15`, 홈서버 `30` |
 | `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP` | Tunnel이 보장한 실제 client IP로 rate limit | `false` |
 | `VITE_API_BASE_URL` | Frontend API origin | 개발 시 `http://localhost:8080` |
 
@@ -186,6 +186,10 @@ docker compose --env-file .env.home-server -f compose.home-server.yaml down
 ```
 
 `down -v`는 PostgreSQL volume까지 삭제하므로 사용하지 않습니다. Docker Desktop은 Windows 로그인 시 자동 시작하도록 설정하고 Surface의 절전 및 최대 절전 모드를 꺼야 합니다. `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP=true`는 Backend가 Tunnel을 통해서만 공개되는 이 구성에서만 사용합니다.
+
+홈서버 구성은 Backend container 2GB, Java heap 1GB, PostgreSQL 768MB, container별 열린 파일 8,192개를 기본 제한으로 둡니다. 행사장 Wi-Fi의 NAT 뒤에서 여러 Room이 하나의 공인 IP를 공유하는 상황을 고려해 IP 전체 join 제한은 분당 600회, 같은 Room Code 제한은 분당 30회입니다. Room별 최대 참가자 수와 random code entropy는 그대로 유지합니다.
+
+익명 나눔의 10 → 100 → 200 → 300명 단계별 외부 부하 테스트와 Surface Docker 지표 수집 방법은 [tests/load/README.md](tests/load/README.md)에 정리되어 있습니다.
 
 Frontend GitHub Pages build에는 repository variable을 설정합니다.
 

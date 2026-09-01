@@ -50,7 +50,7 @@ export const ACTIVITIES: readonly Activity[] = [
     kind: '모임 도구',
     title: '오늘은 누구?',
     description: '사다리부터 기도와 나눔 순서까지 한 번에',
-    meta: '사다리 · 제비 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
+    meta: '사다리 · 제비뽑기 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
     badge: 'NEW',
     available: true,
   },

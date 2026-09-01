@@ -3,23 +3,24 @@ import { useState } from 'react';
 import { ACTIVITIES, type Activity, type ActivityId } from '../../app/activityCatalog';
 import { BrandMark } from '../../components/BrandMark';
 import { ScreenLayout } from '../../components/ScreenLayout';
+import {
+  getPickerModeDefinition,
+  PICKER_SHORTCUTS,
+} from '../group-picker/domain/modeCatalog';
 import type { PickerMode } from '../group-picker/domain/types';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
+import {
+  MAX_FAVORITE_COMMUNITY_TOOLS,
+  type CommunityToolPreferences,
+} from './services/communityToolPreferences';
 
 type HomeScreenProps = {
+  communityToolPreferences: CommunityToolPreferences;
+  featuredActivityId: ActivityId | null;
   onSelectActivity: (activityId: ActivityId, initialGroupPickerMode?: PickerMode) => void;
+  onToggleFavoriteCommunityTool: (mode: PickerMode) => void;
 };
-
-const GROUP_PICKER_SHORTCUTS: readonly { mode: PickerMode; label: string }[] = [
-  { mode: 'ladder', label: '사다리' },
-  { mode: 'lottery', label: '제비' },
-  { mode: 'prayer', label: '기도할 사람' },
-  { mode: 'sharing', label: '나눔 순서' },
-  { mode: 'groups', label: '조 편성' },
-  { mode: 'pairs', label: '원투원' },
-  { mode: 'supporter', label: '기도 후원' },
-];
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '✦',
@@ -28,8 +29,6 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'group-picker': '?',
   'know-me-quiz': 'ME',
 };
-
-let previousFeaturedActivityId: ActivityId | null = null;
 
 export function pickFeaturedActivity(
   activities: readonly Activity[],
@@ -52,12 +51,18 @@ export function pickFeaturedActivity(
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))];
 }
 
-export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
-  const [featuredActivity] = useState(() => {
-    const selected = pickFeaturedActivity(ACTIVITIES, previousFeaturedActivityId);
-    previousFeaturedActivityId = selected?.id ?? null;
-    return selected;
-  });
+export function HomeScreen({
+  communityToolPreferences,
+  featuredActivityId,
+  onSelectActivity,
+  onToggleFavoriteCommunityTool,
+}: HomeScreenProps) {
+  const [favoriteMessage, setFavoriteMessage] = useState('');
+  const featuredActivity = ACTIVITIES.find(({ id }) => id === featuredActivityId) ?? null;
+  const recentMode = communityToolPreferences.recentMode === null
+    ? null
+    : getPickerModeDefinition(communityToolPreferences.recentMode);
+  const favoriteModes = communityToolPreferences.favoriteModes.map(getPickerModeDefinition);
   const communityTools = ACTIVITIES.filter((activity) => (
     activity.available && activity.group === 'community-tool'
   ));
@@ -100,6 +105,44 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
           순서를 정하고 조를 나눌 때, 필요한 기능을 바로 꺼내 쓰세요.
         </p>
 
+        {recentMode || favoriteModes.length > 0 ? (
+          <section className="community-tool-saved" aria-labelledby="saved-tools-title">
+            <div className="community-tool-saved__heading">
+              <h3 id="saved-tools-title">내 도구</h3>
+              <span>이 기기에 저장됨</span>
+            </div>
+            <div className="community-tool-saved__items">
+              {recentMode ? (
+                <button
+                  className="community-tool-saved__recent"
+                  type="button"
+                  aria-label={`최근 사용한 도구 ${recentMode.shortcutLabel} 열기`}
+                  onClick={() => onSelectActivity('group-picker', recentMode.id)}
+                >
+                  <span aria-hidden="true">↻</span>
+                  <small>최근 사용</small>
+                  <strong>{recentMode.shortcutLabel}</strong>
+                </button>
+              ) : null}
+              {favoriteModes.length > 0 ? (
+                <div className="community-tool-saved__favorites" aria-label="즐겨찾기 도구">
+                  {favoriteModes.map((favoriteMode) => (
+                    <button
+                      type="button"
+                      aria-label={`즐겨찾기 ${favoriteMode.shortcutLabel} 열기`}
+                      onClick={() => onSelectActivity('group-picker', favoriteMode.id)}
+                      key={favoriteMode.id}
+                    >
+                      <span aria-hidden="true">★</span>
+                      {favoriteMode.shortcutLabel}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
         <div className="community-tool-list">
           {communityTools.map((activity) => (
             <article
@@ -130,15 +173,46 @@ export function HomeScreen({ onSelectActivity }: HomeScreenProps) {
                 className="community-tool-card__features"
                 id={`community-tool-features-${activity.id}`}
               >
-                {GROUP_PICKER_SHORTCUTS.map(({ mode, label }) => (
-                  <button
-                    type="button"
-                    onClick={() => onSelectActivity(activity.id, mode)}
-                    key={mode}
-                  >
-                    {label}
-                  </button>
-                ))}
+                {PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
+                  const isFavorite = communityToolPreferences.favoriteModes.includes(mode);
+
+                  return (
+                    <span
+                      className={`community-tool-shortcut${isFavorite ? ' is-favorite' : ''}`}
+                      key={mode}
+                    >
+                      <button
+                        className="community-tool-shortcut__open"
+                        type="button"
+                        onClick={() => onSelectActivity(activity.id, mode)}
+                      >
+                        {shortcutLabel}
+                      </button>
+                      <button
+                        className="community-tool-shortcut__favorite"
+                        type="button"
+                        aria-label={`${shortcutLabel} 즐겨찾기 ${isFavorite ? '해제' : '추가'}`}
+                        aria-pressed={isFavorite}
+                        onClick={() => {
+                          if (!isFavorite && communityToolPreferences.favoriteModes.length >= MAX_FAVORITE_COMMUNITY_TOOLS) {
+                            setFavoriteMessage(`즐겨찾기는 ${MAX_FAVORITE_COMMUNITY_TOOLS}개까지 고정할 수 있어요.`);
+                            return;
+                          }
+
+                          onToggleFavoriteCommunityTool(mode);
+                          setFavoriteMessage(isFavorite
+                            ? `${shortcutLabel} 즐겨찾기를 해제했어요.`
+                            : `${shortcutLabel} 즐겨찾기에 추가했어요.`);
+                        }}
+                      >
+                        <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+                      </button>
+                    </span>
+                  );
+                })}
+              </span>
+              <span className="community-tool-card__favorite-message" aria-live="polite">
+                {favoriteMessage}
               </span>
               <span className="community-tool-card__action">
                 전체 도구 보기&nbsp; →

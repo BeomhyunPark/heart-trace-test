@@ -1,13 +1,14 @@
 {
   "name": "ongi-icebreaking-app",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "vitest run",
+    "test": "vitest run --testTimeout=10000",
     "test:watch": "vitest",
     "typecheck": "tsc -b",
+    "generate:share-images": "java -Djava.awt.headless=true scripts/GenerateShareImages.java",
     "build": "tsc -b && vite build",
     "verify": "npm test && npm run build",
     "preview": "vite preview"

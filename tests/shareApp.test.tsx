@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ShareApp } from '../src/features/home/components/ShareApp';
+import { shareAppLink } from '../src/features/home/services/shareAppLink';
 
 beforeEach(() => {
   const canonical = document.createElement('link');
@@ -61,5 +62,22 @@ describe('온기 링크 공유', () => {
 
     await waitFor(() => expect(writeText).toHaveBeenCalledWith('https://ongi.greengroove.app/'));
     expect(await screen.findByText('온기 링크를 복사했어요.')).toBeTruthy();
+  });
+
+  it('놀이별 제목과 공유 전용 URL을 시스템 공유창에 전달한다', async () => {
+    const share = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
+
+    expect(await shareAppLink({
+      title: '최애 월드컵 | 온기',
+      url: 'https://ongi.greengroove.app/share/ideal-world-cup/',
+    })).toBe('shared');
+    expect(share).toHaveBeenCalledWith({
+      title: '최애 월드컵 | 온기',
+      url: 'https://ongi.greengroove.app/share/ideal-world-cup/',
+    });
   });
 });

@@ -6,6 +6,7 @@ import type { ActivityId } from './activityCatalog';
 export type ActivityAppProps = {
   onBackHome: () => void;
   initialGroupPickerMode?: PickerMode;
+  onGroupPickerModeChange?: (mode: PickerMode) => void;
 };
 
 export type ActivityDefinition = {

@@ -1,5 +1,6 @@
-const CACHE_NAME = 'ongi-shell-v2';
+const CACHE_NAME = 'ongi-shell-v4';
 const APP_ROOT = self.registration.scope;
+const APP_ROOT_PATH = new URL(APP_ROOT).pathname;
 const APP_SHELL = [
   APP_ROOT,
   new URL('site.webmanifest', APP_ROOT).href,
@@ -27,8 +28,9 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const requestUrl = new URL(request.url);
 
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) {
+  if (request.method !== 'GET' || requestUrl.origin !== self.location.origin) {
     return;
   }
 
@@ -36,8 +38,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          void caches.open(CACHE_NAME).then((cache) => cache.put(APP_ROOT, copy));
+          if (requestUrl.pathname === APP_ROOT_PATH) {
+            const copy = response.clone();
+            void caches.open(CACHE_NAME).then((cache) => cache.put(APP_ROOT, copy));
+          }
           return response;
         })
         .catch(() => caches.match(APP_ROOT)),

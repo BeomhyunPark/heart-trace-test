@@ -23,6 +23,7 @@ const HEART_TRACE_CARD_NAME = /마음속 흔적 찾기/;
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  window.history.replaceState({}, '', '/');
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
   vi.useRealTimers();

@@ -2,6 +2,11 @@ const SHARE_TITLE = '온기 | 우리 사이에 온기를';
 
 export type ShareAppLinkResult = 'shared' | 'copied' | 'cancelled' | 'failed';
 
+export type ShareAppLinkOptions = {
+  title?: string;
+  url?: string;
+};
+
 function getShareUrl(): string {
   return document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href
     ?? window.location.href;
@@ -45,20 +50,38 @@ async function copyShareUrl(): Promise<ShareAppLinkResult> {
   }
 }
 
-export async function shareAppLink(): Promise<ShareAppLinkResult> {
+export async function shareAppLink(
+  options: ShareAppLinkOptions = {},
+): Promise<ShareAppLinkResult> {
+  const url = options.url ?? getShareUrl();
+
   if (typeof navigator.share !== 'function') {
-    return copyShareUrl();
+    try {
+      await copyText(url);
+      return 'copied';
+    } catch {
+      return 'failed';
+    }
   }
 
   try {
     await navigator.share({
-      title: SHARE_TITLE,
-      url: getShareUrl(),
+      title: options.title ?? SHARE_TITLE,
+      url,
     });
     return 'shared';
   } catch (error: unknown) {
     if (isShareCancellation(error)) {
       return 'cancelled';
+    }
+
+    if (options.url) {
+      try {
+        await copyText(url);
+        return 'copied';
+      } catch {
+        return 'failed';
+      }
     }
 
     return copyShareUrl();

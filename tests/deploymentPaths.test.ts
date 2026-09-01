@@ -41,6 +41,7 @@ describe('하위 경로 배포 URL', () => {
     );
 
     expect(serviceWorkerSource).toContain('const APP_ROOT = self.registration.scope;');
+    expect(serviceWorkerSource).toContain('requestUrl.pathname === APP_ROOT_PATH');
     expect(serviceWorkerSource).toContain("new URL('site.webmanifest', APP_ROOT).href");
     expect(serviceWorkerSource).toContain('cache.put(APP_ROOT, copy)');
     expect(serviceWorkerSource).toContain('caches.match(APP_ROOT)');

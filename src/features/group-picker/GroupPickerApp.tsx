@@ -18,6 +18,7 @@ import {
   type Ladder,
   type PrayerSupportAssignment,
 } from './domain/draw';
+import { getPickerModeDefinition, PICKER_MODES } from './domain/modeCatalog';
 import { getSpecialOutcomeValues } from './domain/outcomes';
 import type { PickerMode } from './domain/types';
 import { loadGroupNames, saveGroupNames } from './services/nameStorage';
@@ -31,6 +32,7 @@ import './styles/group-picker.css';
 type GroupPickerAppProps = {
   onBackHome: () => void;
   initialGroupPickerMode?: PickerMode;
+  onGroupPickerModeChange?: (mode: PickerMode) => void;
 };
 type PickerPhase = 'setup' | 'drawing' | 'result';
 
@@ -59,22 +61,6 @@ type ItemEditorProps = {
 const DRAW_DELAY_MS = 1600;
 const LADDER_TRACE_DELAY_MS = 1100;
 const MAX_PARTICIPANTS = 32;
-
-const MODES: readonly {
-  id: PickerMode;
-  icon: string;
-  title: string;
-  action: string;
-  drawing: string;
-}[] = [
-  { id: 'prayer', icon: '✦', title: '기도할 사람', action: '기도할 사람 정하기', drawing: '기도할 사람을 정하고 있어요' },
-  { id: 'sharing', icon: '1', title: '먼저 나눌 사람', action: '나눔 순서 정하기', drawing: '나눔 순서를 섞고 있어요' },
-  { id: 'lottery', icon: '✓', title: '제비 뽑기', action: '제비 뽑기 시작', drawing: '제비를 섞고 있어요' },
-  { id: 'ladder', icon: '↘', title: '사다리 타기', action: '사다리 만들기', drawing: '사다리를 놓고 있어요' },
-  { id: 'groups', icon: '#', title: '나눔 조 짜기', action: '나눔 조 편성하기', drawing: '나눔 조를 나누고 있어요' },
-  { id: 'pairs', icon: '1:1', title: '원투원 짝 정하기', action: '원투원 짝 정하기', drawing: '원투원 짝을 정하고 있어요' },
-  { id: 'supporter', icon: '♡', title: '이번 주 기도 후원자', action: '기도 후원자 정하기', drawing: '이번 주 기도 후원자를 정하고 있어요' },
-] as const;
 
 function parseItems(value: string): string[] {
   return value.split(/[\n,]/).map((item) => item.trim()).filter(Boolean);
@@ -254,6 +240,7 @@ function LadderBoard({
 export function GroupPickerApp({
   onBackHome,
   initialGroupPickerMode = 'prayer',
+  onGroupPickerModeChange,
 }: GroupPickerAppProps) {
   const storedNames = useMemo(loadGroupNames, []);
   const [phase, setPhase] = useState<PickerPhase>('setup');
@@ -271,7 +258,11 @@ export function GroupPickerApp({
   const [revealAllQueue, setRevealAllQueue] = useState<number[] | null>(null);
   const [isSharing, setIsSharing] = useState(false);
   const [shareMessage, setShareMessage] = useState('');
-  const selectedMode = MODES.find((item) => item.id === mode) ?? MODES[0];
+  const selectedMode = getPickerModeDefinition(mode);
+
+  useEffect(() => {
+    onGroupPickerModeChange?.(mode);
+  }, [mode, onGroupPickerModeChange]);
 
   useEffect(() => {
     if (phase !== 'drawing') return;
@@ -355,7 +346,7 @@ export function GroupPickerApp({
   };
 
   if (phase === 'drawing' && result) {
-    const drawingMode = MODES.find((item) => item.id === result.mode) ?? MODES[0];
+    const drawingMode = getPickerModeDefinition(result.mode);
     return (
       <ScreenLayout className={`group-picker-screen group-picker-drawing is-${result.mode}`}>
         <div className="group-picker-drawing__visual" aria-hidden="true"><i /><i /><i /><span>{drawingMode.icon}</span></div>
@@ -368,7 +359,7 @@ export function GroupPickerApp({
   }
 
   if (phase === 'result' && result) {
-    const resultMode = MODES.find((item) => item.id === result.mode) ?? MODES[0];
+    const resultMode = getPickerModeDefinition(result.mode);
     const destinations = result.ladder ? resolveLadder(result.ladder) : [];
     const allLadderResultsRevealed = result.mode === 'ladder' && revealedLadderStarts.size === result.orderedNames.length;
     const revealAllLadderResults = () => {
@@ -549,7 +540,7 @@ export function GroupPickerApp({
       <section className="group-picker-section" aria-labelledby="picker-mode-title">
         <h2 id="picker-mode-title">무엇을 정할까요?</h2>
         <div className="group-picker-modes">
-          {MODES.map((item) => (
+          {PICKER_MODES.map((item) => (
             <button
               className={`${mode === item.id ? 'is-selected ' : ''}is-${item.id}`.trim()}
               type="button"

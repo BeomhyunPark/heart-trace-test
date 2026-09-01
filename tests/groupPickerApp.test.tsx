@@ -28,10 +28,21 @@ async function finishDraw() {
 
 describe('오늘은 누구?', () => {
   it('홈 바로가기에서 선택한 도구로 시작한다', () => {
-    render(<GroupPickerApp initialGroupPickerMode="groups" onBackHome={vi.fn()} />);
+    const onGroupPickerModeChange = vi.fn();
+    render(
+      <GroupPickerApp
+        initialGroupPickerMode="groups"
+        onBackHome={vi.fn()}
+        onGroupPickerModeChange={onGroupPickerModeChange}
+      />,
+    );
 
     expect(screen.getByRole('button', { name: '나눔 조 짜기' }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByRole('button', { name: '나눔 조 편성하기' })).toBeTruthy();
+    expect(onGroupPickerModeChange).toHaveBeenLastCalledWith('groups');
+
+    fireEvent.click(screen.getByRole('button', { name: '원투원 짝 정하기' }));
+    expect(onGroupPickerModeChange).toHaveBeenLastCalledWith('pairs');
   });
 
   it('기다리는 화면을 거친 뒤 기도 순서를 보여준다', async () => {

@@ -7,3 +7,9 @@ dist
 .idea
 .vite
 *.tsbuildinfo
+
+# Backend
+backend/.gradle
+backend/build
+.env
+.env.home-server

@@ -1,6 +1,6 @@
-export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'know-me-quiz';
+export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'know-me-quiz' | 'anonymous-sharing';
 
-export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '맞히기 게임';
+export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '맞히기 게임' | '소그룹 나눔';
 export type ActivityGroup = 'play' | 'community-tool';
 
 export type Activity = {
@@ -51,6 +51,16 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '오늘은 누구?',
     description: '사다리부터 기도와 나눔 순서까지 한 번에',
     meta: '사다리 · 제비뽑기 · 기도 · 나눔 · 조 편성 · 원투원 · 기도 후원',
+    badge: 'NEW',
+    available: true,
+  },
+  {
+    id: 'anonymous-sharing',
+    group: 'community-tool',
+    kind: '소그룹 나눔',
+    title: '익명으로 만나는 우리',
+    description: '이름보다 이야기를 먼저 만나고, 준비됐을 때 직접 나를 소개해요.',
+    meta: 'Room 참여 · 익명 프로필 · 대화 중심',
     badge: 'NEW',
     available: true,
   },

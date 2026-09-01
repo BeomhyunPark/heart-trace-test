@@ -28,6 +28,7 @@ const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'ideal-world-cup': '★',
   'group-picker': '?',
   'know-me-quiz': 'ME',
+  'anonymous-sharing': '♡',
 };
 
 export function pickFeaturedActivity(
@@ -173,7 +174,7 @@ export function HomeScreen({
                 className="community-tool-card__features"
                 id={`community-tool-features-${activity.id}`}
               >
-                {PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
+                {activity.id === 'group-picker' ? PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
                   const isFavorite = communityToolPreferences.favoriteModes.includes(mode);
 
                   return (
@@ -209,13 +210,21 @@ export function HomeScreen({
                       </button>
                     </span>
                   );
-                })}
+                }) : (
+                  <>
+                    <span>익명 답변</span>
+                    <span>직접 공개</span>
+                    <span>대화 중심</span>
+                  </>
+                )}
               </span>
-              <span className="community-tool-card__favorite-message" aria-live="polite">
-                {favoriteMessage}
-              </span>
+              {activity.id === 'group-picker' ? (
+                <span className="community-tool-card__favorite-message" aria-live="polite">
+                  {favoriteMessage}
+                </span>
+              ) : null}
               <span className="community-tool-card__action">
-                전체 도구 보기&nbsp; →
+                {activity.id === 'group-picker' ? '전체 도구 보기' : '모임 시작하기'}&nbsp; →
               </span>
             </article>
           ))}

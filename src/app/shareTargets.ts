@@ -3,7 +3,8 @@ type ShareActivityId =
   | 'balance-game'
   | 'ideal-world-cup'
   | 'group-picker'
-  | 'know-me-quiz';
+  | 'know-me-quiz'
+  | 'anonymous-sharing';
 
 type SharePickerMode =
   | 'prayer'

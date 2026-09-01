@@ -45,6 +45,12 @@ const loadKnowMeQuizApp = async () => {
   return { default: module.KnowMeQuizApp };
 };
 const KnowMeQuizApp = lazy(loadKnowMeQuizApp);
+const loadAnonymousSharingApp = async () => {
+  const module = await import('../features/anonymous-sharing/AnonymousSharingApp');
+
+  return { default: module.AnonymousSharingApp };
+};
+const AnonymousSharingApp = lazy(loadAnonymousSharingApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -71,6 +77,11 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     id: 'know-me-quiz',
     Component: KnowMeQuizApp,
     preload: loadKnowMeQuizApp,
+  },
+  'anonymous-sharing': {
+    id: 'anonymous-sharing',
+    Component: AnonymousSharingApp,
+    preload: loadAnonymousSharingApp,
   },
 };
 

@@ -1,0 +1,12 @@
+package app.ongi.sharing.realtime;
+
+public enum RoomEventType {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_PROGRESS_CHANGED,
+    ROOM_ACCESS_CHANGED,
+    SHARING_STARTED,
+    ROUND_CHANGED,
+    PROFILE_REVEALED,
+    ROOM_CANCELLED,
+    ROOM_COMPLETED
+}

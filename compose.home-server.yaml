@@ -1,0 +1,62 @@
+name: ongi-home-server
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ongi
+      POSTGRES_USER: ongi
+      POSTGRES_PASSWORD: ${ONGI_POSTGRES_PASSWORD:?Set ONGI_POSTGRES_PASSWORD in .env.home-server}
+    volumes:
+      - ongi-home-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ongi -d ongi"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    build:
+      context: ./backend
+    image: ongi-backend:home
+    restart: unless-stopped
+    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/ongi
+      DB_USERNAME: ongi
+      DB_PASSWORD: ${ONGI_POSTGRES_PASSWORD:?Set ONGI_POSTGRES_PASSWORD in .env.home-server}
+      DB_POOL_SIZE: ${ONGI_DB_POOL_SIZE:-20}
+      ONGI_ALLOWED_ORIGINS: ${ONGI_ALLOWED_ORIGINS:-https://ongi.greengroove.app}
+      ONGI_SECURE_COOKIE: "true"
+      ONGI_TRUST_CLOUDFLARE_CONNECTING_IP: "true"
+      ONGI_ROOM_ACTIVE_LIFETIME: ${ONGI_ROOM_ACTIVE_LIFETIME:-12h}
+      ONGI_TOMBSTONE_RETENTION: ${ONGI_TOMBSTONE_RETENTION:-24h}
+      ONGI_JOIN_ATTEMPTS_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_MINUTE:-30}
+      ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE: ${ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE:-15}
+    ports:
+      - "${ONGI_BACKEND_BIND_ADDRESS:-127.0.0.1}:${ONGI_BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  ongi-home-postgres-data:

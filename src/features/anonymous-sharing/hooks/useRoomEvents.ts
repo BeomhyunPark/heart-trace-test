@@ -18,6 +18,7 @@ export function useRoomEvents(roomId: string | null, onRoomEvent: () => void) {
 
   useEffect(() => {
     if (!roomId || typeof EventSource === 'undefined') {
+      setReconnecting(false);
       return undefined;
     }
 

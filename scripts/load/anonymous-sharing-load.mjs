@@ -37,6 +37,11 @@ const sseStats = {
   connectionErrors: 0,
   events: {},
 };
+const cleanupStats = {
+  attempted: 0,
+  cancelled: 0,
+  failed: 0,
+};
 let rooms = [];
 let sseClients = [];
 let fatalError = null;
@@ -187,6 +192,7 @@ async function createRooms() {
         roomId: data.roomId,
         roomCode: data.roomCode,
         hostCookie: extractCookie(response, 'ongi_host_session'),
+        version: data.version,
         participants: [],
         current: null,
       };
@@ -524,6 +530,37 @@ async function completeRooms() {
   await drainRefreshes();
 }
 
+async function cleanupIncompleteRooms() {
+  const incompleteRooms = rooms.filter((room) => !room.completed);
+  if (incompleteRooms.length === 0) {
+    return;
+  }
+
+  console.log(`Cancelling ${incompleteRooms.length} incomplete test rooms...`);
+  await Promise.all(incompleteRooms.map(async (room) => {
+    cleanupStats.attempted += 1;
+    try {
+      const { data: state } = await apiRequest(
+        'cleanup_state',
+        `/api/rooms/${room.roomId}/state`,
+        { cookie: room.hostCookie },
+      );
+      if (!['CREATED', 'WRITING', 'LOCKED'].includes(state.status)) {
+        throw new Error(`Room ${room.index + 1} is not cancellable in ${state.status}`);
+      }
+      await apiRequest('cleanup_cancel', `/api/rooms/${room.roomId}/cancel`, {
+        method: 'POST',
+        cookie: room.hostCookie,
+        body: { expectedVersion: state.version },
+      });
+      cleanupStats.cancelled += 1;
+    } catch (error) {
+      cleanupStats.failed += 1;
+      console.error(`Cleanup failed for room ${room.index + 1}:`, error.message);
+    }
+  }));
+}
+
 async function drainRefreshes() {
   while (pendingRefreshes.size > 0) {
     await Promise.allSettled([...pendingRefreshes]);
@@ -579,6 +616,7 @@ async function writeResult() {
       completedRooms: rooms.filter((room) => room.completed).length,
     },
     sse: sseStats,
+    cleanup: cleanupStats,
     metrics,
   };
   const outputDirectory = resolve(CONFIG.outputDirectory);
@@ -619,6 +657,9 @@ async function main() {
     console.error(error);
     process.exitCode = 1;
   } finally {
+    if (fatalError !== null) {
+      await cleanupIncompleteRooms();
+    }
     sseClients.forEach((client) => client.stop());
     await Promise.allSettled(sseClients.map((client) => client.done));
     await drainRefreshes();

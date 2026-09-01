@@ -10,6 +10,7 @@
 - Room당 참가자는 2~10명만 허용합니다.
 - 기본 최대 40개 Room, 총 400명까지만 허용합니다.
 - 결과 JSON에는 session cookie, 이름, 답변 내용, Room Code를 기록하지 않습니다.
+- 나눔 시작 전 오류가 발생하면 생성한 테스트 Room을 Host session으로 자동 취소하고 cleanup 결과도 JSON에 기록합니다.
 
 ## 실행 순서
 

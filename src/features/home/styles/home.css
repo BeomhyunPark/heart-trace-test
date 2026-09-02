@@ -356,7 +356,6 @@
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 16rem;
   flex-direction: column;
   gap: 0.875rem;
   align-items: stretch;
@@ -537,7 +536,6 @@
   position: relative;
   z-index: 2;
   align-self: flex-end;
-  margin-top: auto;
   padding: 0.25rem 0;
   color: #baf5e6;
   font-size: 0.8125rem;

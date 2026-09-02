@@ -12,6 +12,7 @@ import './features/heart-trace/styles/result.css';
 import './features/heart-trace/styles/motion.css';
 import './styles/responsive.css';
 import './features/home/styles/home.css';
+import './features/updates/updates.css';
 
 const rootElement = document.getElementById('root');
 

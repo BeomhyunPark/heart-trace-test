@@ -19,6 +19,7 @@ import {
 type HomeScreenProps = {
   communityToolPreferences: CommunityToolPreferences;
   featuredActivityId: ActivityId | null;
+  onOpenUpdates: () => void;
   onSelectActivity: (activityId: ActivityId, initialGroupPickerMode?: PickerMode) => void;
   onToggleFavoriteCommunityTool: (mode: PickerMode) => void;
 };
@@ -56,6 +57,7 @@ export function pickFeaturedActivity(
 export function HomeScreen({
   communityToolPreferences,
   featuredActivityId,
+  onOpenUpdates,
   onSelectActivity,
   onToggleFavoriteCommunityTool,
 }: HomeScreenProps) {
@@ -334,7 +336,12 @@ export function HomeScreen({
 
       <footer className="home-footer">
         <span aria-hidden="true">✦</span>
-        <p>아이스브레이킹앱, by hyunee <small>v{__APP_VERSION__}</small></p>
+        <p>
+          아이스브레이킹앱, by hyunee{' '}
+          <button className="home-footer__updates" type="button" onClick={onOpenUpdates}>
+            v{__APP_VERSION__} · 업데이트 내역
+          </button>
+        </p>
         <div className="home-footer__actions">
           <details className="creator-contact">
             <summary>

@@ -19,12 +19,16 @@ import type { PickerMode } from '../features/group-picker/domain/types';
 import { ACTIVITIES, type ActivityId } from './activityCatalog';
 import {
   buildActivityUrl,
+  buildPageUrl,
   parseActivitySearch,
+  parsePageSearch,
+  type AppPage,
   type ActivityTarget,
 } from './activityNavigation';
 import { SplashScreen } from './SplashScreen';
 import { getActivityDefinition, preloadActivity } from './activityRegistry';
 import { ActivityShareButton } from '../components/ActivityShareButton';
+import { UpdatesScreen } from '../features/updates/UpdatesScreen';
 
 function getDocumentScrollTop(): number {
   return Math.max(
@@ -43,10 +47,22 @@ function updateActivityUrl(target: ActivityTarget | null, action: 'push' | 'repl
   updateHistory(window.history.state, '', nextUrl);
 }
 
+function updatePageUrl(page: AppPage | null, action: 'push' | 'replace'): void {
+  const nextUrl = buildPageUrl(window.location.href, page);
+  const updateHistory = action === 'push'
+    ? window.history.pushState.bind(window.history)
+    : window.history.replaceState.bind(window.history);
+
+  updateHistory(window.history.state, '', nextUrl);
+}
+
 export function App() {
   const [showSplash, setShowSplash] = useState(import.meta.env.MODE !== 'test');
   const [activeActivity, setActiveActivity] = useState<ActivityTarget | null>(() => (
     parseActivitySearch(window.location.search)
+  ));
+  const [activePage, setActivePage] = useState<AppPage | null>(() => (
+    parsePageSearch(window.location.search)
   ));
   const [featuredActivityId] = useState<ActivityId | null>(() => (
     pickFeaturedActivity(ACTIVITIES, null)?.id ?? null
@@ -64,9 +80,11 @@ export function App() {
   useEffect(() => {
     const handlePopState = () => {
       const nextActivity = parseActivitySearch(window.location.search);
+      const nextPage = parsePageSearch(window.location.search);
       activeActivityRef.current = nextActivity;
       startTransition(() => {
         setActiveActivity(nextActivity);
+        setActivePage(nextPage);
       });
     };
 
@@ -86,13 +104,22 @@ export function App() {
   }, [showSplash]);
 
   useLayoutEffect(() => {
-    if (activeActivity !== null) {
+    if (activeActivity !== null || activePage !== null) {
       return;
     }
 
     document.documentElement.scrollTop = homeScrollTop.current;
     document.body.scrollTop = homeScrollTop.current;
-  }, [activeActivity]);
+  }, [activeActivity, activePage]);
+
+  useLayoutEffect(() => {
+    if (activePage === null) {
+      return;
+    }
+
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [activePage]);
 
   const recordRecentCommunityTool = useCallback((mode: PickerMode) => {
     setCommunityToolPreferences((current) => {
@@ -150,14 +177,26 @@ export function App() {
     updateActivityUrl(target, 'push');
     activeActivityRef.current = target;
     startTransition(() => {
+      setActivePage(null);
       setActiveActivity(target);
+    });
+  };
+
+  const openUpdates = () => {
+    homeScrollTop.current = getDocumentScrollTop();
+    updatePageUrl('updates', 'push');
+    activeActivityRef.current = null;
+    startTransition(() => {
+      setActiveActivity(null);
+      setActivePage('updates');
     });
   };
 
   const returnHome = () => {
     activeActivityRef.current = null;
-    updateActivityUrl(null, 'replace');
+    updatePageUrl(null, 'replace');
     setActiveActivity(null);
+    setActivePage(null);
   };
 
   const activity = activeActivity === null
@@ -167,7 +206,9 @@ export function App() {
 
   return (
     <Suspense fallback={<SplashScreen />}>
-      {ActivityApp && activeActivity ? (
+      {activePage === 'updates' ? (
+        <UpdatesScreen onBackHome={returnHome} />
+      ) : ActivityApp && activeActivity ? (
         <div className="activity-shell">
           <ActivityApp
             initialGroupPickerMode={activeActivity.initialGroupPickerMode}
@@ -184,6 +225,7 @@ export function App() {
         <HomeScreen
           communityToolPreferences={communityToolPreferences}
           featuredActivityId={featuredActivityId}
+          onOpenUpdates={openUpdates}
           onSelectActivity={selectActivity}
           onToggleFavoriteCommunityTool={toggleFavoriteCommunityTool}
         />

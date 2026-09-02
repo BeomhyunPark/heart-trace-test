@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildActivityUrl,
+  buildPageUrl,
   parseActivitySearch,
+  parsePageSearch,
 } from '../src/app/activityNavigation';
 
 describe('활동 직접 링크', () => {
@@ -31,5 +33,18 @@ describe('활동 직접 링크', () => {
       'https://example.com/heart-trace-test/?utm_source=chat&tool=sharing#invite',
       null,
     )).toBe('/heart-trace-test/?utm_source=chat#invite');
+  });
+
+  it('업데이트 내역 주소를 읽고 활동 주소와 겹치지 않게 만든다', () => {
+    expect(parsePageSearch('?page=updates')).toBe('updates');
+    expect(parsePageSearch('?page=unknown')).toBeNull();
+    expect(buildPageUrl(
+      'https://example.com/heart-trace-test/?utm_source=home&activity=heart-trace',
+      'updates',
+    )).toBe('/heart-trace-test/?utm_source=home&page=updates');
+    expect(buildActivityUrl(
+      'https://example.com/heart-trace-test/?page=updates',
+      { id: 'balance-game' },
+    )).toBe('/heart-trace-test/?activity=balance-game');
   });
 });

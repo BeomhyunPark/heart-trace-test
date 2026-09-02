@@ -1,0 +1,21 @@
+[Unit]
+Description=Ongi backend automatic deployment watcher
+Documentation=file:///home/user/code/ongi-icebreaking-app/README.md
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=simple
+User=user
+Group=user
+SupplementaryGroups=docker
+WorkingDirectory=/home/user/code/ongi-icebreaking-app
+Environment=HOME=/home/user
+ExecStart=/home/user/code/ongi-icebreaking-app/scripts/home-server/watch-backend.sh
+Restart=always
+RestartSec=5s
+NoNewPrivileges=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

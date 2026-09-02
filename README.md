@@ -202,6 +202,29 @@ docker compose --env-file .env.home-server -f compose.home-server.yaml down
 
 `down -v`는 PostgreSQL volume까지 삭제하므로 사용하지 않습니다. Docker Desktop은 Windows 로그인 시 자동 시작하도록 설정하고 Surface의 절전 및 최대 절전 모드를 꺼야 합니다. `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP=true`는 Backend가 Tunnel을 통해서만 공개되는 이 구성에서만 사용합니다.
 
+### Backend 자동 배포
+
+홈서버 감시기는 매분 원격 `master`를 확인합니다. 새 커밋에 Backend 소스, Gradle 설정, Dockerfile 또는 홈서버 Compose 변경이 있으면 해당 커밋의 깨끗한 배포 snapshot을 만들고 자동으로 테스트한 뒤 Backend container만 다시 빌드합니다. 서버 checkout의 로컬 변경은 덮어쓰지 않습니다. `.env.home-server` 변경도 자동 배포 대상입니다. 새 container가 readiness 검사를 통과하지 못하면 직전 image로 자동 복구하며 PostgreSQL container와 volume은 변경하지 않습니다.
+
+```bash
+# 사용자 crontab에 설치 (sudo 불필요, 1분마다 변경 확인)
+scripts/home-server/install-autodeploy-cron.sh
+
+# 등록 상태와 배포 로그 확인
+crontab -l
+tail -f .deployment/backend/watch.log
+
+# 즉시 한 번 배포
+scripts/home-server/deploy-backend.sh
+
+# 자동 배포 제거
+scripts/home-server/install-autodeploy-cron.sh --remove
+```
+
+원격 변경을 감지하면 기본 5초 동안 기다린 뒤 배포합니다. 동일한 커밋의 실패는 무한 재시도하지 않고, 그 다음 Backend 커밋이나 환경 설정 변경 때 다시 시도합니다. cron 환경에서 기본값을 바꿔야 하면 등록된 명령 앞에 `ONGI_DEPLOY_REMOTE`, `ONGI_DEPLOY_BRANCH`, `ONGI_DEPLOY_DEBOUNCE_SECONDS`, `ONGI_DEPLOY_HEALTH_TIMEOUT` 또는 `ONGI_DEPLOY_RUN_TESTS=false`를 지정합니다.
+
+초 단위로 계속 감시해야 하는 환경에서는 `deploy/systemd/ongi-backend-autodeploy.service`를 `/etc/systemd/system/`에 설치해 사용할 수도 있습니다. cron 감시와 systemd 감시를 동시에 실행해도 잠금으로 중복 배포는 막지만, 운영 방식은 하나만 선택하는 것이 좋습니다.
+
 홈서버 구성은 Backend container 2GB, Java heap 1GB, PostgreSQL 768MB, container별 열린 파일 8,192개를 기본 제한으로 둡니다. 행사장 Wi-Fi의 NAT 뒤에서 여러 Room이 하나의 공인 IP를 공유하는 상황을 고려해 IP 전체 join 제한은 분당 600회, 같은 Room Code 제한은 분당 30회입니다. Room별 최대 참가자 수와 random code entropy는 그대로 유지합니다.
 
 익명 나눔의 10 → 100 → 200 → 300명 단계별 외부 부하 테스트와 Surface Docker 지표 수집 방법은 [tests/load/README.md](tests/load/README.md)에 정리되어 있습니다.

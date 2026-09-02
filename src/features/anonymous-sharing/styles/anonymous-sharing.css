@@ -23,23 +23,18 @@
 }
 
 .anonymous-sharing-header > button {
-  display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
+  display: inline-flex;
+  min-height: var(--ongi-control-small);
   flex: none;
-  padding: 0;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
+  border-radius: var(--ongi-radius-pill);
   background: rgba(12, 24, 48, 0.48);
   color: white;
-  font-size: 1.25rem;
-  place-items: center;
-}
-
-.anonymous-sharing-header strong {
-  display: block;
-  margin-top: 0.125rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .anonymous-sharing-entry {
@@ -98,9 +93,9 @@
 .anonymous-sharing-writing-actions > button:not(.primary-button),
 .anonymous-sharing-lobby-actions > button:not(.primary-button),
 .anonymous-sharing-host-participation > button {
-  min-height: 3rem;
+  min-height: var(--ongi-control-medium);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 1rem;
+  border-radius: var(--ongi-radius-control);
   background: rgba(17, 24, 56, 0.46);
   color: var(--ongi-cream-50);
   font: inherit;
@@ -146,12 +141,12 @@
 }
 
 .anonymous-sharing-form input {
-  height: 3.5rem;
+  height: var(--ongi-control-medium);
   padding: 0 1rem;
 }
 
 .anonymous-sharing-host-participation input {
-  height: 3.25rem;
+  height: var(--ongi-control-medium);
   padding: 0 1rem;
 }
 

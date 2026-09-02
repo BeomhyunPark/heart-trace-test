@@ -48,7 +48,7 @@
 }
 
 .group-picker-hero {
-  padding: 2rem 0 1.5rem;
+  padding: 2rem 0 1rem;
 }
 
 .group-picker-hero .eyebrow,
@@ -60,29 +60,30 @@
   margin: 0.625rem 0 0;
   color: #f4fffb;
   font-family: var(--font-family-display);
-  font-size: clamp(2.75rem, 13vw, 3.5rem);
+  font-size: clamp(2.5rem, 12vw, 3.25rem);
   font-weight: 400;
   letter-spacing: -0.04em;
-  line-height: 1.02;
+  line-height: 1.05;
 }
 
 .group-picker-credit {
-  margin: 0.875rem 0 0;
+  margin: 1rem 0 0;
   color: rgba(216, 248, 239, 0.64);
   font-size: 0.6875rem;
   letter-spacing: 0.025em;
+  text-align: center;
 }
 
 .group-picker-section + .group-picker-section {
-  margin-top: 1.5rem;
+  margin-top: var(--ongi-section-gap);
 }
 
 .group-picker-section h2,
 .group-picker-section__heading h2 {
   margin: 0;
   color: #f4fffb;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.625rem;
 }
 
 .group-picker-section__heading {
@@ -214,7 +215,7 @@
 
 .group-picker-editor__field input {
   width: 100%;
-  min-height: 3.25rem;
+  min-height: var(--ongi-control-medium);
   padding: 1rem;
   border: 1px solid var(--picker-border);
   border-radius: 1rem;
@@ -229,7 +230,7 @@
 }
 
 .group-picker-editor__field button {
-  min-height: 3.25rem;
+  min-height: var(--ongi-control-medium);
   padding: 0;
   border: 1px solid var(--picker-border);
   border-radius: 1rem;

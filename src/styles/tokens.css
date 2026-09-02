@@ -9,6 +9,12 @@
   --ongi-lavender-400: #b4a0ff;
   --ongi-text-secondary: #d8c7d2;
   --ongi-border-accent: #ffaa7a;
+  --ongi-control-small: 2.5rem;
+  --ongi-control-medium: 3.25rem;
+  --ongi-control-large: 3.625rem;
+  --ongi-radius-control: 1rem;
+  --ongi-radius-pill: 999px;
+  --ongi-section-gap: 2rem;
   --ongi-radius-card: 1.5rem;
   --ongi-radius-small: 0.75rem;
   --color-background: #050816;

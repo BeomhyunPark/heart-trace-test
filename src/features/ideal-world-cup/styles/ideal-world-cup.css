@@ -42,7 +42,7 @@
 }
 
 .world-cup-hero {
-  padding: 1.75rem 0 0.75rem;
+  padding: 2rem 0 1rem;
 }
 
 .world-cup-hero h1,
@@ -56,8 +56,8 @@
 }
 
 .world-cup-hero h1 {
-  font-size: clamp(2.75rem, 13vw, 3.5rem);
-  line-height: 1.02;
+  font-size: clamp(2.5rem, 12vw, 3.25rem);
+  line-height: 1.05;
 }
 
 .world-cup-hero__subtitle {
@@ -67,11 +67,12 @@
   line-height: 1.5rem;
 }
 
-.world-cup-hero .world-cup-credit {
-  margin-top: 0.375rem;
+.world-cup-credit {
+  margin: 1rem 0 0;
   color: rgba(255, 247, 239, 0.5);
   font-size: 0.6875rem;
   line-height: 1rem;
+  text-align: center;
 }
 
 .world-cup-resume {
@@ -129,7 +130,7 @@
 }
 
 .world-cup-setup__section {
-  margin-top: 1.75rem;
+  margin-top: var(--ongi-section-gap);
 }
 
 .world-cup-setup__section h2 {

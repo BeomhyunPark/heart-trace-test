@@ -114,8 +114,6 @@
   line-height: 1.05;
 }
 
-.balance-header > p:last-child,
-.balance-picker__header > p:last-child,
 .balance-complete > p:not(.eyebrow) {
   margin: 1rem 0 0;
   color: var(--ongi-text-secondary);
@@ -126,7 +124,7 @@
 
 .balance-section {
   position: relative;
-  margin-top: 2rem;
+  margin-top: var(--ongi-section-gap);
   padding-top: 0.25rem;
 }
 
@@ -280,7 +278,7 @@
 
 .balance-mode-list > button {
   display: grid;
-  min-height: 3.75rem;
+  min-height: var(--ongi-control-large);
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: center;

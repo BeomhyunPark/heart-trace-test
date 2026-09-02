@@ -40,11 +40,9 @@ function joinUrl(roomCode: string): string {
 function Header({ onBackHome }: { onBackHome: () => void }) {
   return (
     <header className="anonymous-sharing-header">
-      <button type="button" onClick={onBackHome} aria-label="온기 홈으로 돌아가기">←</button>
-      <div>
-        <p className="eyebrow">소그룹 익명 나눔</p>
-        <strong>우리의 마음을 천천히</strong>
-      </div>
+      <button type="button" onClick={onBackHome} aria-label="온기 홈으로 돌아가기">
+        <span aria-hidden="true">←</span> 홈
+      </button>
     </header>
   );
 }
@@ -287,9 +285,9 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
         <Header onBackHome={handleBackHome} />
         <section className="anonymous-sharing-entry">
           <div className="anonymous-sharing-symbol" aria-hidden="true">♡</div>
-          <p className="eyebrow">대화가 시작되는 익명 프로필</p>
+          <p className="eyebrow">온기 · 소그룹 나눔</p>
           <h1>누구의 이야기인지<br />천천히 알아가요</h1>
-          <p>답을 맞히는 게임이 아니에요. 서로의 이야기를 읽고, 작성자가 준비됐을 때 직접 자신을 소개해요.</p>
+          <p>이야기를 먼저 읽고, 준비되면 작성자가 직접 자신을 소개해요.</p>
         </section>
 
         {entryMode === 'HOME' ? (

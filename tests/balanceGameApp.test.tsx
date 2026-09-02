@@ -3,7 +3,10 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { BalanceGameApp } from '../src/features/balance-game/BalanceGameApp';
+import {
+  BalanceGameApp,
+  pickRandomQuestions,
+} from '../src/features/balance-game/BalanceGameApp';
 
 afterEach(cleanup);
 
@@ -20,7 +23,7 @@ describe('밸런스 게임 기능 진입점', () => {
     fireEvent.click(deepButton);
     expect(deepButton.getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByRole('button', { name: /가볍게/ }).getAttribute('aria-pressed')).toBe('false');
-    expect(screen.getByRole('button', { name: /추천 흐름으로 시작/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /랜덤으로 시작/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /직접 골라 담기/ })).toBeTruthy();
     expect(screen.getByText('창작자 · CK')).toBeTruthy();
 
@@ -28,19 +31,25 @@ describe('밸런스 게임 기능 진입점', () => {
     expect(onBackHome).toHaveBeenCalledOnce();
   });
 
-  it('추천 흐름은 정해진 5문항을 순서대로 진행한다', () => {
+  it('선택한 온도에서 중복 없는 5문항을 무작위로 고른다', () => {
+    const lightQuestions = pickRandomQuestions('light', () => 0);
+    const deepQuestions = pickRandomQuestions('deep', () => 0.5);
+
+    expect(lightQuestions).toHaveLength(5);
+    expect(deepQuestions).toHaveLength(5);
+    expect(new Set(lightQuestions.map(({ id }) => id)).size).toBe(5);
+    expect(new Set(deepQuestions.map(({ id }) => id)).size).toBe(5);
+    expect(lightQuestions.every(({ weight }) => weight === 'light')).toBe(true);
+    expect(deepQuestions.every(({ weight }) => weight === 'deep')).toBe(true);
+  });
+
+  it('랜덤 시작은 5문항으로 게임을 시작한다', () => {
     render(<BalanceGameApp onBackHome={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /추천 흐름으로 시작/ }));
+    fireEvent.click(screen.getByRole('button', { name: /랜덤으로 시작/ }));
 
     expect(screen.getByRole('progressbar', { name: '밸런스 게임 진행률' }).getAttribute('aria-valuemax')).toBe('5');
-    expect(screen.getByRole('heading', { name: '메시지를 받았을 때 나는?' })).toBeTruthy();
     expect(screen.queryByText(/하나를 고르고|마음속으로 하나|이유를 나눠/)).toBeNull();
-
-    fireEvent.click(screen.getByRole('radio', { name: '칼답' }));
-    fireEvent.click(screen.getByRole('button', { name: '다음 질문' }));
-
-    expect(screen.getByRole('heading', { name: '내 생활 방식에 더 가까운 쪽은?' })).toBeTruthy();
   });
 
   it('리더가 카테고리를 살펴보고 원하는 질문만 골라 시작한다', () => {

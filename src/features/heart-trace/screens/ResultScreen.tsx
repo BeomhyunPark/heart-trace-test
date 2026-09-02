@@ -113,7 +113,6 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
           </div>
         </section>
 
-        <h2 className="result-messages__title">마음에 새겨요</h2>
         <section className="result-messages">
           <article>
             <h2>마음에 남길 한 문장</h2>

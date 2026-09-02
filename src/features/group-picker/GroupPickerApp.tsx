@@ -534,7 +534,6 @@ export function GroupPickerApp({
       <header className="group-picker-hero">
         <p className="eyebrow">온기 · 모임 도구</p>
         <h1 aria-label="오늘은 누구?">오늘은<br />누구?</h1>
-        <p className="group-picker-credit">창작자 · hyunee</p>
       </header>
 
       <section className="group-picker-section" aria-labelledby="picker-mode-title">
@@ -635,6 +634,7 @@ export function GroupPickerApp({
 
       {error ? <p className="group-picker-error" role="alert">{error}</p> : null}
       <PrimaryButton className="group-picker-start" onClick={prepareDraw}>{selectedMode.action}</PrimaryButton>
+      <p className="group-picker-credit">창작자 · hyunee</p>
     </ScreenLayout>
   );
 }

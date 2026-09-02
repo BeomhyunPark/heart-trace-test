@@ -9,12 +9,6 @@ import {
 } from 'react';
 
 import { HomeScreen, pickFeaturedActivity } from '../features/home/HomeScreen';
-import {
-  loadCommunityToolPreferences,
-  saveCommunityToolPreferences,
-  withRecentCommunityTool,
-  withToggledFavoriteCommunityTool,
-} from '../features/home/services/communityToolPreferences';
 import type { PickerMode } from '../features/group-picker/domain/types';
 import { ACTIVITIES, type ActivityId } from './activityCatalog';
 import {
@@ -67,9 +61,6 @@ export function App() {
   const [featuredActivityId] = useState<ActivityId | null>(() => (
     pickFeaturedActivity(ACTIVITIES, null)?.id ?? null
   ));
-  const [communityToolPreferences, setCommunityToolPreferences] = useState(
-    loadCommunityToolPreferences,
-  );
   const activeActivityRef = useRef(activeActivity);
   const homeScrollTop = useRef(0);
 
@@ -121,30 +112,6 @@ export function App() {
     document.body.scrollTop = 0;
   }, [activePage]);
 
-  const recordRecentCommunityTool = useCallback((mode: PickerMode) => {
-    setCommunityToolPreferences((current) => {
-      const next = withRecentCommunityTool(current, mode);
-
-      if (next !== current) {
-        saveCommunityToolPreferences(next);
-      }
-
-      return next;
-    });
-  }, []);
-
-  const toggleFavoriteCommunityTool = useCallback((mode: PickerMode) => {
-    setCommunityToolPreferences((current) => {
-      const next = withToggledFavoriteCommunityTool(current, mode);
-
-      if (next !== current) {
-        saveCommunityToolPreferences(next);
-      }
-
-      return next;
-    });
-  }, []);
-
   const handleGroupPickerModeChange = useCallback((mode: PickerMode) => {
     if (activeActivityRef.current?.id !== 'group-picker') {
       return;
@@ -152,7 +119,6 @@ export function App() {
 
     const nextActivity = { id: 'group-picker' as const, initialGroupPickerMode: mode };
 
-    recordRecentCommunityTool(mode);
     updateActivityUrl(nextActivity, 'replace');
     activeActivityRef.current = nextActivity;
     setActiveActivity((current) => (
@@ -160,7 +126,7 @@ export function App() {
         ? current
         : nextActivity
     ));
-  }, [recordRecentCommunityTool]);
+  }, []);
 
   if (showSplash) {
     return <SplashScreen />;
@@ -168,10 +134,6 @@ export function App() {
 
   const selectActivity = (id: ActivityId, initialGroupPickerMode?: PickerMode) => {
     const target = { id, initialGroupPickerMode };
-
-    if (id === 'group-picker' && initialGroupPickerMode) {
-      recordRecentCommunityTool(initialGroupPickerMode);
-    }
 
     homeScrollTop.current = getDocumentScrollTop();
     updateActivityUrl(target, 'push');
@@ -223,11 +185,9 @@ export function App() {
         </div>
       ) : (
         <HomeScreen
-          communityToolPreferences={communityToolPreferences}
           featuredActivityId={featuredActivityId}
           onOpenUpdates={openUpdates}
           onSelectActivity={selectActivity}
-          onToggleFavoriteCommunityTool={toggleFavoriteCommunityTool}
         />
       )}
     </Suspense>

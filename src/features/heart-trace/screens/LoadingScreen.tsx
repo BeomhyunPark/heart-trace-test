@@ -103,10 +103,6 @@ export function LoadingScreen() {
         </div>
       </div>
 
-      <div className="loading-screen__copy">
-        <p>잠시만 기다려주세요.<br />마음에 남은 흔적들이 빛을 따라 모이고 있어요.</p>
-      </div>
-
       <ProgressBar current={progress} total={100} label="결과 분석 진행률" />
 
       <section className="loading-status" aria-live="polite" aria-atomic="true">
@@ -124,8 +120,6 @@ export function LoadingScreen() {
           })}
         </ul>
       </section>
-
-      <p className="loading-screen__footer">곧 당신의 캐릭터가 나타나요</p>
     </ScreenLayout>
   );
 }

@@ -8,20 +8,16 @@ type GuideScreenProps = {
 
 const GUIDE_ITEMS = [
   {
-    title: '부담가지지 말아요',
-    body: <>이 테스트는 서로를 조금 더 알아가기 위한<br />아이스브레이킹 콘텐츠입니다! 😊</>,
-  },
-  {
     title: '가볍게 골라요',
-    body: <>정답은 없어요.<br />지금 내 마음과 더 가까운 쪽을 골라주세요.</>,
+    body: <>정답은 없어요. 지금 내 마음과 가까운 쪽을 골라주세요.</>,
   },
   {
-    title: '친구들과 나눠요',
-    body: <>결과 이미지를 저장하고<br />친구들과 대화해보세요.</>,
+    title: '결과를 나눠요',
+    body: <>결과 이미지를 저장해 친구들과 나눌 수 있어요.</>,
   },
   {
-    title: '저장되지 않아요',
-    body: <>나의 흔적은 나만 보관해요.</>,
+    title: '서버에 저장되지 않아요',
+    body: <>완료한 결과는 서버에 남지 않아요.</>,
   },
 ] as const;
 
@@ -32,8 +28,7 @@ export function GuideScreen({ onStart, onBackHome }: GuideScreenProps) {
         <span aria-hidden="true">←</span> 홈
       </button>
       <header className="guide-screen__header">
-        <p className="eyebrow">주의사항</p>
-        <h1>시작하기 전에 잠깐</h1>
+        <h1>시작하기 전에</h1>
       </header>
 
       <ol className="guide-list">

@@ -17,7 +17,6 @@ export function UpdatesScreen({ onBackHome }: UpdatesScreenProps) {
           <BrandMark />
           <span>ONGI HISTORY</span>
         </div>
-        <p className="updates-eyebrow">우리 사이에 쌓인 기록</p>
         <h1>업데이트 내역</h1>
         <p className="updates-intro">
           하나의 흔적테스트에서 시작해<br />함께 사용하는 온기가 되기까지.
@@ -49,8 +48,6 @@ export function UpdatesScreen({ onBackHome }: UpdatesScreenProps) {
       </ol>
 
       <footer className="updates-footer">
-        <span aria-hidden="true">✦</span>
-        <p>다음 기록도 우리 사이에 따뜻하게 쌓아갈게요.</p>
         <button type="button" onClick={onBackHome}>온기로 돌아가기</button>
       </footer>
     </ScreenLayout>

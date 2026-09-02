@@ -1,27 +1,16 @@
-import { useState } from 'react';
-
 import { ACTIVITIES, type Activity, type ActivityId } from '../../app/activityCatalog';
 import { BrandMark } from '../../components/BrandMark';
 import { ScreenLayout } from '../../components/ScreenLayout';
-import {
-  getPickerModeDefinition,
-  PICKER_SHORTCUTS,
-} from '../group-picker/domain/modeCatalog';
+import { PICKER_SHORTCUTS } from '../group-picker/domain/modeCatalog';
 import type { PickerMode } from '../group-picker/domain/types';
 import { assetUrl } from '../../utils/assetUrl';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
-import {
-  MAX_FAVORITE_COMMUNITY_TOOLS,
-  type CommunityToolPreferences,
-} from './services/communityToolPreferences';
 
 type HomeScreenProps = {
-  communityToolPreferences: CommunityToolPreferences;
   featuredActivityId: ActivityId | null;
   onOpenUpdates: () => void;
   onSelectActivity: (activityId: ActivityId, initialGroupPickerMode?: PickerMode) => void;
-  onToggleFavoriteCommunityTool: (mode: PickerMode) => void;
 };
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
@@ -55,18 +44,11 @@ export function pickFeaturedActivity(
 }
 
 export function HomeScreen({
-  communityToolPreferences,
   featuredActivityId,
   onOpenUpdates,
   onSelectActivity,
-  onToggleFavoriteCommunityTool,
 }: HomeScreenProps) {
-  const [favoriteMessage, setFavoriteMessage] = useState('');
   const featuredActivity = ACTIVITIES.find(({ id }) => id === featuredActivityId) ?? null;
-  const recentMode = communityToolPreferences.recentMode === null
-    ? null
-    : getPickerModeDefinition(communityToolPreferences.recentMode);
-  const favoriteModes = communityToolPreferences.favoriteModes.map(getPickerModeDefinition);
   const communityTools = ACTIVITIES.filter((activity) => (
     activity.available && activity.group === 'community-tool'
   ));
@@ -85,39 +67,16 @@ export function HomeScreen({
           <BrandMark />
           <span className="home-brand__copy">
             <strong>온기</strong>
-            <small>우리 사이에 온기를</small>
           </span>
         </div>
         <div className="home-hero__message">
           <p className="home-hero__kicker">ICE BREAKING</p>
           <h1>우리 사이에 온기를</h1>
           <p className="home-hero__description">
-            어색함은 조금 덜고,<br />
-            서로의 마음은 조금 더 알아가는 시간.<br />
-            하나님 안에서 만난 우리 사이에 온기를 더해보세요.
+            어색함은 덜고, 서로를 더 알아가는 시간을 시작해보세요.
           </p>
         </div>
       </header>
-
-      <button
-        className="gureumi-home-teaser"
-        type="button"
-        aria-label="구르미 테스트 티저 보기"
-        onClick={() => onSelectActivity('gureumi-teaser')}
-      >
-        <span className="gureumi-home-teaser__copy">
-          <small>ONGI · SECOND TEST</small>
-          <strong>구르미 테스트</strong>
-          <span>흔적을 이을 여덟 친구를<br />먼저 만나보세요.</span>
-          <b>티저 보기 <i aria-hidden="true">→</i></b>
-        </span>
-        <span className="gureumi-home-teaser__preview" aria-hidden="true">
-          <img
-            src={assetUrl('images/teasers/gureumi-test/teaser.png')}
-            alt=""
-          />
-        </span>
-      </button>
 
       <section className="home-section home-section--community-tools" aria-labelledby="community-tools-title">
         <div className="home-section__meta">
@@ -125,47 +84,6 @@ export function HomeScreen({
           <span aria-hidden="true">01</span>
         </div>
         <h2 id="community-tools-title">공동체를 위한 도구</h2>
-        <p className="home-section__description">
-          순서를 정하고 조를 나눌 때, 필요한 기능을 바로 꺼내 쓰세요.
-        </p>
-
-        {recentMode || favoriteModes.length > 0 ? (
-          <section className="community-tool-saved" aria-labelledby="saved-tools-title">
-            <div className="community-tool-saved__heading">
-              <h3 id="saved-tools-title">내 도구</h3>
-              <span>이 기기에 저장됨</span>
-            </div>
-            <div className="community-tool-saved__items">
-              {recentMode ? (
-                <button
-                  className="community-tool-saved__recent"
-                  type="button"
-                  aria-label={`최근 사용한 도구 ${recentMode.shortcutLabel} 열기`}
-                  onClick={() => onSelectActivity('group-picker', recentMode.id)}
-                >
-                  <span aria-hidden="true">↻</span>
-                  <small>최근 사용</small>
-                  <strong>{recentMode.shortcutLabel}</strong>
-                </button>
-              ) : null}
-              {favoriteModes.length > 0 ? (
-                <div className="community-tool-saved__favorites" aria-label="즐겨찾기 도구">
-                  {favoriteModes.map((favoriteMode) => (
-                    <button
-                      type="button"
-                      aria-label={`즐겨찾기 ${favoriteMode.shortcutLabel} 열기`}
-                      onClick={() => onSelectActivity('group-picker', favoriteMode.id)}
-                      key={favoriteMode.id}
-                    >
-                      <span aria-hidden="true">★</span>
-                      {favoriteMode.shortcutLabel}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </section>
-        ) : null}
 
         <div className="community-tool-list">
           {communityTools.map((activity) => (
@@ -200,52 +118,20 @@ export function HomeScreen({
                   className="community-tool-card__features"
                   id={`community-tool-features-${activity.id}`}
                 >
-                  {PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => {
-                    const isFavorite = communityToolPreferences.favoriteModes.includes(mode);
-
-                    return (
-                      <span
-                        className={`community-tool-shortcut${isFavorite ? ' is-favorite' : ''}`}
-                        key={mode}
-                      >
-                        <button
-                          className="community-tool-shortcut__open"
-                          type="button"
-                          onClick={() => onSelectActivity(activity.id, mode)}
-                        >
-                          {shortcutLabel}
-                        </button>
-                        <button
-                          className="community-tool-shortcut__favorite"
-                          type="button"
-                          aria-label={`${shortcutLabel} 즐겨찾기 ${isFavorite ? '해제' : '추가'}`}
-                          aria-pressed={isFavorite}
-                          onClick={() => {
-                            if (!isFavorite && communityToolPreferences.favoriteModes.length >= MAX_FAVORITE_COMMUNITY_TOOLS) {
-                              setFavoriteMessage(`즐겨찾기는 ${MAX_FAVORITE_COMMUNITY_TOOLS}개까지 고정할 수 있어요.`);
-                              return;
-                            }
-
-                            onToggleFavoriteCommunityTool(mode);
-                            setFavoriteMessage(isFavorite
-                              ? `${shortcutLabel} 즐겨찾기를 해제했어요.`
-                              : `${shortcutLabel} 즐겨찾기에 추가했어요.`);
-                          }}
-                        >
-                          <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
-                        </button>
-                      </span>
-                    );
-                  })}
-                </span>
-              ) : null}
-              {activity.id === 'group-picker' ? (
-                <span className="community-tool-card__favorite-message" aria-live="polite">
-                  {favoriteMessage}
+                  {PICKER_SHORTCUTS.map(({ id: mode, shortcutLabel }) => (
+                    <button
+                      className="community-tool-shortcut"
+                      type="button"
+                      onClick={() => onSelectActivity(activity.id, mode)}
+                      key={mode}
+                    >
+                      {shortcutLabel}
+                    </button>
+                  ))}
                 </span>
               ) : null}
               <span className="community-tool-card__action">
-                {activity.id === 'group-picker' ? '전체 도구 보기' : '모임 시작하기'}&nbsp; →
+                {activity.id === 'group-picker' ? '전체 도구 보기' : '모임 시작하기'}
               </span>
             </article>
           ))}
@@ -276,8 +162,8 @@ export function HomeScreen({
               {featuredActivity.description}
             </span>
             <small>{featuredActivity.meta}</small>
+            <b className="activity-card__start">시작하기</b>
           </span>
-          <b>시작하기&nbsp; →</b>
         </button>
       </section>
 
@@ -304,7 +190,7 @@ export function HomeScreen({
                   <p>{activity.description}</p>
                 </span>
                 <span className="activity-card__action" aria-hidden="true">
-                  {activity.available ? '→' : '…'}
+                  {activity.available ? '시작하기' : '준비 중'}
                 </span>
               </>
             );
@@ -330,6 +216,34 @@ export function HomeScreen({
             );
           })}
         </div>
+      </section>
+
+      <section className="home-section home-section--preview" aria-labelledby="preview-title">
+        <div className="home-section__meta">
+          <p>곧 만나요</p>
+          <span aria-hidden="true">04</span>
+        </div>
+        <h2 id="preview-title">업데이트 예정</h2>
+
+        <button
+          className="gureumi-home-teaser"
+          type="button"
+          aria-label="구르미 테스트 티저 보기"
+          onClick={() => onSelectActivity('gureumi-teaser')}
+        >
+          <span className="gureumi-home-teaser__copy">
+            <small>ONGI · SECOND TEST</small>
+            <strong>구르미 테스트</strong>
+            <span>흔적을 이을 여덟 친구를<br />먼저 만나보세요.</span>
+            <b>티저 보기</b>
+          </span>
+          <span className="gureumi-home-teaser__preview" aria-hidden="true">
+            <img
+              src={assetUrl('images/teasers/gureumi-test/teaser.png')}
+              alt=""
+            />
+          </span>
+        </button>
       </section>
 
       <InstallAppPrompt />

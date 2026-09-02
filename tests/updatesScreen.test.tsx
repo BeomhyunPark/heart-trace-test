@@ -17,10 +17,10 @@ describe('업데이트 내역', () => {
 
     document.documentElement.scrollTop = 1200;
     document.body.scrollTop = 1200;
-    fireEvent.click(screen.getByRole('button', { name: 'v2.0.0 · 업데이트 내역' }));
+    fireEvent.click(screen.getByRole('button', { name: 'v2.1.0 · 업데이트 내역' }));
 
     expect(screen.getByRole('heading', { name: '업데이트 내역', level: 1 })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: '함께 쓰는 온기로' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '콘텐츠는 달라도, 온기는 하나' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: '흔적테스트의 시작' })).toBeTruthy();
     expect(screen.getByText('v0.1.0')).toBeTruthy();
     expect(screen.getAllByText('ARCHIVE').length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ describe('업데이트 내역', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { name: '업데이트 내역', level: 1 })).toBeTruthy();
-    expect(screen.getByText('v2.0.0')).toBeTruthy();
+    expect(screen.getByText('v2.1.0')).toBeTruthy();
     expect(screen.getByText('v0.7.2')).toBeTruthy();
   });
 });

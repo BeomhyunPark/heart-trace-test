@@ -64,7 +64,7 @@
 
 .gureumi-teaser-panel {
   width: 100%;
-  min-height: 49.5625rem;
+  min-height: 0;
   padding: 1.5625rem 0.9375rem 1.6875rem;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.66);
@@ -82,11 +82,7 @@
 .gureumi-teaser-kicker,
 .gureumi-teaser-panel h1,
 .gureumi-teaser-intro,
-.gureumi-mystery-stage > p,
-.gureumi-update-card h2,
-.gureumi-update-card ul,
-.gureumi-teaser-waiting,
-.gureumi-teaser-footer {
+.gureumi-mystery-stage > p {
   margin: 0;
 }
 
@@ -269,55 +265,13 @@
   50% { transform: translateY(-0.1875rem); }
 }
 
-.gureumi-update-card {
-  margin: 1.25rem 0.25rem 0;
-  padding: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.76);
-  border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.44);
-  box-shadow: 0 0.625rem 1.75rem rgba(80, 105, 161, 0.07);
-  text-align: left;
-  backdrop-filter: blur(0.5625rem);
-}
-
-.gureumi-update-card h2 {
-  color: var(--gureumi-text-primary);
-  font-size: 1rem;
-  font-weight: 800;
-  line-height: 1.5rem;
-}
-
-.gureumi-update-card ul {
-  display: grid;
-  gap: 0.125rem;
-  margin-top: 0.5rem;
-  padding: 0;
-  color: var(--gureumi-text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.4375rem;
-  list-style: none;
-}
-
-.gureumi-update-card li::before {
-  margin-right: 0.45rem;
-  color: var(--gureumi-action-primary);
-  content: "•";
-}
-
-.gureumi-teaser-waiting {
-  margin-top: 1.625rem;
-  color: var(--gureumi-text-secondary);
-  font-size: 0.8125rem;
-  line-height: 1.3125rem;
-}
-
 .gureumi-teaser-cta {
   width: 100%;
-  min-height: 3.5rem;
-  margin-top: 0.4375rem;
+  min-height: var(--ongi-control-large);
+  margin-top: 1.25rem;
   padding: 0.75rem 1.25rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--ongi-radius-pill);
   background: linear-gradient(100deg, var(--gureumi-cyan) 0%, var(--gureumi-violet) 51%, var(--gureumi-pink) 100%);
   box-shadow: 0.3125rem 0.6875rem 1.375rem rgba(199, 110, 222, 0.18),
     -0.25rem 0.625rem 1.3125rem rgba(77, 181, 235, 0.2);
@@ -340,13 +294,6 @@
   transform: translateY(0);
 }
 
-.gureumi-teaser-footer {
-  margin-top: 0.5rem;
-  color: var(--gureumi-text-secondary);
-  font-size: 0.6875rem;
-  line-height: 1.0625rem;
-}
-
 @media (max-width: 23rem) {
   .gureumi-teaser-screen {
     padding-inline: 0.5rem;
@@ -366,10 +313,6 @@
     margin-inline: 0.125rem;
   }
 
-  .gureumi-update-card {
-    margin-inline: 0;
-    padding: 1rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

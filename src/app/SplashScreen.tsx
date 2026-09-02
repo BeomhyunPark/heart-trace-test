@@ -7,7 +7,6 @@ export function SplashScreen() {
         <BrandMark size="splash" />
         <h1>온기</h1>
         <p>우리 사이에 온기를</p>
-        <small>함께 웃고, 묻고, 가까워지는 시간</small>
       </div>
     </main>
   );

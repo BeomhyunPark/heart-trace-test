@@ -30,7 +30,6 @@ export function GureumiTeaserApp({
           <span aria-hidden="true">←</span>
           홈
         </button>
-        <span>구르미 테스트 미리보기</span>
       </nav>
 
       <article className="gureumi-teaser-panel" aria-labelledby="gureumi-teaser-title">
@@ -64,23 +63,13 @@ export function GureumiTeaserApp({
           ))}
         </section>
 
-        <section className="gureumi-update-card" aria-labelledby="gureumi-update-title">
-          <h2 id="gureumi-update-title">두 번째 테스트에서</h2>
-          <ul>
-            <li>여덟 캐릭터의 서로 다른 유형</li>
-            <li>관계 속에서 드러나는 새로운 모습</li>
-          </ul>
-        </section>
-
-        <p className="gureumi-teaser-waiting">기다리는 동안, 첫 번째 테스트 하기</p>
         <button
           className="gureumi-teaser-cta"
           type="button"
           onClick={() => onSelectActivity?.('heart-trace')}
         >
-          마음의 흔적 테스트 하러 가기
+          마음속 흔적 찾기
         </button>
-        <p className="gureumi-teaser-footer">두 번째 테스트는 곧 공개됩니다.</p>
       </article>
     </ScreenLayout>
   );

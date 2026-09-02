@@ -173,7 +173,6 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           <p className="eyebrow">온기 · 토너먼트</p>
           <h1 aria-label="최애 월드컵">최애<br />월드컵</h1>
           <p className="world-cup-hero__subtitle">오늘 가장 끌리는 하나를 남겨보세요.</p>
-          <p className="world-cup-credit">창작자 · hyunee</p>
         </header>
 
         {savedState ? (
@@ -250,6 +249,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
         >
           {selectedCategory.title} {selectedSize}강 시작하기
         </PrimaryButton>
+        <p className="world-cup-credit">창작자 · hyunee</p>
       </ScreenLayout>
     );
   }

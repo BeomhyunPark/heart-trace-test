@@ -100,19 +100,3 @@ export const BALANCE_GAME_QUESTIONS = [
     right: '오해의 가능성을 알지만, 조심스럽게 한 번 더 다가간다.',
   },
 ] as const satisfies readonly BalanceGameQuestion[];
-
-export const CURATED_LIGHT_QUESTION_IDS = [
-  'daily-04',
-  'daily-01',
-  'daily-07',
-  'faith-11',
-  'faith-12',
-] as const;
-
-export const CURATED_DEEP_QUESTION_IDS = [
-  'deep-daily-08',
-  'deep-relationship-07',
-  'deep-work-01',
-  'deep-faith-05',
-  'deep-faith-community-04',
-] as const;

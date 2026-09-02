@@ -194,7 +194,7 @@ export function IntroScreen({
             className="intro-screen__next-button"
             onClick={() => moveToMessage(Math.min(activeMessageIndex + 1, lastMessageIndex))}
           >
-            다음<span aria-hidden="true">→</span>
+            다음
           </PrimaryButton>
         )}
       </div>

@@ -441,16 +441,23 @@ button.activity-card {
 
 .test-home-button {
   align-self: flex-start;
-  min-height: 2.25rem;
+  min-height: var(--ongi-control-small);
   margin: 0 0 1rem;
-  padding: 0.3rem 0.625rem;
+  padding: 0.35rem 0.75rem;
   border: 1px solid rgba(199, 237, 255, 0.2);
-  border-radius: 999px;
+  border-radius: var(--ongi-radius-pill);
   background: rgba(199, 229, 255, 0.08);
   color: #c7daf2;
   cursor: pointer;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.test-home-button:hover {
+  border-color: rgba(199, 237, 255, 0.42);
+  background: rgba(199, 229, 255, 0.14);
+  color: #e8f5ff;
 }
 
 .test-home-button span {
@@ -459,9 +466,9 @@ button.activity-card {
 
 .primary-button {
   width: 100%;
-  min-height: 3.625rem;
+  min-height: var(--ongi-control-large);
   border: 1px solid rgba(221, 248, 255, 0.45);
-  border-radius: 999px;
+  border-radius: var(--ongi-radius-pill);
   background: var(--button-gradient);
   box-shadow: 0 0.5rem 1.5rem rgba(8, 13, 46, 0.24);
   color: #07142c;

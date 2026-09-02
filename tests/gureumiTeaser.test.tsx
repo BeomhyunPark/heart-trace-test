@@ -43,7 +43,7 @@ describe('구르미 테스트 티저', () => {
     fireEvent.click(screen.getByRole('button', { name: '구르미 테스트 티저 보기' }));
 
     fireEvent.click(await screen.findByRole('button', {
-      name: '마음의 흔적 테스트 하러 가기',
+      name: '마음속 흔적 찾기',
     }));
 
     expect(await screen.findByRole('heading', {

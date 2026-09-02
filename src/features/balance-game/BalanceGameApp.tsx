@@ -3,11 +3,7 @@ import { useMemo, useState } from 'react';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProgressBar } from '../../components/ProgressBar';
 import { ScreenLayout } from '../../components/ScreenLayout';
-import {
-  BALANCE_GAME_QUESTIONS,
-  CURATED_DEEP_QUESTION_IDS,
-  CURATED_LIGHT_QUESTION_IDS,
-} from './data/questions';
+import { BALANCE_GAME_QUESTIONS } from './data/questions';
 import type {
   BalanceGameCategory,
   BalanceGameQuestion,
@@ -35,22 +31,21 @@ const FILTER_LABELS: Record<BalanceGameWeight, Record<BalanceGameCategory, strin
   },
 };
 
-function getQuestions(questionIds: readonly string[]) {
-  return questionIds.map((questionId) => {
-    const question = BALANCE_GAME_QUESTIONS.find((candidate) => candidate.id === questionId);
+const RANDOM_QUESTION_COUNT = 5;
 
-    if (!question) {
-      throw new Error(`추천 질문을 찾을 수 없습니다: ${questionId}`);
-    }
+export function pickRandomQuestions(
+  weight: BalanceGameWeight,
+  random = Math.random,
+): readonly BalanceGameQuestion[] {
+  const questions = BALANCE_GAME_QUESTIONS.filter((question) => question.weight === weight);
 
-    return question;
-  });
+  for (let index = questions.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.min(index, Math.floor(random() * (index + 1)));
+    [questions[index], questions[swapIndex]] = [questions[swapIndex], questions[index]];
+  }
+
+  return questions.slice(0, RANDOM_QUESTION_COUNT);
 }
-
-const CURATED_QUESTIONS: Record<BalanceGameWeight, readonly BalanceGameQuestion[]> = {
-  light: getQuestions(CURATED_LIGHT_QUESTION_IDS),
-  deep: getQuestions(CURATED_DEEP_QUESTION_IDS),
-};
 
 export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   const [phase, setPhase] = useState<Phase>('setup');
@@ -125,7 +120,6 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         <header className="balance-header">
           <p className="eyebrow">온기 · VS 놀이</p>
           <h1 aria-label="극과 극 밸런스 게임">극과 극<br />밸런스 게임</h1>
-          <p>정답보다 서로의 이유가 더 재미있는 시간이에요.</p>
         </header>
 
         <section className="balance-section" aria-labelledby="weight-title">
@@ -159,13 +153,11 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
           <span className="balance-step">02</span>
           <h2 id="mode-title">질문을 고르는 방법</h2>
           <div className="balance-mode-list">
-            <button type="button" onClick={() => startGame(CURATED_QUESTIONS[weight])}>
-              <strong>추천 흐름으로 시작</strong>
-              <b aria-hidden="true">→</b>
+            <button type="button" onClick={() => startGame(pickRandomQuestions(weight))}>
+              <strong>랜덤으로 시작</strong>
             </button>
             <button type="button" onClick={showPicker}>
               <strong>직접 골라 담기</strong>
-              <b aria-hidden="true">→</b>
             </button>
           </div>
         </section>
@@ -193,7 +185,6 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
         <header className="balance-picker__header">
           <p className="eyebrow">{weight === 'light' ? '가볍게' : '조금 깊게'} · 직접 골라 담기</p>
           <h1>오늘 나눌 질문</h1>
-          <p>순서는 카테고리 안에서 부담 없이 이어지도록 정리해드려요.</p>
         </header>
 
         <div className="balance-filters" role="group" aria-label="질문 카테고리">

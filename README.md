@@ -1,258 +1,81 @@
-# OnGi
-
-교회 공동체에서 사용하는 모바일 중심의 인터랙티브 콘텐츠 웹앱입니다. 콘텐츠는 브라우저에서 동작하며, 소그룹 익명 자기소개 나눔과 익명 콘텐츠 참여·반응 기록은 Spring Boot API와 PostgreSQL을 사용합니다.
-
-## 구조
-
-```text
-/
-├── src/                 React + TypeScript frontend
-├── tests/               Vitest frontend tests
-├── backend/             Java 21 + Spring Boot API
-├── compose.yaml         local PostgreSQL
-└── docs/                architecture documents
-```
+<p align="center">
+  <img src="./public/ongi-og-default.png" alt="우리 사이에 온기를 — 온기 아이스브레이킹 콘텐츠" width="840" />
+</p>
 
-운영 환경에서는 `ongi.greengroove.app`의 GitHub Pages frontend와 `ongi-api.greengroove.app`의 API를 분리합니다.
+<h1 align="center">온기</h1>
 
-## 로컬 실행
-
-요구 사항:
-
-- Node.js 24
-- Java 21
-- Docker
+<p align="center">
+  <strong>어색함은 조금 덜고, 서로의 마음은 조금 더 가까이.</strong><br />
+  하나님 안에서 만난 우리가 자연스럽게 친밀해지도록 돕는<br />
+  아이스브레이킹 서비스입니다.
+</p>
 
-환경변수 예시는 `.env.example`에 있습니다. 로컬 기본값으로 실행할 때는 별도 secret이 필요하지 않습니다.
+<p align="center">
+  <a href="https://ongi.greengroove.app/"><strong>온기 시작하기 →</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://ongi.greengroove.app/?activity=gureumi-teaser">구르미 테스트 미리보기</a>
+</p>
 
-```bash
-docker compose up -d postgres
+---
 
-cd backend
-./gradlew bootRun
+## 함께 있는 시간이 조금 더 따뜻해지도록
 
-# 별도 터미널, 저장소 루트
-npm install
-npm run dev
-```
+새로운 사람들과 처음 인사하는 자리,<br /> 무슨 이야기부터 꺼내야 할지 막막한 소그룹,<br /> 순서와 조를 정해야 하는 모임까지.<br />온기는 모두의 휴대폰에서 바로 열어 함께 즐길 수 있어요.
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:8080`
-- Health check: `http://localhost:8080/actuator/health`
-- PostgreSQL: `localhost:5432/ongi`
+회원가입이나 복잡한 준비는 필요하지 않습니다.<br /> 링크를 열고, 지금 모임에 필요한 콘텐츠를 골라보세요.
 
-Flyway migration은 Backend 시작 시 자동 실행됩니다. 운영 DB에서 migration 파일을 수정하지 말고 새 migration을 추가해야 합니다.
+## 지금 온기에서 만날 수 있어요
 
-## 주요 환경변수
+### 서로를 알아가는 놀거리
 
-| 변수 | 설명 | 로컬 기본값 |
-|---|---|---|
-| `DB_URL` | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/ongi` |
-| `DB_USERNAME` | DB 사용자 | `ongi` |
-| `DB_PASSWORD` | DB 비밀번호 | 로컬 개발 비밀번호 |
-| `ONGI_ALLOWED_ORIGINS` | credential CORS 허용 origin | `http://localhost:5173` |
-| `ONGI_SECURE_COOKIE` | HTTPS 전용 cookie | `false` |
-| `ONGI_ROOM_ACTIVE_LIFETIME` | 활성 Room 만료 | `12h` |
-| `ONGI_TOMBSTONE_RETENTION` | 종료 상태/session hash 유지 | `24h` |
-| `ONGI_JOIN_ATTEMPTS_PER_MINUTE` | IP별 join 시도 제한 | 로컬 `30`, 홈서버 `600` |
-| `ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE` | 같은 IP와 code 조합 제한 | 로컬 `15`, 홈서버 `30` |
-| `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP` | Tunnel이 보장한 실제 client IP로 rate limit | `false` |
-| `VITE_API_BASE_URL` | Frontend API origin | 개발 시 `http://localhost:8080` |
+| 콘텐츠 | 어떤 시간인가요? |
+|---|---|
+| [✦ 마음속 흔적 찾기](https://ongi.greengroove.app/?activity=heart-trace) | 스무 가지 질문을 따라가며 나와 닮은 흔적이를 만나는 성격 테스트 |
+| [VS 극과 극 밸런스 게임](https://ongi.greengroove.app/?activity=balance-game) | 선택보다 서로의 이유가 더 재미있는 밸런스 토크 |
+| [★ 최애 월드컵](https://ongi.greengroove.app/?activity=ideal-world-cup) | 음식과 여행, 다양한 취향 중 단 하나의 최애를 찾는 토너먼트 |
 
-운영에서는 `DB_PASSWORD`를 repository나 image에 넣지 않고 배포 플랫폼 secret으로 주입합니다.
+### 모임이 편해지는 공동체 도구
 
-## API 개요
+| 콘텐츠 | 어떤 때 사용하나요? |
+|---|---|
+| [오늘은 누구?](https://ongi.greengroove.app/?activity=group-picker) | 사다리, 제비뽑기, 기도·나눔 순서, 조 편성, 원투원과 기도 후원까지 한곳에서 |
+| [♡ 익명으로 만나는 우리](https://ongi.greengroove.app/?activity=anonymous-sharing) | 이름보다 이야기를 먼저 만나고, 준비됐을 때 직접 나를 소개하는 소그룹 나눔 |
 
-```text
-POST /api/rooms
-POST /api/room-joins
+각 놀이나 도구는 링크로 바로 나눌 수 있고, 결과도 이미지로 저장하거나 공유할 수 있어요.
 
-GET  /api/rooms/{roomId}/state
-POST /api/rooms/{roomId}/lock
-POST /api/rooms/{roomId}/unlock
-POST /api/rooms/{roomId}/cancel
-GET  /api/rooms/{roomId}/participants
-GET  /api/rooms/{roomId}/participants/me
+## 그리고, 다음 이야기
 
-GET  /api/rooms/{roomId}/questions
-GET  /api/rooms/{roomId}/responses/me
-PUT  /api/rooms/{roomId}/responses
-POST /api/rooms/{roomId}/responses/complete
+<p align="center">
+  <a href="https://ongi.greengroove.app/?activity=gureumi-teaser">
+    <img src="./public/images/teasers/gureumi-test/teaser.png" alt="구르미 테스트 — 서로 다른 여덟 친구가 곧 찾아옵니다" width="280" />
+  </a>
+</p>
 
-POST /api/rooms/{roomId}/start-sharing
-GET  /api/rooms/{roomId}/sharing/current
-POST /api/rooms/{roomId}/sharing/reveal
-POST /api/rooms/{roomId}/next
-POST /api/rooms/{roomId}/complete
+<p align="center">
+  <strong>두 번째 기질 테스트, 구르미 테스트</strong><br />
+  서로 다른 빛과 표정을 지닌 여덟 친구가 곧 새로운 이야기로 찾아옵니다.
+</p>
 
-GET  /api/rooms/{roomId}/events
+## 온기가 소중하게 생각하는 것
 
-PUT    /api/engagement/visitors/{visitorKey}
-PUT    /api/engagement/visits/{visitKey}
-GET    /api/engagement/contents/{contentCode}
-POST   /api/engagement/participations
-PUT    /api/engagement/participations/{participationId}/completion
-GET    /api/engagement/contents/{contentCode}/like?variant={variantCode}
-PUT    /api/engagement/contents/{contentCode}/like  (variantCode 포함)
-DELETE /api/engagement/contents/{contentCode}/like?variant={variantCode}
-POST   /api/engagement/events
-GET    /api/engagement/statistics
-GET    /api/engagement/contents/{contentCode}/statistics
-GET    /api/engagement/share-links/{code}
-```
+- 누구나 설명 없이 바로 시작할 수 있는 쉬운 경험
+- 한 사람도 부담스럽거나 소외되지 않는 따뜻한 질문
+- 모임이 끝난 뒤에도 기분 좋은 대화가 남는 콘텐츠
+- 필요한 정보만 사용하고, 익명 나눔이 끝나면 이름과 답변을 지우는 운영
 
-Room Code와 public Room ID는 credential이 아닙니다. 최초 join을 제외한 모든 Room API는 해당 Room에 속한 HttpOnly session cookie를 검증합니다. 변경 요청에는 `X-OnGi-Client: web` header가 필요합니다.
+---
 
-콘텐츠 좋아요는 밸런스 게임의 대화 온도, 최애 월드컵의 주제, 공동체 도구의 모드처럼 화면에서 선택한 `variantCode` 단위로 독립 집계합니다. `variant`를 생략하면 각 콘텐츠의 기본 분류를 사용해 이전 클라이언트와도 호환됩니다.
+<p align="center">
+  온기는 작은 교회 공동체의 실제 모임에서 시작해 조금씩 자라고 있습니다.<br />
+  아이디어나 발견한 문제는 <a href="https://github.com/BeomhyunPark/ongi-icebreaking-app/issues">GitHub Issues</a>로 알려주세요.
+</p>
 
-Host와 Participant token은 256-bit random 값이며 cookie에만 저장됩니다. DB에는 SHA-256 hash만 저장합니다. frontend 저장소에는 Room ID만 남습니다.
+<details>
+  <summary><strong>만드는 사람을 위한 프로젝트 문서</strong></summary>
 
-## SSE
+- [개발 가이드와 기술 구성](./docs/DEVELOPMENT.md)
+- [제품 로드맵](./ROADMAP.md)
+- [익명 자기소개 나눔 설계](./docs/ongi-sharing-mvp.md)
+- [익명 참여·반응 데이터 설계](./docs/engagement-v0.1.md)
 
-`GET /api/rooms/{roomId}/events`는 다음 trigger를 보냅니다.
-
-- `PARTICIPANT_JOINED`
-- `PARTICIPANT_PROGRESS_CHANGED`
-- `ROOM_ACCESS_CHANGED`
-- `ROOM_CANCELLED`
-- `SHARING_STARTED`
-- `ROUND_CHANGED`
-- `PROFILE_REVEALED`
-- `ROOM_COMPLETED`
-
-이벤트에 이름이나 답변은 포함하지 않습니다. client는 이벤트를 받으면 REST API에서 현재 상태를 다시 조회합니다. 모바일 background 전환이나 플랫폼 timeout으로 연결이 종료되면 `EventSource`가 재연결합니다.
-
-## 개인정보 삭제
-
-Host가 Room을 종료하면 같은 DB transaction에서 다음 정보를 즉시 hard delete합니다.
-
-- 모든 답변
-- 참여자 이름과 Participant record
-- 나눔 순서
-- Participant와 session의 연결
-
-완료 화면 복구와 code 재사용 방지를 위해 `COMPLETED` Room과 익명화된 session hash만 기본 24시간 유지한 뒤 삭제합니다. 종료되지 않은 Room은 생성 12시간 후 전체 삭제합니다.
-
-나눔 시작 전 Host가 `방 없애기`를 확인하면 Room, session, 참여자와 작성 중 답변을 같은 transaction에서 즉시 삭제합니다. 이 취소 동작에는 tombstone을 남기지 않습니다.
-
-DB backup에는 backup 보존 기간 동안 과거 block이 남을 수 있으므로 운영 backup retention과 접근 권한을 별도로 관리해야 합니다.
-
-## 테스트
-
-```bash
-npm test
-npm run build
-
-cd backend
-./gradlew test
-```
-
-Backend integration test는 Testcontainers PostgreSQL을 사용하므로 Docker가 실행 중이어야 합니다.
-
-## Surface Pro 홈서버 배포
-
-기존 Cloudflare Tunnel이 Windows에서 실행 중이라는 전제의 구성입니다. PostgreSQL은 Docker 내부에서만 접근할 수 있고, Backend는 Surface 자신의 `127.0.0.1:8080`에만 공개됩니다. 공유기 포트포워딩은 사용하지 않습니다.
-
-Surface에서 repository를 받은 뒤 PowerShell로 실행합니다.
-
-```powershell
-Copy-Item .env.home-server.example .env.home-server
-notepad .env.home-server
-```
-
-`ONGI_POSTGRES_PASSWORD`를 충분히 긴 임의의 값으로 바꾼 다음 실행합니다.
-
-```powershell
-docker compose --env-file .env.home-server -f compose.home-server.yaml up -d --build
-docker compose --env-file .env.home-server -f compose.home-server.yaml ps
-Invoke-RestMethod http://localhost:8080/actuator/health/readiness
-```
-
-Cloudflare Tunnel public hostname은 다음과 같이 연결합니다.
-
-```text
-Hostname: ongi-api.greengroove.app
-Service:  http://localhost:8080
-```
-
-`cloudflared` 자체도 별도 Docker container 안에서 실행 중이라면 `localhost` 대신 다음 주소를 사용합니다.
-
-```text
-http://host.docker.internal:8080
-```
-
-외부 연결을 확인합니다.
-
-```powershell
-Invoke-RestMethod https://ongi-api.greengroove.app/actuator/health/readiness
-```
-
-운영 명령:
-
-```powershell
-# 로그 확인
-docker compose --env-file .env.home-server -f compose.home-server.yaml logs -f backend
-
-# 새 코드를 받은 뒤 재배포
-docker compose --env-file .env.home-server -f compose.home-server.yaml up -d --build
-
-# 컨테이너만 중지 (DB volume 유지)
-docker compose --env-file .env.home-server -f compose.home-server.yaml down
-```
-
-`down -v`는 PostgreSQL volume까지 삭제하므로 사용하지 않습니다. Docker Desktop은 Windows 로그인 시 자동 시작하도록 설정하고 Surface의 절전 및 최대 절전 모드를 꺼야 합니다. `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP=true`는 Backend가 Tunnel을 통해서만 공개되는 이 구성에서만 사용합니다.
-
-### Backend 자동 배포
-
-홈서버 감시기는 매분 원격 `master`를 확인합니다. 새 커밋에 Backend 소스, Gradle 설정, Dockerfile 또는 홈서버 Compose 변경이 있으면 해당 커밋의 깨끗한 배포 snapshot을 만들고 자동으로 테스트한 뒤 Backend container만 다시 빌드합니다. 서버 checkout의 로컬 변경은 덮어쓰지 않습니다. `.env.home-server` 변경도 자동 배포 대상입니다. 새 container가 readiness 검사를 통과하지 못하면 직전 image로 자동 복구하며 PostgreSQL container와 volume은 변경하지 않습니다.
-
-```bash
-# 사용자 crontab에 설치 (sudo 불필요, 1분마다 변경 확인)
-scripts/home-server/install-autodeploy-cron.sh
-
-# 등록 상태와 배포 로그 확인
-crontab -l
-tail -f .deployment/backend/watch.log
-
-# 즉시 한 번 배포
-scripts/home-server/deploy-backend.sh
-
-# 자동 배포 제거
-scripts/home-server/install-autodeploy-cron.sh --remove
-```
-
-원격 변경을 감지하면 기본 5초 동안 기다린 뒤 배포합니다. 동일한 커밋의 실패는 무한 재시도하지 않고, 그 다음 Backend 커밋이나 환경 설정 변경 때 다시 시도합니다. cron 환경에서 기본값을 바꿔야 하면 등록된 명령 앞에 `ONGI_DEPLOY_REMOTE`, `ONGI_DEPLOY_BRANCH`, `ONGI_DEPLOY_DEBOUNCE_SECONDS`, `ONGI_DEPLOY_HEALTH_TIMEOUT` 또는 `ONGI_DEPLOY_RUN_TESTS=false`를 지정합니다.
-
-초 단위로 계속 감시해야 하는 환경에서는 `deploy/systemd/ongi-backend-autodeploy.service`를 `/etc/systemd/system/`에 설치해 사용할 수도 있습니다. cron 감시와 systemd 감시를 동시에 실행해도 잠금으로 중복 배포는 막지만, 운영 방식은 하나만 선택하는 것이 좋습니다.
-
-홈서버 구성은 Backend container 2GB, Java heap 1GB, PostgreSQL 768MB, container별 열린 파일 8,192개를 기본 제한으로 둡니다. 행사장 Wi-Fi의 NAT 뒤에서 여러 Room이 하나의 공인 IP를 공유하는 상황을 고려해 IP 전체 join 제한은 분당 600회, 같은 Room Code 제한은 분당 30회입니다. Room별 최대 참가자 수와 random code entropy는 그대로 유지합니다.
-
-익명 나눔의 10 → 100 → 200 → 300명 단계별 외부 부하 테스트와 Surface Docker 지표 수집 방법은 [tests/load/README.md](tests/load/README.md)에 정리되어 있습니다.
-
-Frontend GitHub Pages build에는 repository variable을 설정합니다.
-
-```text
-VITE_API_BASE_URL=https://ongi-api.greengroove.app
-```
-
-## Railway 배포
-
-MVP는 Singapore region의 단일 Backend instance와 같은 project의 PostgreSQL을 사용합니다.
-
-1. Railway project에 PostgreSQL service를 추가합니다.
-2. Backend service의 source root를 `/backend`로 지정합니다. `Dockerfile`이 자동 감지됩니다.
-3. Backend와 PostgreSQL을 같은 Singapore region에 둡니다.
-4. Backend에서 DB reference variables로 다음 값을 설정합니다.
-   - `DB_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}`
-   - `DB_USERNAME=${{Postgres.PGUSER}}`
-   - `DB_PASSWORD=${{Postgres.PGPASSWORD}}`
-5. `ONGI_ALLOWED_ORIGINS=https://ongi.greengroove.app`
-6. `ONGI_SECURE_COOKIE=true`
-7. Health check path를 `/actuator/health/readiness`로 설정합니다.
-8. Serverless/App Sleeping을 끄고 replica를 1개로 유지합니다.
-9. custom domain `ongi-api.greengroove.app`을 연결합니다.
-10. GitHub repository variable `VITE_API_BASE_URL=https://ongi-api.greengroove.app`을 설정합니다.
-
-현재 SSE subscriber registry는 단일 process 메모리에 있습니다. Backend를 둘 이상의 replica로 늘리기 전에는 PostgreSQL LISTEN/NOTIFY 같은 cross-instance event 전달 수단을 추가해야 합니다.
-
-익명 콘텐츠 참여·반응의 통계 정의, ERD, 개인정보 정책과 frontend 호출 시점은 [Engagement v0.1 문서](docs/engagement-v0.1.md)를 참고하세요. 익명 나눔의 상세 설계는 `docs/ongi-sharing-mvp.md`를 참고하세요.
+</details>

@@ -17,6 +17,7 @@ describe('홈 방문자 수', () => {
       />,
     );
 
+    expect(screen.getByLabelText('누적 방문자 집계 중')).toBeTruthy();
     expect(await screen.findByLabelText('누적 방문자 0명')).toBeTruthy();
   });
 });

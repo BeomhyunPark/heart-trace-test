@@ -63,9 +63,12 @@ public final class EngagementDtos {
         Instant completedAt
     ) {}
 
-    public record LikeRequest(@NotNull UUID visitorKey) {}
+    public record LikeRequest(
+        @NotNull UUID visitorKey,
+        @Size(max = 80) String variantCode
+    ) {}
 
-    public record LikeResponse(boolean liked, long likeCount) {}
+    public record LikeResponse(String variantCode, boolean liked, long likeCount) {}
 
     public record EventRequest(
         @NotNull UUID eventKey,
@@ -93,6 +96,8 @@ public final class EngagementDtos {
         double percentage
     ) {}
 
+    public record VariantLikeStatistics(String variantCode, long likeCount) {}
+
     public record VersionStatistics(
         String versionNo,
         long participationCount,
@@ -110,6 +115,7 @@ public final class EngagementDtos {
         double completionRate,
         long likeCount,
         long shareCount,
+        List<VariantLikeStatistics> variantLikes,
         List<VersionStatistics> versions
     ) {}
 }

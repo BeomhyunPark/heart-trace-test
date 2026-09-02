@@ -92,9 +92,9 @@ PUT    /api/engagement/visits/{visitKey}
 GET    /api/engagement/contents/{contentCode}
 POST   /api/engagement/participations
 PUT    /api/engagement/participations/{participationId}/completion
-GET    /api/engagement/contents/{contentCode}/like
-PUT    /api/engagement/contents/{contentCode}/like
-DELETE /api/engagement/contents/{contentCode}/like
+GET    /api/engagement/contents/{contentCode}/like?variant={variantCode}
+PUT    /api/engagement/contents/{contentCode}/like  (variantCode 포함)
+DELETE /api/engagement/contents/{contentCode}/like?variant={variantCode}
 POST   /api/engagement/events
 GET    /api/engagement/statistics
 GET    /api/engagement/contents/{contentCode}/statistics
@@ -102,6 +102,8 @@ GET    /api/engagement/share-links/{code}
 ```
 
 Room Code와 public Room ID는 credential이 아닙니다. 최초 join을 제외한 모든 Room API는 해당 Room에 속한 HttpOnly session cookie를 검증합니다. 변경 요청에는 `X-OnGi-Client: web` header가 필요합니다.
+
+콘텐츠 좋아요는 밸런스 게임의 대화 온도, 최애 월드컵의 주제, 공동체 도구의 모드처럼 화면에서 선택한 `variantCode` 단위로 독립 집계합니다. `variant`를 생략하면 각 콘텐츠의 기본 분류를 사용해 이전 클라이언트와도 호환됩니다.
 
 Host와 Participant token은 256-bit random 값이며 cookie에만 저장됩니다. DB에는 SHA-256 hash만 저장합니다. frontend 저장소에는 Room ID만 남습니다.
 

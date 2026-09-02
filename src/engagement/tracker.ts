@@ -8,6 +8,8 @@ import type {
 } from './types';
 
 const PARTICIPATION_STORAGE_KEY = 'ongi_engagement_participations_v1';
+const LIKE_CACHE_STORAGE_KEY = 'ongi_like_cache_v2';
+const VISITOR_COUNT_CACHE_STORAGE_KEY = 'ongi_visitor_count_cache_v1';
 
 type ParticipationReference = {
   participationId: number;
@@ -21,6 +23,61 @@ let sessionPromise: Promise<EngagementIdentity> | null = null;
 let pageViewPromise: Promise<void> | null = null;
 let memoryParticipations: Partial<Record<EngagementContentCode, ParticipationReference>> = {};
 const participationStartPromises = new Map<EngagementContentCode, Promise<boolean>>();
+
+function likeCacheKey(contentCode: EngagementContentCode, variantCode: string): string {
+  return `${contentCode}:${variantCode}`;
+}
+
+function readLikeCache(): Record<string, LikeResponse> {
+  if (TEST_MODE) return {};
+  try {
+    const serialized = window.localStorage.getItem(LIKE_CACHE_STORAGE_KEY);
+    return serialized ? JSON.parse(serialized) as Record<string, LikeResponse> : {};
+  } catch {
+    return {};
+  }
+}
+
+function isCachedLikeResponse(
+  value: LikeResponse | undefined,
+  variantCode: string,
+): value is LikeResponse {
+  return value?.variantCode === variantCode
+    && typeof value.liked === 'boolean'
+    && Number.isSafeInteger(value.likeCount)
+    && value.likeCount >= 0;
+}
+
+function cacheLike(contentCode: EngagementContentCode, response: LikeResponse): void {
+  if (TEST_MODE) return;
+  try {
+    const cache = readLikeCache();
+    cache[likeCacheKey(contentCode, response.variantCode)] = response;
+    window.localStorage.setItem(LIKE_CACHE_STORAGE_KEY, JSON.stringify(cache));
+  } catch {
+    // 캐시 저장 실패는 실제 좋아요 요청에 영향을 주지 않는다.
+  }
+}
+
+export function getCachedContentLike(
+  contentCode: EngagementContentCode,
+  variantCode: string,
+): LikeResponse | null {
+  const cached = readLikeCache()[likeCacheKey(contentCode, variantCode)];
+  return isCachedLikeResponse(cached, variantCode) ? cached : null;
+}
+
+export function getCachedVisitorCount(): number | null {
+  if (TEST_MODE) return null;
+  try {
+    const cached = window.localStorage.getItem(VISITOR_COUNT_CACHE_STORAGE_KEY);
+    if (cached === null) return null;
+    const parsed = Number(cached);
+    return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
 
 function warn(action: string, error: unknown): void {
   console.warn(`[engagement] ${action} 기록에 실패했습니다.`, error);
@@ -199,23 +256,37 @@ export async function recordShareClick(
   }
 }
 
-export async function getContentLike(contentCode: EngagementContentCode): Promise<LikeResponse> {
-  if (TEST_MODE) return { liked: false, likeCount: 0 };
+export async function getContentLike(
+  contentCode: EngagementContentCode,
+  variantCode: string,
+): Promise<LikeResponse> {
+  if (TEST_MODE) return { variantCode, liked: false, likeCount: 0 };
   const identity = await ensureSession();
-  return engagementApi.getLike(contentCode, identity.visitorKey);
+  const response = await engagementApi.getLike(contentCode, variantCode, identity.visitorKey);
+  cacheLike(contentCode, response);
+  return response;
 }
 
 export async function getVisitorCount(): Promise<number> {
   if (TEST_MODE) return 0;
   await ensureSession();
-  return (await engagementApi.getVisitorStatistics()).visitorCount;
+  const visitorCount = (await engagementApi.getVisitorStatistics()).visitorCount;
+  try {
+    window.localStorage.setItem(VISITOR_COUNT_CACHE_STORAGE_KEY, String(visitorCount));
+  } catch {
+    // 캐시 저장 실패는 방문자 집계에 영향을 주지 않는다.
+  }
+  return visitorCount;
 }
 
 export async function setContentLike(
   contentCode: EngagementContentCode,
+  variantCode: string,
   liked: boolean,
 ): Promise<LikeResponse> {
-  if (TEST_MODE) return { liked, likeCount: liked ? 1 : 0 };
+  if (TEST_MODE) return { variantCode, liked, likeCount: liked ? 1 : 0 };
   const identity = await ensureSession();
-  return engagementApi.setLike(contentCode, identity.visitorKey, liked);
+  const response = await engagementApi.setLike(contentCode, variantCode, identity.visitorKey, liked);
+  cacheLike(contentCode, response);
+  return response;
 }

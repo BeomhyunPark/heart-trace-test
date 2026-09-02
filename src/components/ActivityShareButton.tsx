@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { memo, useEffect, useState, type CSSProperties } from 'react';
 
 import type { ActivityTarget } from '../app/activityNavigation';
 import { getShareTarget } from '../app/shareTargets';
@@ -8,10 +8,13 @@ import {
 } from '../features/home/services/shareAppLink';
 import { getEngagementContentCode } from '../engagement/contentCodes';
 import {
+  getCachedContentLike,
   getContentLike,
   recordShareClick,
   setContentLike,
 } from '../engagement/tracker';
+import { getEngagementLikeVariant } from '../engagement/likeVariants';
+import type { EngagementContentCode, LikeResponse } from '../engagement/types';
 
 type ActivityShareButtonProps = {
   target: ActivityTarget;
@@ -27,31 +30,91 @@ export function buildActivityShareUrl(slug: string): string {
   return new URL(`share/${slug}/`, getSiteBaseUrl()).href;
 }
 
-export function ActivityShareButton({ target }: ActivityShareButtonProps) {
-  const [message, setMessage] = useState('');
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+type ActivityLikeButtonProps = {
+  contentCode: EngagementContentCode;
+  variantCode: string;
+};
+
+const ActivityLikeButton = memo(function ActivityLikeButton({
+  contentCode,
+  variantCode,
+}: ActivityLikeButtonProps) {
+  const [likeState, setLikeState] = useState<LikeResponse | null>(() => (
+    getCachedContentLike(contentCode, variantCode)
+  ));
   const [likeBusy, setLikeBusy] = useState(false);
-  const shareTarget = getShareTarget(target);
-  const contentCode = getEngagementContentCode(target);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let active = true;
 
-    if (!contentCode) return () => { active = false; };
-    void getContentLike(contentCode)
+    void getContentLike(contentCode, variantCode)
       .then((state) => {
-        if (active) {
-          setLiked(state.liked);
-          setLikeCount(state.likeCount);
-        }
+        if (active) setLikeState(state);
       })
       .catch(() => {
         // 최초 상태 조회 실패는 콘텐츠 이용을 방해하지 않는다.
       });
 
     return () => { active = false; };
-  }, [contentCode]);
+  }, [contentCode, variantCode]);
+
+  const handleLike = async () => {
+    if (!likeState || likeBusy) return;
+
+    const previous = likeState;
+    const nextLiked = !previous.liked;
+    setLikeState({
+      variantCode,
+      liked: nextLiked,
+      likeCount: Math.max(0, previous.likeCount + (nextLiked ? 1 : -1)),
+    });
+    setLikeBusy(true);
+    setError('');
+    try {
+      setLikeState(await setContentLike(contentCode, variantCode, nextLiked));
+    } catch {
+      setLikeState(previous);
+      setError('좋아요를 반영하지 못했어요. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setLikeBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <p aria-live="polite" aria-atomic="true">{error}</p>
+      <button
+        className={`activity-link-share__like${likeState?.liked ? ' is-liked' : ''}`}
+        type="button"
+        disabled={likeState === null}
+        aria-busy={likeBusy}
+        aria-label={likeState === null
+          ? '좋아요 정보 불러오는 중'
+          : `좋아요 ${likeState.liked ? '취소' : '추가'} · 현재 ${likeState.likeCount}개`}
+        aria-pressed={likeState?.liked ?? false}
+        onClick={handleLike}
+      >
+        <span aria-hidden="true">{likeState?.liked ? '♥' : '♡'}</span>
+        {likeState && likeState.likeCount > 0 ? (
+          <small aria-hidden="true">{likeState.likeCount}</small>
+        ) : null}
+      </button>
+    </>
+  );
+});
+
+export const ActivityShareButton = memo(function ActivityShareButton({
+  target,
+}: ActivityShareButtonProps) {
+  const [message, setMessage] = useState('');
+  const shareTarget = getShareTarget(target);
+  const contentCode = getEngagementContentCode(target);
+  const variantCode = getEngagementLikeVariant(target);
+
+  useEffect(() => {
+    setMessage('');
+  }, [shareTarget?.slug]);
 
   if (!shareTarget && !contentCode) {
     return null;
@@ -78,23 +141,6 @@ export function ActivityShareButton({ target }: ActivityShareButtonProps) {
     }
   };
 
-  const handleLike = async () => {
-    if (!contentCode || likeBusy) return;
-
-    setLikeBusy(true);
-    setMessage('');
-    try {
-      const state = await setContentLike(contentCode, !liked);
-      setLiked(state.liked);
-      setLikeCount(state.likeCount);
-      setMessage(state.liked ? '좋아요를 남겼어요.' : '좋아요를 취소했어요.');
-    } catch {
-      setMessage('좋아요를 반영하지 못했어요. 잠시 후 다시 시도해주세요.');
-    } finally {
-      setLikeBusy(false);
-    }
-  };
-
   const accent = shareTarget?.accent ?? '#ffc98f';
   const secondary = shareTarget?.secondary ?? '#f48faa';
 
@@ -108,17 +154,11 @@ export function ActivityShareButton({ target }: ActivityShareButtonProps) {
     >
       <p aria-live="polite" aria-atomic="true">{message}</p>
       {contentCode ? (
-        <button
-          className={`activity-link-share__like${liked ? ' is-liked' : ''}`}
-          type="button"
-          disabled={likeBusy}
-          aria-label={`좋아요 ${liked ? '취소' : '추가'} · 현재 ${likeCount}개`}
-          aria-pressed={liked}
-          onClick={handleLike}
-        >
-          <span aria-hidden="true">{liked ? '♥' : '♡'}</span>
-          {likeCount > 0 ? <small aria-hidden="true">{likeCount}</small> : null}
-        </button>
+        <ActivityLikeButton
+          contentCode={contentCode}
+          variantCode={variantCode}
+          key={`${contentCode}:${variantCode}`}
+        />
       ) : null}
       {shareTarget ? (
         <button
@@ -136,4 +176,4 @@ export function ActivityShareButton({ target }: ActivityShareButtonProps) {
       ) : null}
     </div>
   );
-}
+});

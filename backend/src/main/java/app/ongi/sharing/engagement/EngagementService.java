@@ -152,30 +152,49 @@ public class EngagementService {
     }
 
     @Transactional(readOnly = true)
-    public LikeResponse likeStatus(String contentCode, UUID visitorKey) {
+    public LikeResponse likeStatus(String contentCode, UUID visitorKey, String requestedVariant) {
         Content content = requirePublishedContent(contentCode);
+        String variantCode = LikeVariantPolicy.normalize(content.getCode(), requestedVariant);
         boolean liked = visitorRepository.findByVisitorKey(visitorKey)
-            .map(visitor -> likeRepository.existsByVisitorIdAndContentId(visitor.getId(), content.getId()))
+            .map(visitor -> likeRepository.existsByVisitorIdAndContentIdAndVariantCode(
+                visitor.getId(), content.getId(), variantCode
+            ))
             .orElse(false);
-        return new LikeResponse(liked, likeRepository.countByContentId(content.getId()));
+        return new LikeResponse(
+            variantCode,
+            liked,
+            likeRepository.countByContentIdAndVariantCode(content.getId(), variantCode)
+        );
     }
 
     @Transactional
-    public LikeResponse like(String contentCode, UUID visitorKey) {
+    public LikeResponse like(String contentCode, UUID visitorKey, String requestedVariant) {
         Instant now = clock.instant();
         visitorRepository.upsert(visitorKey, now);
         Visitor visitor = requireVisitor(visitorKey);
         Content content = requirePublishedContent(contentCode);
-        likeRepository.insertIfAbsent(visitor.getId(), content.getId(), now);
-        return new LikeResponse(true, likeRepository.countByContentId(content.getId()));
+        String variantCode = LikeVariantPolicy.normalize(content.getCode(), requestedVariant);
+        likeRepository.insertIfAbsent(visitor.getId(), content.getId(), variantCode, now);
+        return new LikeResponse(
+            variantCode,
+            true,
+            likeRepository.countByContentIdAndVariantCode(content.getId(), variantCode)
+        );
     }
 
     @Transactional
-    public LikeResponse unlike(String contentCode, UUID visitorKey) {
+    public LikeResponse unlike(String contentCode, UUID visitorKey, String requestedVariant) {
         Content content = requirePublishedContent(contentCode);
+        String variantCode = LikeVariantPolicy.normalize(content.getCode(), requestedVariant);
         visitorRepository.findByVisitorKey(visitorKey)
-            .ifPresent(visitor -> likeRepository.deleteByVisitorIdAndContentId(visitor.getId(), content.getId()));
-        return new LikeResponse(false, likeRepository.countByContentId(content.getId()));
+            .ifPresent(visitor -> likeRepository.deleteByVisitorIdAndContentIdAndVariantCode(
+                visitor.getId(), content.getId(), variantCode
+            ));
+        return new LikeResponse(
+            variantCode,
+            false,
+            likeRepository.countByContentIdAndVariantCode(content.getId(), variantCode)
+        );
     }
 
     @Transactional

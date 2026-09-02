@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { getEngagementContentCode } from '../src/engagement/contentCodes';
+import { getEngagementLikeVariant } from '../src/engagement/likeVariants';
 
 describe('콘텐츠 engagement 코드', () => {
   it('공개 콘텐츠는 backend seed code와 같은 값을 사용한다', () => {
@@ -13,5 +14,21 @@ describe('콘텐츠 engagement 코드', () => {
 
   it('아직 공개되지 않은 구르미 티저는 참여 통계에서 제외한다', () => {
     expect(getEngagementContentCode({ id: 'gureumi-teaser' })).toBeNull();
+  });
+
+  it('카테고리형 콘텐츠의 좋아요 variant를 실제 선택값으로 분리한다', () => {
+    expect(getEngagementLikeVariant({
+      id: 'balance-game',
+      initialBalanceGameWeight: 'deep',
+    })).toBe('deep');
+    expect(getEngagementLikeVariant({
+      id: 'ideal-world-cup',
+      initialWorldCupCategory: 'travel',
+    })).toBe('travel');
+    expect(getEngagementLikeVariant({
+      id: 'group-picker',
+      initialGroupPickerMode: 'groups',
+    })).toBe('groups');
+    expect(getEngagementLikeVariant({ id: 'heart-trace' })).toBe('default');
   });
 });

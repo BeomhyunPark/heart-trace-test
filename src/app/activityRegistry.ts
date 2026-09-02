@@ -3,6 +3,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import type { PickerMode } from '../features/group-picker/domain/types';
 import type { WorldCupCategoryId } from '../features/ideal-world-cup/domain/types';
 import type { ActivityId } from './activityCatalog';
+import type { BalanceGameWeight } from '../features/balance-game/domain/types';
 
 export type ActivityAppProps = {
   onBackHome: () => void;
@@ -11,6 +12,8 @@ export type ActivityAppProps = {
   onGroupPickerModeChange?: (mode: PickerMode) => void;
   initialWorldCupCategory?: WorldCupCategoryId;
   onWorldCupCategoryChange?: (category: WorldCupCategoryId) => void;
+  initialBalanceGameWeight?: BalanceGameWeight;
+  onBalanceGameWeightChange?: (weight: BalanceGameWeight) => void;
 };
 
 export type ActivityDefinition = {

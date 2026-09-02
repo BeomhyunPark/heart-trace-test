@@ -11,6 +11,7 @@ import {
 import { HomeScreen, pickFeaturedActivity } from '../features/home/HomeScreen';
 import type { PickerMode } from '../features/group-picker/domain/types';
 import type { WorldCupCategoryId } from '../features/ideal-world-cup/domain/types';
+import type { BalanceGameWeight } from '../features/balance-game/domain/types';
 import { ACTIVITIES, type ActivityId } from './activityCatalog';
 import {
   buildActivityUrl,
@@ -166,6 +167,25 @@ export function App() {
     ));
   }, []);
 
+  const handleBalanceGameWeightChange = useCallback((weight: BalanceGameWeight) => {
+    if (activeActivityRef.current?.id !== 'balance-game') {
+      return;
+    }
+
+    const nextActivity = {
+      id: 'balance-game' as const,
+      initialBalanceGameWeight: weight,
+    };
+
+    updateActivityUrl(nextActivity, 'replace');
+    activeActivityRef.current = nextActivity;
+    setActiveActivity((current) => (
+      current?.id !== 'balance-game' || current.initialBalanceGameWeight === weight
+        ? current
+        : nextActivity
+    ));
+  }, []);
+
   if (showSplash) {
     return <SplashScreen />;
   }
@@ -173,7 +193,9 @@ export function App() {
   const selectActivity = (id: ActivityId, initialGroupPickerMode?: PickerMode) => {
     const target: ActivityTarget = id === 'ideal-world-cup'
       ? { id, initialWorldCupCategory: 'meal' }
-      : { id, initialGroupPickerMode };
+      : id === 'balance-game'
+        ? { id, initialBalanceGameWeight: 'light' }
+        : { id, initialGroupPickerMode };
 
     homeScrollTop.current = getDocumentScrollTop();
     updateActivityUrl(target, 'push');
@@ -215,14 +237,15 @@ export function App() {
           <ActivityApp
             initialGroupPickerMode={activeActivity.initialGroupPickerMode}
             initialWorldCupCategory={activeActivity.initialWorldCupCategory}
+            initialBalanceGameWeight={activeActivity.initialBalanceGameWeight}
             onBackHome={returnHome}
             onSelectActivity={selectActivity}
             onGroupPickerModeChange={handleGroupPickerModeChange}
             onWorldCupCategoryChange={handleWorldCupCategoryChange}
+            onBalanceGameWeightChange={handleBalanceGameWeightChange}
           />
           <ActivityShareButton
             target={activeActivity}
-            key={`${activeActivity.id}:${activeActivity.initialGroupPickerMode ?? ''}:${activeActivity.initialWorldCupCategory ?? ''}`}
           />
         </div>
       ) : (

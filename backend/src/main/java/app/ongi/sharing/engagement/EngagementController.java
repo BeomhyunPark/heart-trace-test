@@ -69,18 +69,26 @@ public class EngagementController {
     }
 
     @GetMapping("/contents/{contentCode}/like")
-    LikeResponse likeStatus(@PathVariable String contentCode, @RequestParam UUID visitorKey) {
-        return engagementService.likeStatus(contentCode, visitorKey);
+    LikeResponse likeStatus(
+        @PathVariable String contentCode,
+        @RequestParam UUID visitorKey,
+        @RequestParam(required = false) String variant
+    ) {
+        return engagementService.likeStatus(contentCode, visitorKey, variant);
     }
 
     @PutMapping("/contents/{contentCode}/like")
     LikeResponse like(@PathVariable String contentCode, @Valid @RequestBody LikeRequest request) {
-        return engagementService.like(contentCode, request.visitorKey());
+        return engagementService.like(contentCode, request.visitorKey(), request.variantCode());
     }
 
     @DeleteMapping("/contents/{contentCode}/like")
-    LikeResponse unlike(@PathVariable String contentCode, @RequestParam UUID visitorKey) {
-        return engagementService.unlike(contentCode, visitorKey);
+    LikeResponse unlike(
+        @PathVariable String contentCode,
+        @RequestParam UUID visitorKey,
+        @RequestParam(required = false) String variant
+    ) {
+        return engagementService.unlike(contentCode, visitorKey, variant);
     }
 
     @PostMapping("/events")

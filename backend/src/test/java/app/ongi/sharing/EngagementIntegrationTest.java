@@ -160,6 +160,7 @@ class EngagementIntegrationTest {
 
         like("heart-trace", visitorKey)
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.variantCode", is("default")))
             .andExpect(jsonPath("$.liked", is(true)))
             .andExpect(jsonPath("$.likeCount", is(1)));
         like("heart-trace", visitorKey)
@@ -172,6 +173,51 @@ class EngagementIntegrationTest {
         unlike("heart-trace", visitorKey)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.likeCount", is(0)));
+    }
+
+    @Test
+    void keepsLikesIndependentForContentVariants() throws Exception {
+        UUID visitorKey = UUID.randomUUID();
+        ensureVisitor(visitorKey).andExpect(status().isOk());
+
+        like("ideal-world-cup", visitorKey, "meal")
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.variantCode", is("meal")))
+            .andExpect(jsonPath("$.likeCount", is(1)));
+        like("ideal-world-cup", visitorKey, "dessert")
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.variantCode", is("dessert")))
+            .andExpect(jsonPath("$.likeCount", is(1)));
+        mockMvc.perform(get("/api/engagement/contents/ideal-world-cup/like")
+                .queryParam("visitorKey", visitorKey.toString())
+                .queryParam("variant", "travel"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.liked", is(false)))
+            .andExpect(jsonPath("$.likeCount", is(0)));
+
+        unlike("ideal-world-cup", visitorKey, "meal")
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.likeCount", is(0)));
+        mockMvc.perform(get("/api/engagement/contents/ideal-world-cup/like")
+                .queryParam("visitorKey", visitorKey.toString())
+                .queryParam("variant", "dessert"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.liked", is(true)))
+            .andExpect(jsonPath("$.likeCount", is(1)));
+
+        like("balance-game", visitorKey, "deep").andExpect(status().isOk());
+        like("group-picker", visitorKey, "groups").andExpect(status().isOk());
+        like("ideal-world-cup", visitorKey, "unknown")
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", is("INVALID_LIKE_VARIANT")));
+
+        mockMvc.perform(get("/api/engagement/contents/ideal-world-cup/statistics"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.likeCount", is(1)))
+            .andExpect(jsonPath("$.variantLikes[0].variantCode", is("meal")))
+            .andExpect(jsonPath("$.variantLikes[0].likeCount", is(0)))
+            .andExpect(jsonPath("$.variantLikes[1].variantCode", is("dessert")))
+            .andExpect(jsonPath("$.variantLikes[1].likeCount", is(1)));
     }
 
     @Test
@@ -355,16 +401,37 @@ class EngagementIntegrationTest {
     }
 
     private org.springframework.test.web.servlet.ResultActions like(String contentCode, UUID visitorKey) throws Exception {
+        return like(contentCode, visitorKey, null);
+    }
+
+    private org.springframework.test.web.servlet.ResultActions like(
+        String contentCode,
+        UUID visitorKey,
+        String variantCode
+    ) throws Exception {
+        var payload = new java.util.HashMap<String, Object>();
+        payload.put("visitorKey", visitorKey.toString());
+        if (variantCode != null) payload.put("variantCode", variantCode);
         return mockMvc.perform(put("/api/engagement/contents/{contentCode}/like", contentCode)
             .header("X-OnGi-Client", "web")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(Map.of("visitorKey", visitorKey.toString()))));
+            .content(objectMapper.writeValueAsString(payload)));
     }
 
     private org.springframework.test.web.servlet.ResultActions unlike(String contentCode, UUID visitorKey) throws Exception {
-        return mockMvc.perform(delete("/api/engagement/contents/{contentCode}/like", contentCode)
+        return unlike(contentCode, visitorKey, null);
+    }
+
+    private org.springframework.test.web.servlet.ResultActions unlike(
+        String contentCode,
+        UUID visitorKey,
+        String variantCode
+    ) throws Exception {
+        var request = delete("/api/engagement/contents/{contentCode}/like", contentCode)
             .queryParam("visitorKey", visitorKey.toString())
-            .header("X-OnGi-Client", "web"));
+            .header("X-OnGi-Client", "web");
+        if (variantCode != null) request.queryParam("variant", variantCode);
+        return mockMvc.perform(request);
     }
 
     private org.springframework.test.web.servlet.ResultActions event(

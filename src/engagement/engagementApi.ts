@@ -94,18 +94,23 @@ export const engagementApi = {
     },
   ),
 
-  getLike: (contentCode: EngagementContentCode, visitorKey: string) => request<LikeResponse>(
-    `/api/engagement/contents/${contentCode}/like?visitorKey=${encodeURIComponent(visitorKey)}`,
+  getLike: (contentCode: EngagementContentCode, variantCode: string, visitorKey: string) => request<LikeResponse>(
+    `/api/engagement/contents/${contentCode}/like?visitorKey=${encodeURIComponent(visitorKey)}&variant=${encodeURIComponent(variantCode)}`,
   ),
 
-  setLike: (contentCode: EngagementContentCode, visitorKey: string, liked: boolean) => (
+  setLike: (
+    contentCode: EngagementContentCode,
+    variantCode: string,
+    visitorKey: string,
+    liked: boolean,
+  ) => (
     liked
       ? request<LikeResponse>(`/api/engagement/contents/${contentCode}/like`, {
           method: 'PUT',
-          body: JSON.stringify({ visitorKey }),
+          body: JSON.stringify({ visitorKey, variantCode }),
         })
       : request<LikeResponse>(
-          `/api/engagement/contents/${contentCode}/like?visitorKey=${encodeURIComponent(visitorKey)}`,
+          `/api/engagement/contents/${contentCode}/like?visitorKey=${encodeURIComponent(visitorKey)}&variant=${encodeURIComponent(variantCode)}`,
           { method: 'DELETE' },
         )
   ),

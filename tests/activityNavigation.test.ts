@@ -16,10 +16,28 @@ describe('활동 직접 링크', () => {
   });
 
   it('놀거리 활동 링크도 읽고 알 수 없는 값은 무시한다', () => {
-    expect(parseActivitySearch('?activity=balance-game')).toEqual({ id: 'balance-game' });
+    expect(parseActivitySearch('?activity=balance-game')).toEqual({
+      id: 'balance-game',
+      initialBalanceGameWeight: 'light',
+    });
     expect(parseActivitySearch('?activity=gureumi-teaser')).toEqual({ id: 'gureumi-teaser' });
     expect(parseActivitySearch('?tool=unknown')).toBeNull();
     expect(parseActivitySearch('?activity=unknown')).toBeNull();
+  });
+
+  it('밸런스 게임 대화 온도를 주소에서 유지하고 잘못된 값은 가볍게로 복구한다', () => {
+    expect(parseActivitySearch('?activity=balance-game&weight=deep')).toEqual({
+      id: 'balance-game',
+      initialBalanceGameWeight: 'deep',
+    });
+    expect(parseActivitySearch('?activity=balance-game&weight=unknown')).toEqual({
+      id: 'balance-game',
+      initialBalanceGameWeight: 'light',
+    });
+    expect(buildActivityUrl('https://example.com/', {
+      id: 'balance-game',
+      initialBalanceGameWeight: 'deep',
+    })).toBe('/?activity=balance-game&weight=deep');
   });
 
   it('최애 월드컵 카테고리를 직접 링크에서 유지하고 잘못된 값은 한 끼로 복구한다', () => {
@@ -60,6 +78,6 @@ describe('활동 직접 링크', () => {
     expect(buildActivityUrl(
       'https://example.com/heart-trace-test/?page=updates',
       { id: 'balance-game' },
-    )).toBe('/heart-trace-test/?activity=balance-game');
+    )).toBe('/heart-trace-test/?activity=balance-game&weight=light');
   });
 });

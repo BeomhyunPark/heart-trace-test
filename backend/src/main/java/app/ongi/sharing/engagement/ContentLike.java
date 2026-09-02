@@ -28,19 +28,24 @@ public class ContentLike {
     @JoinColumn(name = "content_id", nullable = false)
     private Content content;
 
+    @Column(name = "variant_code", nullable = false, length = 80)
+    private String variantCode;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     protected ContentLike() {}
 
-    public ContentLike(Visitor visitor, Content content, Instant createdAt) {
+    public ContentLike(Visitor visitor, Content content, String variantCode, Instant createdAt) {
         this.visitor = visitor;
         this.content = content;
+        this.variantCode = variantCode;
         this.createdAt = createdAt;
     }
 
     public Long getId() { return id; }
     public Visitor getVisitor() { return visitor; }
     public Content getContent() { return content; }
+    public String getVariantCode() { return variantCode; }
     public Instant getCreatedAt() { return createdAt; }
 }

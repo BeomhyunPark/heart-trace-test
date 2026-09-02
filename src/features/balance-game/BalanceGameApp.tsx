@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProgressBar } from '../../components/ProgressBar';
@@ -17,6 +17,8 @@ import {
 
 type BalanceGameAppProps = {
   onBackHome: () => void;
+  initialBalanceGameWeight?: BalanceGameWeight;
+  onBalanceGameWeightChange?: (weight: BalanceGameWeight) => void;
 };
 
 type Phase = 'setup' | 'picker' | 'play' | 'complete';
@@ -51,9 +53,13 @@ export function pickRandomQuestions(
   return questions.slice(0, RANDOM_QUESTION_COUNT);
 }
 
-export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
+export function BalanceGameApp({
+  onBackHome,
+  initialBalanceGameWeight = 'light',
+  onBalanceGameWeightChange,
+}: BalanceGameAppProps) {
   const [phase, setPhase] = useState<Phase>('setup');
-  const [weight, setWeight] = useState<BalanceGameWeight>('light');
+  const [weight, setWeight] = useState<BalanceGameWeight>(initialBalanceGameWeight);
   const [filter, setFilter] = useState<QuestionFilter>('all');
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<readonly string[]>([]);
   const [playedQuestionIds, setPlayedQuestionIds] = useState<readonly string[]>([]);
@@ -68,6 +74,14 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
     ),
     [filter, weight],
   );
+
+  useEffect(() => {
+    if (phase === 'setup') setWeight(initialBalanceGameWeight);
+  }, [initialBalanceGameWeight, phase]);
+
+  useEffect(() => {
+    onBalanceGameWeightChange?.(weight);
+  }, [onBalanceGameWeightChange, weight]);
 
   const startGame = (questions: readonly BalanceGameQuestion[]) => {
     void startContentParticipation('balance-game');

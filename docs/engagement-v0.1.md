@@ -84,6 +84,7 @@ erDiagram
         bigint id PK
         bigint visitor_id FK
         bigint content_id FK
+        varchar variant_code
         timestamptz created_at
     }
     event_log {
@@ -114,7 +115,7 @@ erDiagram
 | `content_version` | 통계를 분리할 콘텐츠 버전 | `(content_id, version_no)` unique |
 | `content_result` | 버전별 허용 결과 | `(version_id, code)` unique |
 | `participation` | 참여 시작과 완료의 source of truth | `request_key` unique |
-| `content_like` | 익명 좋아요 | `(visitor_id, content_id)` unique |
+| `content_like` | 익명 좋아요 | `(visitor_id, content_id, variant_code)` unique |
 | `event_log` | 조회와 공유 같은 가벼운 행동 | `event_key` unique, type별 data whitelist |
 | `share_link` | 공동체·행사 링크 단위 attribution | `code` unique, active/expiry 검사 |
 
@@ -144,9 +145,9 @@ Engagement DB에는 이름, 전화번호, 이메일, 생년월일, 성별, 위�
 | `GET` | `/contents/{contentCode}` | 공개 콘텐츠의 현재 버전과 허용 결과 조회 |
 | `POST` | `/participations` | `request_key`로 참여 시작 |
 | `PUT` | `/participations/{id}/completion` | 기존 참여 완료 및 결과 연결 |
-| `GET` | `/contents/{contentCode}/like` | visitor의 좋아요 여부와 전체 수 조회 |
-| `PUT` | `/contents/{contentCode}/like` | idempotent 좋아요 |
-| `DELETE` | `/contents/{contentCode}/like` | idempotent 좋아요 취소 |
+| `GET` | `/contents/{contentCode}/like?visitorKey=&variant=` | visitor의 variant별 좋아요 여부와 수 조회 |
+| `PUT` | `/contents/{contentCode}/like` | `variantCode` 단위 idempotent 좋아요 |
+| `DELETE` | `/contents/{contentCode}/like?visitorKey=&variant=` | variant별 idempotent 좋아요 취소 |
 | `POST` | `/events` | `PAGE_VIEW`, `CONTENT_VIEW`, `SHARE_CLICK` 기록 |
 | `GET` | `/statistics` | 홈에 표시할 누적 익명 visitor 수 조회 |
 | `GET` | `/contents/{contentCode}/statistics` | 공개 가능한 콘텐츠 집계 조회 |
@@ -176,6 +177,15 @@ Engagement DB에는 이름, 전화번호, 이메일, 생년월일, 성별, 위�
 
 홈 브랜드 영역에는 누적 익명 visitor 수를 표시한다. 공개 콘텐츠 화면 우측 상단에는 공통 좋아요 상태·개수와 기존 공유 버튼을 같은 규격으로 보여준다. 각 콘텐츠 accent 색은 유지한다. 분석 API가 실패해도 홈과 콘텐츠 진입·진행은 막지 않으며 한 번의 실패를 무한 재시도하지 않는다. 좋아요 실패는 해당 위치에 사용자 안내를 보여준다.
 
+좋아요는 다음 variant별로 독립 집계한다.
+
+- 밸런스 게임: `light`, `deep`
+- 최애 월드컵: `meal`, `dessert`, `late-night`, `travel`, `free-pass`, `life-cheat`
+- 오늘은 누구?: `prayer`, `sharing`, `lottery`, `ladder`, `groups`, `pairs`, `supporter`
+- 단일형 콘텐츠: `default`
+
+Frontend는 마지막 정상 방문자 수와 variant별 좋아요 응답만 현재 브라우저에 캐시하고 백그라운드에서 최신 값으로 갱신한다. 최초 응답 전에는 임시 0을 표시하지 않는다. 좋아요 클릭은 즉시 화면에 반영하고 요청 실패 때만 이전 상태로 되돌린다. 이 캐시에는 이름·연락처·IP 등 개인정보가 들어가지 않는다.
+
 공유 동작은 콘텐츠 흐름에 맞게 연결한다.
 
 | 콘텐츠 | 상단 링크 공유 | 추가 공유 지점 |
@@ -194,7 +204,7 @@ Engagement DB에는 이름, 전화번호, 이메일, 생년월일, 성별, 위�
 ## 통계 기준
 
 - 서비스: 누적 visitor, 오늘 생성된 visitor, visit, `PAGE_VIEW`
-- 콘텐츠: `CONTENT_VIEW`, distinct viewer, participation, distinct participant, completion, completion rate, like, share
+- 콘텐츠: `CONTENT_VIEW`, distinct viewer, participation, distinct participant, completion, completion rate, 전체 like, variant별 like, share
 - 결과형 콘텐츠: content version별 결과 수와 완료 대비 비율
 - share link: 연결된 visit, participation, completion, result distribution
 

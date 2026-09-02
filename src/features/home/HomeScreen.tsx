@@ -8,7 +8,7 @@ import type { PickerMode } from '../group-picker/domain/types';
 import { assetUrl } from '../../utils/assetUrl';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
-import { getVisitorCount } from '../../engagement/tracker';
+import { getCachedVisitorCount, getVisitorCount } from '../../engagement/tracker';
 
 type HomeScreenProps = {
   featuredActivityId: ActivityId | null;
@@ -51,7 +51,7 @@ export function HomeScreen({
   onOpenUpdates,
   onSelectActivity,
 }: HomeScreenProps) {
-  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+  const [visitorCount, setVisitorCount] = useState<number | null>(getCachedVisitorCount);
   const featuredActivity = ACTIVITIES.find(({ id }) => id === featuredActivityId) ?? null;
   const communityTools = ACTIVITIES.filter((activity) => (
     activity.available && activity.group === 'community-tool'

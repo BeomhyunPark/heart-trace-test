@@ -4,6 +4,7 @@ import static app.ongi.sharing.engagement.EngagementDtos.ContentStatisticsRespon
 import static app.ongi.sharing.engagement.EngagementDtos.ResultStatistics;
 import static app.ongi.sharing.engagement.EngagementDtos.VersionStatistics;
 import static app.ongi.sharing.engagement.EngagementDtos.VisitorStatisticsResponse;
+import static app.ongi.sharing.engagement.EngagementDtos.VariantLikeStatistics;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -72,6 +73,12 @@ public class EngagementStatisticsService {
             WHERE version.content_id = ? AND participation.completed_at IS NOT NULL
             """, contentId);
         long shares = count("SELECT count(*) FROM event_log WHERE content_id = ? AND event_type = 'SHARE_CLICK'", contentId);
+        List<VariantLikeStatistics> variantLikes = LikeVariantPolicy.variants(content.getCode()).stream()
+            .map(variantCode -> new VariantLikeStatistics(
+                variantCode,
+                likeRepository.countByContentIdAndVariantCode(contentId, variantCode)
+            ))
+            .toList();
         List<VersionStatistics> versions = versionRepository.findAllByContentIdOrderByPublishedAtAsc(contentId).stream()
             .filter(version -> version.getPublishedAt() != null)
             .map(this::versionStatistics)
@@ -79,7 +86,8 @@ public class EngagementStatisticsService {
 
         return new ContentStatisticsResponse(
             content.getCode(), views, uniqueViewers, participations, participants, completions,
-            ratio(completions, participations), likeRepository.countByContentId(contentId), shares, versions
+            ratio(completions, participations), likeRepository.countByContentId(contentId), shares,
+            variantLikes, versions
         );
     }
 

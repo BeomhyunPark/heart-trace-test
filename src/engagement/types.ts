@@ -24,6 +24,7 @@ export type ParticipationResponse = {
 };
 
 export type LikeResponse = {
+  variantCode: string;
   liked: boolean;
   likeCount: number;
 };

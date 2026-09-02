@@ -620,22 +620,6 @@
   color: #baf5e6;
 }
 
-.featured-activity--know-me-quiz .activity-card--featured {
-  border-color: #c8adff;
-  background:
-    radial-gradient(circle at 87% 14%, rgba(255, 195, 152, 0.25), transparent 34%),
-    radial-gradient(circle at 8% 94%, rgba(138, 164, 241, 0.16), transparent 38%),
-    linear-gradient(145deg, #422d55 0%, #382b50 55%, #29334b 100%);
-  box-shadow: 0 0.125rem 1.25rem rgba(200, 173, 255, 0.15),
-    0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.3);
-}
-
-.featured-activity--know-me-quiz .activity-card__kind,
-.featured-activity--know-me-quiz small,
-.featured-activity--know-me-quiz > b {
-  color: #ffcba6;
-}
-
 .featured-activity:hover .activity-card--featured {
   border-color: #c8b8ff;
   box-shadow: 0 0.125rem 1.375rem rgba(255, 140, 104, 0.13),
@@ -657,12 +641,6 @@
 .featured-activity--group-picker:hover .activity-card--featured {
   border-color: #baf5e6;
   box-shadow: 0 0.125rem 1.375rem rgba(83, 214, 184, 0.2),
-    0 0.875rem 1.875rem -0.5rem rgba(0, 0, 0, 0.34);
-}
-
-.featured-activity--know-me-quiz:hover .activity-card--featured {
-  border-color: #e2d3ff;
-  box-shadow: 0 0.125rem 1.375rem rgba(200, 173, 255, 0.21),
     0 0.875rem 1.875rem -0.5rem rgba(0, 0, 0, 0.34);
 }
 
@@ -773,13 +751,6 @@
     0 0.75rem 1.75rem -0.5rem rgba(0, 0, 0, 0.34);
 }
 
-.activity-grid .activity-card--know-me-quiz {
-  border-color: #c8adff;
-  background:
-    radial-gradient(circle at 86% 12%, rgba(255, 195, 152, 0.18), transparent 36%),
-    linear-gradient(150deg, #422d55 0%, #342b4d 62%, #29334b 100%);
-}
-
 .activity-card__topline {
   color: var(--ongi-apricot-300);
   font-size: 0.6875rem;
@@ -832,16 +803,6 @@
 .activity-card--ideal-world-cup .activity-card__topline,
 .activity-card--ideal-world-cup .activity-card__action {
   color: #f8d98e;
-}
-
-.activity-card--know-me-quiz .activity-card__mini-visual {
-  background: linear-gradient(145deg, #ffc398, #bba7ff);
-  color: #35223e;
-}
-
-.activity-card--know-me-quiz .activity-card__topline,
-.activity-card--know-me-quiz .activity-card__action {
-  color: #ffcba6;
 }
 
 .activity-grid h3 {

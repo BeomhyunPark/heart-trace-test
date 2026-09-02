@@ -3,7 +3,7 @@ type ShareActivityId =
   | 'balance-game'
   | 'ideal-world-cup'
   | 'group-picker'
-  | 'know-me-quiz';
+  | 'anonymous-sharing';
 
 type SharePickerMode =
   | 'prayer'
@@ -64,17 +64,6 @@ const PLAY_SHARE_TARGETS: readonly ShareTarget[] = [
     symbol: '★',
     accent: '#ffd36e',
     secondary: '#86d9f2',
-  },
-  {
-    slug: 'know-me-quiz',
-    target: { id: 'know-me-quiz' },
-    label: '나를 맞혀봐',
-    title: '나를 맞혀봐 | 온기',
-    description: '서로를 얼마나 잘 알고 있는지 함께 맞혀보세요.',
-    eyebrow: '온기 · 맞히기 게임',
-    symbol: 'ME',
-    accent: '#c8adff',
-    secondary: '#ffc398',
   },
 ];
 

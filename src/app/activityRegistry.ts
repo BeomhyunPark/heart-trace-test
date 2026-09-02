@@ -39,12 +39,12 @@ const loadGroupPickerApp = async () => {
   return { default: module.GroupPickerApp };
 };
 const GroupPickerApp = lazy(loadGroupPickerApp);
-const loadKnowMeQuizApp = async () => {
-  const module = await import('../features/know-me-quiz/KnowMeQuizApp');
+const loadAnonymousSharingApp = async () => {
+  const module = await import('../features/anonymous-sharing/AnonymousSharingApp');
 
-  return { default: module.KnowMeQuizApp };
+  return { default: module.AnonymousSharingApp };
 };
-const KnowMeQuizApp = lazy(loadKnowMeQuizApp);
+const AnonymousSharingApp = lazy(loadAnonymousSharingApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -67,10 +67,10 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     Component: GroupPickerApp,
     preload: loadGroupPickerApp,
   },
-  'know-me-quiz': {
-    id: 'know-me-quiz',
-    Component: KnowMeQuizApp,
-    preload: loadKnowMeQuizApp,
+  'anonymous-sharing': {
+    id: 'anonymous-sharing',
+    Component: AnonymousSharingApp,
+    preload: loadAnonymousSharingApp,
   },
 };
 

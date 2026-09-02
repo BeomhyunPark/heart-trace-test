@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: ongi-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ongi}
+    username: ${DB_USERNAME:ongi}
+    password: ${DB_PASSWORD:ongi-local-password}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+ongi:
+  allowed-origins: ${ONGI_ALLOWED_ORIGINS:http://localhost:5173}
+  session:
+    secure-cookie: ${ONGI_SECURE_COOKIE:false}
+    tombstone-retention: ${ONGI_TOMBSTONE_RETENTION:24h}
+  room:
+    active-lifetime: ${ONGI_ROOM_ACTIVE_LIFETIME:12h}
+    minimum-participants: ${ONGI_MIN_PARTICIPANTS:2}
+    maximum-participants: ${ONGI_MAX_PARTICIPANTS:10}
+  realtime:
+    timeout: ${ONGI_SSE_TIMEOUT:10m}
+    heartbeat: ${ONGI_SSE_HEARTBEAT:20s}
+  rate-limit:
+    attempts-per-minute: ${ONGI_JOIN_ATTEMPTS_PER_MINUTE:30}
+    attempts-per-code-per-minute: ${ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE:15}
+    trust-cloudflare-connecting-ip: ${ONGI_TRUST_CLOUDFLARE_CONNECTING_IP:false}

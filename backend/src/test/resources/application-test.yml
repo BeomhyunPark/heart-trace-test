@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: false
+ongi:
+  allowed-origins:
+    - http://localhost:5173
+  session:
+    secure-cookie: false
+    tombstone-retention: 24h
+  room:
+    active-lifetime: 12h
+    minimum-participants: 2
+    maximum-participants: 10
+  realtime:
+    timeout: 10m
+    heartbeat: 20s
+  rate-limit:
+    attempts-per-minute: 1000
+    attempts-per-code-per-minute: 1000

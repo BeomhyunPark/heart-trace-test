@@ -1,7 +1,7 @@
-export type ActivityId = 'heart-trace' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'anonymous-sharing';
+export type ActivityId = 'heart-trace' | 'gureumi-teaser' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'anonymous-sharing';
 
-export type ActivityKind = '성격검사' | 'VS 놀이' | '토너먼트' | '모임 도구' | '소그룹 나눔';
-export type ActivityGroup = 'play' | 'community-tool';
+export type ActivityKind = '성격검사' | '새로운 테스트' | 'VS 놀이' | '토너먼트' | '모임 도구' | '소그룹 나눔';
+export type ActivityGroup = 'play' | 'community-tool' | 'teaser';
 
 export type Activity = {
   id: ActivityId;
@@ -22,6 +22,15 @@ export const ACTIVITIES: readonly Activity[] = [
     title: '마음속 흔적 찾기',
     description: '내 마음과 가장 닮은 흔적이는 누구일까요?',
     meta: '약 4분 · 20문항 · 5가지 결과',
+    available: true,
+  },
+  {
+    id: 'gureumi-teaser',
+    group: 'teaser',
+    kind: '새로운 테스트',
+    title: '구르미 테스트',
+    description: '흔적을 이을 여덟 친구의 새로운 이야기를 먼저 만나보세요.',
+    meta: '두 번째 테스트 · 곧 공개',
     available: true,
   },
   {

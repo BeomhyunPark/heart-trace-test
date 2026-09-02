@@ -172,6 +172,7 @@ export function App() {
           <ActivityApp
             initialGroupPickerMode={activeActivity.initialGroupPickerMode}
             onBackHome={returnHome}
+            onSelectActivity={selectActivity}
             onGroupPickerModeChange={handleGroupPickerModeChange}
           />
           <ActivityShareButton

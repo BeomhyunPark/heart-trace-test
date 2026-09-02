@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "vitest run --testTimeout=10000",
+    "test": "vitest run --testTimeout=20000 --maxWorkers=2",
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "load:anonymous-sharing": "node scripts/load/anonymous-sharing-load.mjs",

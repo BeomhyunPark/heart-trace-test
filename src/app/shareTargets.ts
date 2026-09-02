@@ -19,6 +19,11 @@ export type ShareActivityTarget = {
   initialGroupPickerMode?: SharePickerMode;
 };
 
+type ShareLookupTarget = {
+  id: string;
+  initialGroupPickerMode?: string;
+};
+
 export type ShareTarget = {
   slug: string;
   target: ShareActivityTarget;
@@ -154,13 +159,13 @@ export const SHARE_TARGETS: readonly ShareTarget[] = [
 
 function matchesTarget(
   candidate: ShareActivityTarget,
-  target: ShareActivityTarget,
+  target: ShareLookupTarget,
 ): boolean {
   return candidate.id === target.id
     && candidate.initialGroupPickerMode === target.initialGroupPickerMode;
 }
 
-export function getShareTarget(target: ShareActivityTarget): ShareTarget | null {
+export function getShareTarget(target: ShareLookupTarget): ShareTarget | null {
   return SHARE_TARGETS.find((candidate) => matchesTarget(candidate.target, target)) ?? null;
 }
 

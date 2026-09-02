@@ -8,6 +8,7 @@ import {
   PICKER_SHORTCUTS,
 } from '../group-picker/domain/modeCatalog';
 import type { PickerMode } from '../group-picker/domain/types';
+import { assetUrl } from '../../utils/assetUrl';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
 import {
@@ -24,6 +25,7 @@ type HomeScreenProps = {
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '✦',
+  'gureumi-teaser': '☁',
   'balance-game': 'VS',
   'ideal-world-cup': '★',
   'group-picker': '?',
@@ -94,6 +96,26 @@ export function HomeScreen({
           </p>
         </div>
       </header>
+
+      <button
+        className="gureumi-home-teaser"
+        type="button"
+        aria-label="구르미 테스트 티저 보기"
+        onClick={() => onSelectActivity('gureumi-teaser')}
+      >
+        <span className="gureumi-home-teaser__copy">
+          <small>ONGI · SECOND TEST</small>
+          <strong>구르미 테스트</strong>
+          <span>흔적을 이을 여덟 친구를<br />먼저 만나보세요.</span>
+          <b>티저 보기 <i aria-hidden="true">→</i></b>
+        </span>
+        <span className="gureumi-home-teaser__preview" aria-hidden="true">
+          <img
+            src={assetUrl('images/teasers/gureumi-test/teaser.png')}
+            alt=""
+          />
+        </span>
+      </button>
 
       <section className="home-section home-section--community-tools" aria-labelledby="community-tools-title">
         <div className="home-section__meta">

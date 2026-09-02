@@ -15,6 +15,7 @@ describe('활동 직접 링크', () => {
 
   it('놀거리 활동 링크도 읽고 알 수 없는 값은 무시한다', () => {
     expect(parseActivitySearch('?activity=balance-game')).toEqual({ id: 'balance-game' });
+    expect(parseActivitySearch('?activity=gureumi-teaser')).toEqual({ id: 'gureumi-teaser' });
     expect(parseActivitySearch('?tool=unknown')).toBeNull();
     expect(parseActivitySearch('?activity=unknown')).toBeNull();
   });

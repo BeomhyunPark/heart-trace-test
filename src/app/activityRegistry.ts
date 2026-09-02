@@ -5,6 +5,7 @@ import type { ActivityId } from './activityCatalog';
 
 export type ActivityAppProps = {
   onBackHome: () => void;
+  onSelectActivity?: (activityId: ActivityId) => void;
   initialGroupPickerMode?: PickerMode;
   onGroupPickerModeChange?: (mode: PickerMode) => void;
 };
@@ -45,6 +46,12 @@ const loadAnonymousSharingApp = async () => {
   return { default: module.AnonymousSharingApp };
 };
 const AnonymousSharingApp = lazy(loadAnonymousSharingApp);
+const loadGureumiTeaserApp = async () => {
+  const module = await import('../features/gureumi-teaser/GureumiTeaserApp');
+
+  return { default: module.GureumiTeaserApp };
+};
+const GureumiTeaserApp = lazy(loadGureumiTeaserApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -71,6 +78,11 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     id: 'anonymous-sharing',
     Component: AnonymousSharingApp,
     preload: loadAnonymousSharingApp,
+  },
+  'gureumi-teaser': {
+    id: 'gureumi-teaser',
+    Component: GureumiTeaserApp,
+    preload: loadGureumiTeaserApp,
   },
 };
 

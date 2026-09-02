@@ -7,6 +7,7 @@ import {
   saveResultImageFile,
   type ResultImageAction,
 } from '../services/resultImage';
+import { recordShareClick } from '../../../engagement/tracker';
 
 type UseResultImageOptions = {
   resultId: ResultTypeId;
@@ -50,6 +51,7 @@ export function useResultImage({ resultId, imageSrc }: UseResultImageOptions) {
     switch (action) {
       case 'shared':
         setSaveMessage('결과 이미지를 공유했어요.');
+        void recordShareClick('heart-trace', 'native');
         break;
       case 'downloaded':
         setSaveMessage('결과 이미지 다운로드를 시작했어요.');

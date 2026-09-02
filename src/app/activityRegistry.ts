@@ -1,6 +1,7 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 
 import type { PickerMode } from '../features/group-picker/domain/types';
+import type { WorldCupCategoryId } from '../features/ideal-world-cup/domain/types';
 import type { ActivityId } from './activityCatalog';
 
 export type ActivityAppProps = {
@@ -8,6 +9,8 @@ export type ActivityAppProps = {
   onSelectActivity?: (activityId: ActivityId) => void;
   initialGroupPickerMode?: PickerMode;
   onGroupPickerModeChange?: (mode: PickerMode) => void;
+  initialWorldCupCategory?: WorldCupCategoryId;
+  onWorldCupCategoryChange?: (category: WorldCupCategoryId) => void;
 };
 
 export type ActivityDefinition = {

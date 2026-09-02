@@ -10,6 +10,10 @@ import type {
   BalanceGameWeight,
 } from './domain/types';
 import './styles/balance-game.css';
+import {
+  completeContentParticipation,
+  startContentParticipation,
+} from '../../engagement/tracker';
 
 type BalanceGameAppProps = {
   onBackHome: () => void;
@@ -66,6 +70,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   );
 
   const startGame = (questions: readonly BalanceGameQuestion[]) => {
+    void startContentParticipation('balance-game');
     setPlayQuestions(questions);
     setCurrentQuestionIndex(0);
     setSelectedSide(null);
@@ -102,6 +107,7 @@ export function BalanceGameApp({ onBackHome }: BalanceGameAppProps) {
   };
 
   const completeGame = () => {
+    void completeContentParticipation('balance-game');
     setPlayedQuestionIds((current) => Array.from(new Set([
       ...current,
       ...playQuestions.map((question) => question.id),

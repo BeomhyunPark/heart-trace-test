@@ -19,6 +19,11 @@ import {
   saveRoomReference,
 } from './services/roomReference';
 import './styles/anonymous-sharing.css';
+import {
+  completeContentParticipation,
+  recordShareClick,
+  startContentParticipation,
+} from '../../engagement/tracker';
 
 type AnonymousSharingAppProps = {
   onBackHome: () => void;
@@ -132,6 +137,12 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
     setRevealConfirming(false);
   }, [sharing?.sequence, sharing?.state]);
 
+  useEffect(() => {
+    if (roomState?.status === 'COMPLETED') {
+      void completeContentParticipation('anonymous-sharing');
+    }
+  }, [roomState?.status]);
+
   const refreshCurrentRoom = useCallback(() => {
     if (roomId) {
       void hydrateRoom(roomId);
@@ -183,6 +194,7 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
 
   const createRoom = () => run(async () => {
     const created = await sharingApi.createRoom(title);
+    void startContentParticipation('anonymous-sharing');
     setRoomCode(created.roomCode);
     setRoomId(created.roomId);
     await hydrateRoom(created.roomId);
@@ -190,6 +202,7 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
 
   const joinRoom = () => run(async () => {
     const joined = await sharingApi.joinRoom(roomCode, name);
+    void startContentParticipation('anonymous-sharing');
     setRoomId(joined.roomId);
     await hydrateRoom(joined.roomId);
   });
@@ -383,7 +396,10 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
                   return;
                 }
                 void navigator.clipboard.writeText(shareUrl)
-                  .then(() => setNotice('참여 링크를 복사했어요.'))
+                  .then(() => {
+                    setNotice('참여 링크를 복사했어요.');
+                    void recordShareClick('anonymous-sharing', 'copy_link');
+                  })
                   .catch(() => setNotice('링크를 복사하지 못했어요.'));
               }}>참여 링크 복사</button>
               <p aria-live="polite">{notice}</p>

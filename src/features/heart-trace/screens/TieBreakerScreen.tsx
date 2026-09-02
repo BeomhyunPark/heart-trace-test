@@ -33,28 +33,33 @@ export function TieBreakerScreen({
         <ProgressBar current={questionNumber} total={questionNumber} />
       </header>
 
-      <header className="tie-screen__header">
-        <span className="question-number">마지막 질문</span>
-        <h1>{question.prompt}</h1>
-      </header>
+      <fieldset className="question-fieldset">
+        <legend className="question-prompt">
+          <span className="question-number">Q{questionNumber} · 마지막 질문</span>
+          <span className="question-title">{question.prompt}</span>
+        </legend>
 
-      <div className="answer-list tie-screen__options" role="radiogroup" aria-label="추가 질문 선택지">
-        {question.options.map((option, optionIndex) => (
-          <AnswerOption
-            key={option.id}
-            name="tie-breaker"
-            value={option.id}
-            marker={ANSWER_OPTION_IDS[optionIndex]}
-            text={option.label}
-            selected={false}
-            onSelect={() => onSelect(option.id)}
-          />
-        ))}
-      </div>
+        <div className="answer-list" role="radiogroup" aria-label="마지막 문항 선택지">
+          {question.options.map((option, optionIndex) => (
+            <AnswerOption
+              key={option.id}
+              name="tie-breaker"
+              value={option.id}
+              marker={ANSWER_OPTION_IDS[optionIndex]}
+              text={option.label}
+              selected={false}
+              onSelect={() => onSelect(option.id)}
+            />
+          ))}
+        </div>
+      </fieldset>
 
-      <button className="previous-button" type="button" onClick={onPrevious}>
-        이전
-      </button>
+      <nav className="question-actions" aria-label="문항 이동">
+        <button className="previous-button" type="button" onClick={onPrevious}>
+          이전
+        </button>
+        <span className="question-actions__placeholder" aria-hidden="true" />
+      </nav>
     </ScreenLayout>
   );
 }

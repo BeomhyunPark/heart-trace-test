@@ -22,6 +22,21 @@ describe('활동 직접 링크', () => {
     expect(parseActivitySearch('?activity=unknown')).toBeNull();
   });
 
+  it('최애 월드컵 카테고리를 직접 링크에서 유지하고 잘못된 값은 한 끼로 복구한다', () => {
+    expect(parseActivitySearch('?activity=ideal-world-cup&category=travel')).toEqual({
+      id: 'ideal-world-cup',
+      initialWorldCupCategory: 'travel',
+    });
+    expect(parseActivitySearch('?activity=ideal-world-cup&category=unknown')).toEqual({
+      id: 'ideal-world-cup',
+      initialWorldCupCategory: 'meal',
+    });
+    expect(buildActivityUrl('https://example.com/?utm_source=share', {
+      id: 'ideal-world-cup',
+      initialWorldCupCategory: 'life-cheat',
+    })).toBe('/?utm_source=share&activity=ideal-world-cup&category=life-cheat');
+  });
+
   it('기존 배포 경로와 다른 쿼리를 보존하면서 앱 활동 주소만 바꾼다', () => {
     const currentUrl = 'https://example.com/heart-trace-test/?utm_source=chat#invite';
 

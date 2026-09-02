@@ -213,27 +213,33 @@
 }
 
 .release-entry__changes li {
-  position: relative;
-  padding-left: 0.875rem;
+  display: grid;
+  grid-template-columns: 0.25rem minmax(0, 1fr);
+  column-gap: 0.625rem;
 }
 
 .release-entry__changes li::before {
-  position: absolute;
-  top: 0.48rem;
-  left: 0;
   width: 0.25rem;
   height: 0.25rem;
+  align-self: center;
+  grid-column: 1;
+  grid-row: 1;
   border-radius: 50%;
   background: var(--ongi-rose-400);
   content: "";
 }
 
 .release-entry__changes strong {
+  grid-column: 2;
+  grid-row: 1;
   color: #f7e9ee;
   font-size: 0.75rem;
+  line-height: 1.125rem;
 }
 
 .release-entry__changes p {
+  grid-column: 2;
+  grid-row: 2;
   margin: 0.2rem 0 0;
   color: #bca9b6;
   font-size: 0.6875rem;

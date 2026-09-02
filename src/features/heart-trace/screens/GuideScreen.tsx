@@ -15,10 +15,6 @@ const GUIDE_ITEMS = [
     title: '결과를 나눠요',
     body: <>결과 이미지를 저장해 친구들과 나눌 수 있어요.</>,
   },
-  {
-    title: '서버에 저장되지 않아요',
-    body: <>완료한 결과는 서버에 남지 않아요.</>,
-  },
 ] as const;
 
 export function GuideScreen({ onStart, onBackHome }: GuideScreenProps) {

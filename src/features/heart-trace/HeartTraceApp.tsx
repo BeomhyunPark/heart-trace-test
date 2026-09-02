@@ -22,6 +22,10 @@ import {
 } from './services/sessionStorage';
 import { createInitialTestState, testReducer } from './state/testReducer';
 import { RESULT_REVEAL_DELAY_MS } from './state/timing';
+import {
+  completeContentParticipation,
+  startContentParticipation,
+} from '../../engagement/tracker';
 
 type HeartTraceAppProps = {
   onBackHome: () => void;
@@ -53,6 +57,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
   const handleStart = () => {
     clearHeartTraceSession();
     setSavedSession(null);
+    void startContentParticipation('heart-trace');
     dispatch({ type: 'START' });
   };
 
@@ -98,6 +103,7 @@ export function HeartTraceApp({ onBackHome }: HeartTraceAppProps) {
     }
 
     const result = RESULT_TYPES[state.result];
+    void completeContentParticipation('heart-trace', result.id);
 
     void preloadResultImage(
       result.resultCardSrc,

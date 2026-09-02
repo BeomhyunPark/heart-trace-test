@@ -2,13 +2,21 @@ export const TOURNAMENT_SIZES = [16, 32, 64] as const;
 
 export type TournamentSize = (typeof TOURNAMENT_SIZES)[number];
 export type TournamentPhase = 'match' | 'round-complete' | 'champion';
-export type WorldCupCategoryId =
-  | 'meal'
-  | 'dessert'
-  | 'late-night'
-  | 'travel'
-  | 'free-pass'
-  | 'life-cheat';
+export const WORLD_CUP_CATEGORY_IDS = [
+  'meal',
+  'dessert',
+  'late-night',
+  'travel',
+  'free-pass',
+  'life-cheat',
+] as const;
+
+export type WorldCupCategoryId = (typeof WORLD_CUP_CATEGORY_IDS)[number];
+
+export function isWorldCupCategoryId(value: unknown): value is WorldCupCategoryId {
+  return typeof value === 'string'
+    && WORLD_CUP_CATEGORY_IDS.includes(value as WorldCupCategoryId);
+}
 
 export type CandidateVisualTone = 'gold' | 'coral' | 'mint' | 'sky' | 'violet';
 

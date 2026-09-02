@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { ACTIVITIES, type Activity, type ActivityId } from '../../app/activityCatalog';
 import { BrandMark } from '../../components/BrandMark';
 import { ScreenLayout } from '../../components/ScreenLayout';
@@ -6,6 +8,7 @@ import type { PickerMode } from '../group-picker/domain/types';
 import { assetUrl } from '../../utils/assetUrl';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { ShareApp } from './components/ShareApp';
+import { getVisitorCount } from '../../engagement/tracker';
 
 type HomeScreenProps = {
   featuredActivityId: ActivityId | null;
@@ -48,6 +51,7 @@ export function HomeScreen({
   onOpenUpdates,
   onSelectActivity,
 }: HomeScreenProps) {
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
   const featuredActivity = ACTIVITIES.find(({ id }) => id === featuredActivityId) ?? null;
   const communityTools = ACTIVITIES.filter((activity) => (
     activity.available && activity.group === 'community-tool'
@@ -55,6 +59,20 @@ export function HomeScreen({
   const otherPlayActivities = ACTIVITIES.filter((activity) => (
     activity.group === 'play' && activity.id !== featuredActivity?.id
   ));
+
+  useEffect(() => {
+    let active = true;
+
+    void getVisitorCount()
+      .then((count) => {
+        if (active) setVisitorCount(count);
+      })
+      .catch(() => {
+        // 방문자 수 조회 실패는 홈 이용을 방해하지 않는다.
+      });
+
+    return () => { active = false; };
+  }, []);
 
   if (!featuredActivity) {
     return null;
@@ -68,12 +86,21 @@ export function HomeScreen({
           <span className="home-brand__copy">
             <strong>온기</strong>
           </span>
+          <span
+            className="home-brand__visitors"
+            aria-label={visitorCount === null ? '누적 방문자 집계 중' : `누적 방문자 ${visitorCount}명`}
+            aria-live="polite"
+          >
+            <small>누적 방문자</small>
+            <b>{visitorCount === null ? '—' : visitorCount.toLocaleString('ko-KR')}</b>
+          </span>
         </div>
         <div className="home-hero__message">
           <p className="home-hero__kicker">ICE BREAKING</p>
           <h1>우리 사이에 온기를</h1>
           <p className="home-hero__description">
-            어색함은 덜고, 서로를 더 알아가는 시간을 시작해보세요.
+            어색함은 덜고,<br/>
+            하나님 안에서 서로를 더 알아가는 시간을 가져보세요.
           </p>
         </div>
       </header>

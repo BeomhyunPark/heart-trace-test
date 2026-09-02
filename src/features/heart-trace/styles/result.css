@@ -532,14 +532,6 @@
   text-underline-offset: 0.22rem;
 }
 
-.result-disclaimer {
-  margin: 0;
-  color: var(--result-muted);
-  font-size: 0.6875rem;
-  line-height: 1.03125rem;
-  text-align: center;
-}
-
 .save-help {
   position: fixed;
   z-index: 20;

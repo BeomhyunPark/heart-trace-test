@@ -58,6 +58,20 @@ describe('놀이와 도구 링크 공유', () => {
     expect(shell?.querySelector('.balance-game-screen--deep')).toBeTruthy();
   });
 
+  it('콘텐츠 좋아요를 추가하고 취소한다', async () => {
+    window.history.replaceState({}, '', '/?activity=balance-game');
+    render(<App />);
+
+    const likeButton = await screen.findByRole('button', { name: '좋아요 추가 · 현재 0개' });
+    fireEvent.click(likeButton);
+    expect(await screen.findByRole('button', { name: '좋아요 취소 · 현재 1개' })).toBeTruthy();
+    expect(screen.getByText('좋아요를 남겼어요.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: '좋아요 취소 · 현재 1개' }));
+    expect(await screen.findByRole('button', { name: '좋아요 추가 · 현재 0개' })).toBeTruthy();
+    expect(screen.getByText('좋아요를 취소했어요.')).toBeTruthy();
+  });
+
   it('모임 도구를 바꾸면 공유 대상도 선택한 도구로 바꾸어준다', async () => {
     window.history.replaceState({}, '', '/?tool=prayer');
     render(<App />);
@@ -71,5 +85,70 @@ describe('놀이와 도구 링크 공유', () => {
       '--activity-share-accent',
     )).toBe('#85a8ed');
     expect(window.location.search).toBe('?tool=groups');
+  });
+
+  it('최애 월드컵 카테고리를 바꾸면 공유 제목·URL·색상도 함께 바꾼다', async () => {
+    const share = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
+    window.history.replaceState({}, '', '/?activity=ideal-world-cup&category=dessert');
+    render(<App />);
+
+    const dessertShare = await screen.findByRole('button', {
+      name: '디저트 최애 월드컵 링크 공유하기',
+    });
+    expect(dessertShare.closest<HTMLElement>('.activity-link-share')?.style.getPropertyValue(
+      '--activity-share-accent',
+    )).toBe('#f48faa');
+
+    fireEvent.click(screen.getByRole('button', { name: '여행지' }));
+    const travelShare = await screen.findByRole('button', {
+      name: '여행지 최애 월드컵 링크 공유하기',
+    });
+    expect(window.location.search).toBe('?activity=ideal-world-cup&category=travel');
+    expect(travelShare.closest<HTMLElement>('.activity-link-share')?.style.getPropertyValue(
+      '--activity-share-accent',
+    )).toBe('#86d9f2');
+
+    fireEvent.click(travelShare);
+    await waitFor(() => expect(share).toHaveBeenCalledWith({
+      title: '여행지 최애 월드컵 | 온기',
+      url: 'https://ongi.greengroove.app/share/ideal-world-cup-travel/',
+    }));
+  });
+
+  it.each([
+    ['heart-trace', '/?activity=heart-trace', '마음속 흔적 찾기 링크 공유하기', '#f48faa'],
+    ['balance-game', '/?activity=balance-game', '극과 극 밸런스 게임 링크 공유하기', '#ff8c68'],
+    ['ideal-world-cup', '/?activity=ideal-world-cup&category=meal', '든든한 한 끼 최애 월드컵 링크 공유하기', '#ffd36e'],
+    ['group-picker', '/?tool=prayer', '기도할 사람 정하기 링크 공유하기', '#baf5e6'],
+  ])('%s 화면에 맞는 공유 버튼과 색상을 노출한다', async (_content, route, label, accent) => {
+    window.history.replaceState({}, '', route);
+    render(<App />);
+
+    const shareButton = await screen.findByRole('button', { name: label });
+    expect(shareButton.closest<HTMLElement>('.activity-link-share')?.style.getPropertyValue(
+      '--activity-share-accent',
+    )).toBe(accent);
+    expect(await screen.findByRole('button', { name: '좋아요 추가 · 현재 0개' })).toBeTruthy();
+  });
+
+  it('익명 나눔은 방 참여 링크에서 공유를 처리하므로 상단에는 좋아요만 둔다', async () => {
+    window.history.replaceState({}, '', '/?activity=anonymous-sharing');
+    render(<App />);
+
+    expect(await screen.findByRole('button', { name: '좋아요 추가 · 현재 0개' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /링크 공유하기/ })).toBeNull();
+  });
+
+  it('공개 전 구르미 티저에는 좋아요와 공유를 노출하지 않는다', async () => {
+    window.history.replaceState({}, '', '/?activity=gureumi-teaser');
+    render(<App />);
+
+    await screen.findByRole('heading', { name: /두 번째 테스트/ });
+    expect(screen.queryByRole('button', { name: /좋아요/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /링크 공유하기/ })).toBeNull();
   });
 });

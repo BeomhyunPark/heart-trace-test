@@ -10,6 +10,7 @@ import {
 
 import { HomeScreen, pickFeaturedActivity } from '../features/home/HomeScreen';
 import type { PickerMode } from '../features/group-picker/domain/types';
+import type { WorldCupCategoryId } from '../features/ideal-world-cup/domain/types';
 import { ACTIVITIES, type ActivityId } from './activityCatalog';
 import {
   buildActivityUrl,
@@ -23,6 +24,8 @@ import { SplashScreen } from './SplashScreen';
 import { getActivityDefinition, preloadActivity } from './activityRegistry';
 import { ActivityShareButton } from '../components/ActivityShareButton';
 import { UpdatesScreen } from '../features/updates/UpdatesScreen';
+import { getEngagementContentCode } from '../engagement/contentCodes';
+import { initializeEngagement, trackContentView } from '../engagement/tracker';
 
 function getDocumentScrollTop(): number {
   return Math.max(
@@ -63,10 +66,26 @@ export function App() {
   ));
   const activeActivityRef = useRef(activeActivity);
   const homeScrollTop = useRef(0);
+  const trackedLocation = useRef<string | null>(null);
 
   useEffect(() => {
     void preloadActivity('heart-trace');
   }, []);
+
+  useEffect(() => {
+    void initializeEngagement();
+    const contentCode = activeActivity ? getEngagementContentCode(activeActivity) : null;
+    const locationKey = contentCode ?? (activePage ? `page:${activePage}` : 'home');
+
+    if (trackedLocation.current === locationKey) {
+      return;
+    }
+    trackedLocation.current = locationKey;
+
+    if (contentCode) {
+      void trackContentView(contentCode);
+    }
+  }, [activeActivity, activePage]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -128,12 +147,33 @@ export function App() {
     ));
   }, []);
 
+  const handleWorldCupCategoryChange = useCallback((category: WorldCupCategoryId) => {
+    if (activeActivityRef.current?.id !== 'ideal-world-cup') {
+      return;
+    }
+
+    const nextActivity = {
+      id: 'ideal-world-cup' as const,
+      initialWorldCupCategory: category,
+    };
+
+    updateActivityUrl(nextActivity, 'replace');
+    activeActivityRef.current = nextActivity;
+    setActiveActivity((current) => (
+      current?.id !== 'ideal-world-cup' || current.initialWorldCupCategory === category
+        ? current
+        : nextActivity
+    ));
+  }, []);
+
   if (showSplash) {
     return <SplashScreen />;
   }
 
   const selectActivity = (id: ActivityId, initialGroupPickerMode?: PickerMode) => {
-    const target = { id, initialGroupPickerMode };
+    const target: ActivityTarget = id === 'ideal-world-cup'
+      ? { id, initialWorldCupCategory: 'meal' }
+      : { id, initialGroupPickerMode };
 
     homeScrollTop.current = getDocumentScrollTop();
     updateActivityUrl(target, 'push');
@@ -174,13 +214,15 @@ export function App() {
         <div className="activity-shell">
           <ActivityApp
             initialGroupPickerMode={activeActivity.initialGroupPickerMode}
+            initialWorldCupCategory={activeActivity.initialWorldCupCategory}
             onBackHome={returnHome}
             onSelectActivity={selectActivity}
             onGroupPickerModeChange={handleGroupPickerModeChange}
+            onWorldCupCategoryChange={handleWorldCupCategoryChange}
           />
           <ActivityShareButton
             target={activeActivity}
-            key={`${activeActivity.id}:${activeActivity.initialGroupPickerMode ?? ''}`}
+            key={`${activeActivity.id}:${activeActivity.initialGroupPickerMode ?? ''}:${activeActivity.initialWorldCupCategory ?? ''}`}
           />
         </div>
       ) : (

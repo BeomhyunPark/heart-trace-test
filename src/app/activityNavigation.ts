@@ -1,10 +1,15 @@
 import { ACTIVITIES, type ActivityId } from './activityCatalog';
 import { isPickerMode } from '../features/group-picker/domain/modeCatalog';
 import type { PickerMode } from '../features/group-picker/domain/types';
+import {
+  isWorldCupCategoryId,
+  type WorldCupCategoryId,
+} from '../features/ideal-world-cup/domain/types';
 
 export type ActivityTarget = {
   id: ActivityId;
   initialGroupPickerMode?: PickerMode;
+  initialWorldCupCategory?: WorldCupCategoryId;
 };
 
 export type AppPage = 'updates';
@@ -27,6 +32,14 @@ export function parseActivitySearch(search: string): ActivityTarget | null {
 
   const activity = searchParams.get('activity');
 
+  if (activity === 'ideal-world-cup') {
+    const category = searchParams.get('category');
+    return {
+      id: 'ideal-world-cup',
+      initialWorldCupCategory: isWorldCupCategoryId(category) ? category : 'meal',
+    };
+  }
+
   return isAvailableActivityId(activity) ? { id: activity } : null;
 }
 
@@ -42,10 +55,14 @@ export function buildActivityUrl(
 
   url.searchParams.delete('activity');
   url.searchParams.delete('tool');
+  url.searchParams.delete('category');
   url.searchParams.delete('page');
 
   if (target?.id === 'group-picker' && target.initialGroupPickerMode) {
     url.searchParams.set('tool', target.initialGroupPickerMode);
+  } else if (target?.id === 'ideal-world-cup') {
+    url.searchParams.set('activity', target.id);
+    url.searchParams.set('category', target.initialWorldCupCategory ?? 'meal');
   } else if (target) {
     url.searchParams.set('activity', target.id);
   }
@@ -58,6 +75,7 @@ export function buildPageUrl(currentUrl: string, page: AppPage | null): string {
 
   url.searchParams.delete('activity');
   url.searchParams.delete('tool');
+  url.searchParams.delete('category');
   url.searchParams.delete('page');
 
   if (page) {

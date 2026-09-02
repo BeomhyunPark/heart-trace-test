@@ -14,14 +14,24 @@ type SharePickerMode =
   | 'pairs'
   | 'supporter';
 
+type ShareWorldCupCategory =
+  | 'meal'
+  | 'dessert'
+  | 'late-night'
+  | 'travel'
+  | 'free-pass'
+  | 'life-cheat';
+
 export type ShareActivityTarget = {
   id: ShareActivityId;
   initialGroupPickerMode?: SharePickerMode;
+  initialWorldCupCategory?: ShareWorldCupCategory;
 };
 
 type ShareLookupTarget = {
   id: string;
   initialGroupPickerMode?: string;
+  initialWorldCupCategory?: string;
 };
 
 export type ShareTarget = {
@@ -60,6 +70,7 @@ const PLAY_SHARE_TARGETS: readonly ShareTarget[] = [
     secondary: '#55ddf2',
   },
   {
+    // 기존에 공유된 링크를 깨지 않기 위한 legacy entry다. 새 공유는 아래 카테고리별 entry를 사용한다.
     slug: 'ideal-world-cup',
     target: { id: 'ideal-world-cup' },
     label: '최애 월드컵',
@@ -68,6 +79,75 @@ const PLAY_SHARE_TARGETS: readonly ShareTarget[] = [
     eyebrow: '온기 · 토너먼트',
     symbol: '★',
     accent: '#ffd36e',
+    secondary: '#86d9f2',
+  },
+];
+
+const WORLD_CUP_SHARE_TARGETS: readonly ShareTarget[] = [
+  {
+    slug: 'ideal-world-cup-meal',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'meal' },
+    label: '든든한 한 끼 최애 월드컵',
+    title: '든든한 한 끼 최애 월드컵 | 온기',
+    description: '오늘 딱 하나만 고른다면? 든든한 한 끼 취향 토너먼트.',
+    eyebrow: '온기 · 한 끼 월드컵',
+    symbol: '★',
+    accent: '#ffd36e',
+    secondary: '#86d9f2',
+  },
+  {
+    slug: 'ideal-world-cup-dessert',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'dessert' },
+    label: '디저트 최애 월드컵',
+    title: '디저트 최애 월드컵 | 온기',
+    description: '달콤한 후보 중 마지막까지 남을 나의 최애 디저트는?',
+    eyebrow: '온기 · 디저트 월드컵',
+    symbol: '★',
+    accent: '#f48faa',
+    secondary: '#ffd36e',
+  },
+  {
+    slug: 'ideal-world-cup-late-night',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'late-night' },
+    label: '야식 최애 월드컵',
+    title: '야식 최애 월드컵 | 온기',
+    description: '늦은 밤 가장 간절한 하나를 고르는 야식 토너먼트.',
+    eyebrow: '온기 · 야식 월드컵',
+    symbol: '★',
+    accent: '#b4a0ff',
+    secondary: '#ff8c68',
+  },
+  {
+    slug: 'ideal-world-cup-travel',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'travel' },
+    label: '여행지 최애 월드컵',
+    title: '여행지 최애 월드컵 | 온기',
+    description: '지금 떠날 수 있다면 어디로? 여행 취향 토너먼트.',
+    eyebrow: '온기 · 여행지 월드컵',
+    symbol: '★',
+    accent: '#86d9f2',
+    secondary: '#78e2c6',
+  },
+  {
+    slug: 'ideal-world-cup-free-pass',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'free-pass' },
+    label: '평생 무료 이용권 월드컵',
+    title: '평생 무료 이용권 월드컵 | 온기',
+    description: '평생 하나가 무료라면? 가장 탐나는 이용권을 골라보세요.',
+    eyebrow: '온기 · 무료 이용권 월드컵',
+    symbol: '★',
+    accent: '#78e2c6',
+    secondary: '#ffd36e',
+  },
+  {
+    slug: 'ideal-world-cup-life-cheat',
+    target: { id: 'ideal-world-cup', initialWorldCupCategory: 'life-cheat' },
+    label: '인생 치트키 월드컵',
+    title: '인생 치트키 월드컵 | 온기',
+    description: '딱 하나 가질 수 있다면? 나만의 인생 치트키 토너먼트.',
+    eyebrow: '온기 · 인생 치트키 월드컵',
+    symbol: '★',
+    accent: '#c8adff',
     secondary: '#86d9f2',
   },
 ];
@@ -154,6 +234,7 @@ const TOOL_SHARE_TARGETS: readonly ShareTarget[] = [
 
 export const SHARE_TARGETS: readonly ShareTarget[] = [
   ...PLAY_SHARE_TARGETS,
+  ...WORLD_CUP_SHARE_TARGETS,
   ...TOOL_SHARE_TARGETS,
 ];
 
@@ -162,16 +243,25 @@ function matchesTarget(
   target: ShareLookupTarget,
 ): boolean {
   return candidate.id === target.id
-    && candidate.initialGroupPickerMode === target.initialGroupPickerMode;
+    && candidate.initialGroupPickerMode === target.initialGroupPickerMode
+    && candidate.initialWorldCupCategory === target.initialWorldCupCategory;
 }
 
 export function getShareTarget(target: ShareLookupTarget): ShareTarget | null {
-  return SHARE_TARGETS.find((candidate) => matchesTarget(candidate.target, target)) ?? null;
+  const normalizedTarget = target.id === 'ideal-world-cup'
+    ? { ...target, initialWorldCupCategory: target.initialWorldCupCategory ?? 'meal' }
+    : target;
+
+  return SHARE_TARGETS.find((candidate) => matchesTarget(candidate.target, normalizedTarget)) ?? null;
 }
 
 export function getActivityDestination(target: ShareActivityTarget): string {
   if (target.id === 'group-picker' && target.initialGroupPickerMode) {
     return `?tool=${target.initialGroupPickerMode}`;
+  }
+
+  if (target.id === 'ideal-world-cup' && target.initialWorldCupCategory) {
+    return `?activity=ideal-world-cup&category=${target.initialWorldCupCategory}`;
   }
 
   return `?activity=${target.id}`;

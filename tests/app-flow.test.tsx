@@ -483,7 +483,7 @@ describe('앱 화면 흐름과 접근성', () => {
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe(
       String(QUESTIONS.length + 1),
     );
-    expect(screen.getByText('마지막 질문')).toBeTruthy();
+    expect(screen.getByText(/마지막 질문/)).toBeTruthy();
     expect(await getAccessibilityViolations(container)).toEqual([]);
 
     vi.useFakeTimers();

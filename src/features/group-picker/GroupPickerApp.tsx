@@ -28,6 +28,11 @@ import {
   type GroupPickerResultEntry,
 } from './services/resultImage';
 import './styles/group-picker.css';
+import {
+  completeContentParticipation,
+  recordShareClick,
+  startContentParticipation,
+} from '../../engagement/tracker';
 
 type GroupPickerAppProps = {
   onBackHome: () => void;
@@ -271,6 +276,12 @@ export function GroupPickerApp({
   }, [phase]);
 
   useEffect(() => {
+    if (phase === 'result' && result) {
+      void completeContentParticipation('group-picker');
+    }
+  }, [phase, result]);
+
+  useEffect(() => {
     if (activeLadderStart === null) return;
     const timer = window.setTimeout(() => {
       setRevealedLadderStarts((current) => new Set(current).add(activeLadderStart));
@@ -313,6 +324,7 @@ export function GroupPickerApp({
       ? nextOutcomes.length > 0 ? nextOutcomes : nextNames.map((_, index) => `${index + 1}번`)
       : [];
     saveGroupNames(nextNames);
+    void startContentParticipation('group-picker');
     setError('');
     setRevealedLadderStarts(new Set());
     setActiveLadderStart(null);
@@ -420,6 +432,9 @@ export function GroupPickerApp({
       try {
         const file = await createGroupPickerResultFile({ modeTitle: resultMode.title, resultTitle, entries });
         const action = await shareGroupPickerResultFile(file);
+        if (action === 'shared') {
+          void recordShareClick('group-picker', 'native');
+        }
         setShareMessage(action === 'shared' ? '결과 이미지를 공유했어요.' : action === 'downloaded' ? '결과 이미지를 저장했어요.' : '공유를 취소했어요.');
       } catch {
         setShareMessage('이미지를 만들지 못했어요. 잠시 후 다시 시도해 주세요.');

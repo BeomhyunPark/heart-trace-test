@@ -6,10 +6,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -28,6 +31,16 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ProblemDetail handleValidation(MethodArgumentNotValidException exception) {
+        return problem(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "입력 내용을 확인해주세요.");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ProblemDetail handleUnreadableRequest(HttpMessageNotReadableException exception) {
+        return problem(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "입력 내용을 확인해주세요.");
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class})
+    ProblemDetail handleRequestParameter(Exception exception) {
         return problem(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "입력 내용을 확인해주세요.");
     }
 

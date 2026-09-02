@@ -36,9 +36,16 @@ import {
   shareWorldCupResultFile,
 } from './services/resultImage';
 import './styles/ideal-world-cup.css';
+import {
+  completeContentParticipation,
+  recordShareClick,
+  startContentParticipation,
+} from '../../engagement/tracker';
 
 type IdealWorldCupAppProps = {
   onBackHome: () => void;
+  initialWorldCupCategory?: WorldCupCategoryId;
+  onWorldCupCategoryChange?: (category: WorldCupCategoryId) => void;
 };
 
 type CandidateVisualProps = {
@@ -109,8 +116,12 @@ function createSession(
   };
 }
 
-export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<WorldCupCategoryId>('meal');
+export function IdealWorldCupApp({
+  onBackHome,
+  initialWorldCupCategory = 'meal',
+  onWorldCupCategoryChange,
+}: IdealWorldCupAppProps) {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<WorldCupCategoryId>(initialWorldCupCategory);
   const [selectedSize, setSelectedSize] = useState<TournamentSize>(32);
   const [savedSession, setSavedSession] = useState<WorldCupSession | null>(
     () => loadWorldCupSession(VALID_CANDIDATE_IDS, VALID_CATEGORY_IDS),
@@ -120,8 +131,24 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
   const [shareMessage, setShareMessage] = useState('');
 
   useEffect(() => {
+    if (!activeSession) {
+      setSelectedCategoryId(initialWorldCupCategory);
+    }
+  }, [activeSession, initialWorldCupCategory]);
+
+  useEffect(() => {
+    onWorldCupCategoryChange?.(activeSession?.categoryId ?? selectedCategoryId);
+  }, [activeSession?.categoryId, onWorldCupCategoryChange, selectedCategoryId]);
+
+  useEffect(() => {
     if (activeSession) {
       saveWorldCupSession(activeSession);
+    }
+  }, [activeSession]);
+
+  useEffect(() => {
+    if (activeSession?.current.phase === 'champion' && activeSession.current.championId) {
+      void completeContentParticipation('ideal-world-cup');
     }
   }, [activeSession]);
 
@@ -132,6 +159,7 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
     clearWorldCupSession();
     setSavedSession(null);
     setShareMessage('');
+    void startContentParticipation('ideal-world-cup');
     setActiveSession(createSession(categoryId, tournamentSize));
   };
 
@@ -185,7 +213,10 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
               {getRoundLabel(savedState.roundCandidateIds.length)} · 선택 {savedState.history.length}개 저장
             </p>
             <div>
-              <PrimaryButton onClick={() => setActiveSession(savedSession)}>이어하기</PrimaryButton>
+              <PrimaryButton onClick={() => {
+                setSelectedCategoryId(savedSession.categoryId);
+                setActiveSession(savedSession);
+              }}>이어하기</PrimaryButton>
               <button type="button" onClick={() => {
                 clearWorldCupSession();
                 setSavedSession(null);
@@ -307,6 +338,10 @@ export function IdealWorldCupApp({ onBackHome }: IdealWorldCupAppProps) {
           tournamentSize: state.tournamentSize,
         });
         const action = await shareWorldCupResultFile(file);
+
+        if (action === 'shared') {
+          void recordShareClick('ideal-world-cup', 'native');
+        }
 
         setShareMessage(action === 'shared'
           ? '우승 이미지를 공유했어요.'

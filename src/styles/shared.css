@@ -225,6 +225,34 @@
   outline-offset: 3px;
 }
 
+.activity-link-share > button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.activity-link-share > .activity-link-share__like {
+  display: inline-flex;
+  width: auto;
+  min-width: 2.25rem;
+  gap: 0.25rem;
+  padding: 0 0.625rem;
+  border-radius: var(--ongi-radius-pill);
+}
+
+.activity-link-share__like span {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.activity-link-share__like small {
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.activity-link-share__like.is-liked {
+  background: color-mix(in srgb, var(--activity-share-accent) 24%, rgba(23, 20, 34, 0.9));
+}
+
 .activity-link-share svg {
   width: 1rem;
   height: 1rem;

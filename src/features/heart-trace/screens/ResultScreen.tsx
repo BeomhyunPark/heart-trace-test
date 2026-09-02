@@ -140,8 +140,6 @@ export function ResultScreen({ resultId, onRestart, onBackHome }: ResultScreenPr
         </button>
         <p className="result-save-notice" aria-live="polite">{saveMessage}</p>
 
-        <p className="result-disclaimer">이 결과는 당신을 규정하거나 저장하지 않아요.</p>
-
         <div className="result-navigation">
           <button className="result-restart-button" type="button" onClick={onRestart}>처음부터 다시 하기</button>
           <button className="result-home-button" type="button" onClick={onBackHome}>홈으로</button>

@@ -1,6 +1,6 @@
 # OnGi
 
-교회 공동체에서 사용하는 모바일 중심의 인터랙티브 콘텐츠 웹앱입니다. 기존 콘텐츠는 브라우저에서 독립적으로 동작하고, 소그룹 익명 자기소개 나눔은 Spring Boot API와 PostgreSQL을 사용합니다.
+교회 공동체에서 사용하는 모바일 중심의 인터랙티브 콘텐츠 웹앱입니다. 콘텐츠는 브라우저에서 동작하며, 소그룹 익명 자기소개 나눔과 익명 콘텐츠 참여·반응 기록은 Spring Boot API와 PostgreSQL을 사용합니다.
 
 ## 구조
 
@@ -86,6 +86,19 @@ POST /api/rooms/{roomId}/next
 POST /api/rooms/{roomId}/complete
 
 GET  /api/rooms/{roomId}/events
+
+PUT    /api/engagement/visitors/{visitorKey}
+PUT    /api/engagement/visits/{visitKey}
+GET    /api/engagement/contents/{contentCode}
+POST   /api/engagement/participations
+PUT    /api/engagement/participations/{participationId}/completion
+GET    /api/engagement/contents/{contentCode}/like
+PUT    /api/engagement/contents/{contentCode}/like
+DELETE /api/engagement/contents/{contentCode}/like
+POST   /api/engagement/events
+GET    /api/engagement/statistics
+GET    /api/engagement/contents/{contentCode}/statistics
+GET    /api/engagement/share-links/{code}
 ```
 
 Room Code와 public Room ID는 credential이 아닙니다. 최초 join을 제외한 모든 Room API는 해당 Room에 속한 HttpOnly session cookie를 검증합니다. 변경 요청에는 `X-OnGi-Client: web` header가 필요합니다.
@@ -217,4 +230,4 @@ MVP는 Singapore region의 단일 Backend instance와 같은 project의 PostgreS
 
 현재 SSE subscriber registry는 단일 process 메모리에 있습니다. Backend를 둘 이상의 replica로 늘리기 전에는 PostgreSQL LISTEN/NOTIFY 같은 cross-instance event 전달 수단을 추가해야 합니다.
 
-상세 설계는 `docs/ongi-sharing-mvp.md`를 참고하세요.
+익명 콘텐츠 참여·반응의 통계 정의, ERD, 개인정보 정책과 frontend 호출 시점은 [Engagement v0.1 문서](docs/engagement-v0.1.md)를 참고하세요. 익명 나눔의 상세 설계는 `docs/ongi-sharing-mvp.md`를 참고하세요.

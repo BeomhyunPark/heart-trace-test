@@ -14,22 +14,29 @@ type KakaoSdk = {
   init: (key: string) => void;
   isInitialized: () => boolean;
   Share: {
+    createDefaultButton?: (settings: KakaoShareSettings & { container: string }) => void;
     sendDefault: (settings: {
-      objectType: 'feed';
-      content: {
-        title: string;
-        description: string;
-        imageUrl: string;
-        imageWidth: number;
-        imageHeight: number;
-        link: { mobileWebUrl: string; webUrl: string };
-      };
-      buttons: Array<{
-        title: string;
-        link: { mobileWebUrl: string; webUrl: string };
-      }>;
+      objectType: KakaoShareSettings['objectType'];
+      content: KakaoShareSettings['content'];
+      buttons: KakaoShareSettings['buttons'];
     }) => void;
   };
+};
+
+type KakaoShareSettings = {
+  objectType: 'feed';
+  content: {
+    title: string;
+    description: string;
+    imageUrl: string;
+    imageWidth: number;
+    imageHeight: number;
+    link: { mobileWebUrl: string; webUrl: string };
+  };
+  buttons: Array<{
+    title: string;
+    link: { mobileWebUrl: string; webUrl: string };
+  }>;
 };
 
 declare global {
@@ -147,10 +154,8 @@ async function shareWithDevice(
   return await copyShareText(text) ? 'copied' : 'failed';
 }
 
-function sendWithKakao(kakao: KakaoSdk, javascriptKey: string, payload: KakaoSharePayload, testUrl: string) {
-  if (!kakao.isInitialized()) kakao.init(javascriptKey);
-
-  kakao.Share.sendDefault({
+function getKakaoShareSettings(payload: KakaoSharePayload, testUrl: string): KakaoShareSettings {
+  return {
     objectType: 'feed',
     content: {
       title: `나는 ${payload.name}!`,
@@ -164,7 +169,12 @@ function sendWithKakao(kakao: KakaoSdk, javascriptKey: string, payload: KakaoSha
       title: '나도 테스트하러 가기',
       link: { mobileWebUrl: testUrl, webUrl: testUrl },
     }],
-  });
+  };
+}
+
+function sendWithKakao(kakao: KakaoSdk, javascriptKey: string, payload: KakaoSharePayload, testUrl: string) {
+  if (!kakao.isInitialized()) kakao.init(javascriptKey);
+  kakao.Share.sendDefault(getKakaoShareSettings(payload, testUrl));
 }
 
 export async function prepareGureumiKakaoShare(): Promise<boolean> {
@@ -173,6 +183,27 @@ export async function prepareGureumiKakaoShare(): Promise<boolean> {
   try {
     const kakao = await loadKakaoSdk();
     if (!kakao.isInitialized()) kakao.init(javascriptKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function bindGureumiKakaoShareButton(
+  container: string,
+  payload: KakaoSharePayload,
+): Promise<boolean> {
+  const javascriptKey = getJavascriptKey();
+  if (!javascriptKey) return false;
+
+  try {
+    const kakao = await loadKakaoSdk();
+    if (!kakao.isInitialized()) kakao.init(javascriptKey);
+    if (!kakao.Share.createDefaultButton) return false;
+    kakao.Share.createDefaultButton({
+      container,
+      ...getKakaoShareSettings(payload, getTestUrl()),
+    });
     return true;
   } catch {
     return false;

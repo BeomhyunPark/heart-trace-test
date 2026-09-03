@@ -8,7 +8,7 @@ import {
   preloadGureumiResultImage,
   saveGureumiResultImage,
 } from '../services/resultImage';
-import { prepareGureumiKakaoShare, shareGureumiResult } from '../services/kakaoShare';
+import { bindGureumiKakaoShareButton, shareGureumiResult } from '../services/kakaoShare';
 
 type GureumiResultScreenProps = {
   result: GureumiResult;
@@ -61,6 +61,7 @@ export function GureumiResultScreen({
   const [shareMessage, setShareMessage] = useState('');
   const [savingImage, setSavingImage] = useState(false);
   const [sharingResult, setSharingResult] = useState(false);
+  const [kakaoButtonMode, setKakaoButtonMode] = useState<'loading' | 'sdk' | 'fallback'>('loading');
   const [showAllTypes, setShowAllTypes] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
   const resultImageSrc = getGureumiResultImageSrc(definition.characterKey);
@@ -90,10 +91,20 @@ export function GureumiResultScreen({
   };
 
   useEffect(() => {
+    let active = true;
     void preloadGureumiResultImage(definition.characterKey).catch(() => {
       // The button retries the request and reports an actionable error.
     });
-    void prepareGureumiKakaoShare();
+    void bindGureumiKakaoShareButton('#gureumi-kakao-share-button', {
+      name: definition.name,
+      descriptor: definition.descriptor,
+      characterKey: definition.characterKey,
+    }).then((bound) => {
+      if (active) setKakaoButtonMode(bound ? 'sdk' : 'fallback');
+    });
+    return () => {
+      active = false;
+    };
   }, [definition.characterKey]);
 
   const handleSaveImage = async () => {
@@ -242,8 +253,14 @@ export function GureumiResultScreen({
           <button type="button" disabled={savingImage} onClick={() => void handleSaveImage()}>
             {savingImage ? '이미지를 준비하고 있어요…' : '결과 이미지 저장하기'}
           </button>
-          <button className="gureumi-result__kakao-button" type="button" disabled={sharingResult} onClick={() => void handleKakaoShare()}>
-            {sharingResult ? '공유 화면 여는 중…' : '카카오톡으로 결과 공유하기'}
+          <button
+            id="gureumi-kakao-share-button"
+            className="gureumi-result__kakao-button"
+            type="button"
+            disabled={sharingResult || kakaoButtonMode === 'loading'}
+            onClick={kakaoButtonMode === 'fallback' ? () => void handleKakaoShare() : undefined}
+          >
+            {kakaoButtonMode === 'loading' || sharingResult ? '공유 화면 준비 중…' : '카카오톡으로 결과 공유하기'}
           </button>
           {saveMessage ? <p aria-live="polite">{saveMessage}</p> : null}
           {shareMessage ? <p aria-live="polite">{shareMessage}</p> : null}

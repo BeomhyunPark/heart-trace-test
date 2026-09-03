@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://ongi.greengroove.app/"><strong>온기 시작하기 →</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://ongi.greengroove.app/?activity=gureumi-teaser">구르미 테스트 미리보기</a>
+  <a href="https://ongi.greengroove.app/?activity=gureumi">구르미 Beta 테스트</a>
 </p>
 
 ---
@@ -46,15 +46,19 @@
 ## 그리고, 다음 이야기
 
 <p align="center">
-  <a href="https://ongi.greengroove.app/?activity=gureumi-teaser">
-    <img src="./public/images/teasers/gureumi-test/teaser.png" alt="구르미 테스트 — 서로 다른 여덟 친구가 곧 찾아옵니다" width="280" />
+  <a href="https://ongi.greengroove.app/?activity=gureumi">
+    <img src="./public/images/teasers/gureumi-test/teaser.png" alt="구르미 테스트 — 서로 다른 여덟 친구를 만나는 Beta 테스트" width="280" />
   </a>
 </p>
 
 <p align="center">
-  <strong>두 번째 기질 테스트, 구르미 테스트</strong><br />
-  서로 다른 빛과 표정을 지닌 여덟 친구가 곧 새로운 이야기로 찾아옵니다.
+  <strong>두 번째 기질 테스트, 구르미 테스트 Beta v0.1</strong><br />
+  27개의 선택을 따라가며 나와 닮은 구르미를 만나보세요.
 </p>
+
+구르미의 문항 출처와 이론 참고 범위, Beta 검증 기록은
+[구르미 문서](./docs/gureumi/)에서 관리합니다. 구르미 테스트는 공식 TCI 검사나
+심리학적 진단·평가 도구가 아닌 독자적인 놀이형 자기이해 콘텐츠입니다.
 
 ## 온기가 소중하게 생각하는 것
 

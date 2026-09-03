@@ -1,5 +1,6 @@
 type ShareActivityId =
   | 'heart-trace'
+  | 'gureumi'
   | 'balance-game'
   | 'ideal-world-cup'
   | 'group-picker'
@@ -57,6 +58,17 @@ const PLAY_SHARE_TARGETS: readonly ShareTarget[] = [
     symbol: '✦',
     accent: '#f48faa',
     secondary: '#ffc98f',
+  },
+  {
+    slug: 'gureumi',
+    target: { id: 'gureumi' },
+    label: '구르미 테스트',
+    title: '나는 어떤 구르미일까? | 온기',
+    description: '27개의 선택으로 만나는 나의 구르미 기질 테스트 Beta.',
+    eyebrow: '온기 · 놀이형 자기이해',
+    symbol: '☁',
+    accent: '#6b86ea',
+    secondary: '#f08dc1',
   },
   {
     slug: 'balance-game',

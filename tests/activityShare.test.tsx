@@ -180,12 +180,13 @@ describe('놀이와 도구 링크 공유', () => {
     expect(screen.queryByRole('button', { name: /링크 공유하기/ })).toBeNull();
   });
 
-  it('공개 전 구르미 티저에는 좋아요와 공유를 노출하지 않는다', async () => {
+  it('구르미 Beta에는 전용 공유를 노출하고 attempt 통계와 겹치는 좋아요는 두지 않는다', async () => {
     window.history.replaceState({}, '', '/?activity=gureumi-teaser');
     render(<App />);
 
-    await screen.findByRole('heading', { name: /두 번째 테스트/ });
+    await screen.findByRole('heading', { name: /구르미 테스트 Beta/ });
     expect(screen.queryByRole('button', { name: /좋아요/ })).toBeNull();
-    expect(screen.queryByRole('button', { name: /링크 공유하기/ })).toBeNull();
+    expect(screen.getByRole('button', { name: '구르미 테스트 링크 공유하기' })).toBeTruthy();
+    expect(window.location.search).toBe('?activity=gureumi-teaser');
   });
 });

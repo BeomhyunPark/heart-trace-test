@@ -11,8 +11,8 @@ import {
 
 describe('놀이별 공유 메타데이터', () => {
   it('월드컵 카테고리 6개와 기존 링크, 다른 놀이·도구를 서로 다른 공유 대상으로 정의한다', () => {
-    expect(SHARE_TARGETS).toHaveLength(16);
-    expect(new Set(SHARE_TARGETS.map(({ slug }) => slug)).size).toBe(16);
+    expect(SHARE_TARGETS).toHaveLength(17);
+    expect(new Set(SHARE_TARGETS.map(({ slug }) => slug)).size).toBe(17);
     expect(SHARE_TARGETS.filter(({ target }) => target.id === 'group-picker')).toHaveLength(7);
     expect(SHARE_TARGETS.filter(({ target }) => target.id === 'ideal-world-cup')).toHaveLength(7);
   });
@@ -26,6 +26,8 @@ describe('놀이별 공유 메타데이터', () => {
     expect(sharing?.slug).toBe('tool-sharing');
     expect(getActivityDestination(sharing!.target)).toBe('?tool=sharing');
     expect(getActivityDestination({ id: 'heart-trace' })).toBe('?activity=heart-trace');
+    expect(getShareTarget({ id: 'gureumi' })?.slug).toBe('gureumi');
+    expect(getActivityDestination({ id: 'gureumi' })).toBe('?activity=gureumi');
 
     const dessert = getShareTarget({
       id: 'ideal-world-cup',

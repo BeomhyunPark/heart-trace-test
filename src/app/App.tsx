@@ -1,4 +1,5 @@
 import {
+  lazy,
   Suspense,
   startTransition,
   useCallback,
@@ -27,6 +28,11 @@ import { ActivityShareButton } from '../components/ActivityShareButton';
 import { UpdatesScreen } from '../features/updates/UpdatesScreen';
 import { getEngagementContentCode } from '../engagement/contentCodes';
 import { initializeEngagement, trackContentView } from '../engagement/tracker';
+
+const GureumiStatisticsApp = lazy(async () => {
+  const module = await import('../features/gureumi-statistics/GureumiStatisticsApp');
+  return { default: module.GureumiStatisticsApp };
+});
 
 function getDocumentScrollTop(): number {
   return Math.max(
@@ -232,6 +238,8 @@ export function App() {
     <Suspense fallback={<SplashScreen />}>
       {activePage === 'updates' ? (
         <UpdatesScreen onBackHome={returnHome} />
+      ) : activePage === 'gureumi-beta-stats' ? (
+        <GureumiStatisticsApp onBackHome={returnHome} />
       ) : ActivityApp && activeActivity ? (
         <div className="activity-shell">
           <ActivityApp

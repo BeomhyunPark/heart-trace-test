@@ -36,7 +36,7 @@
 - Java 21
 - Docker
 
-환경변수 예시는 [`.env.example`](../.env.example)에 있습니다. 로컬 기본값으로 실행할 때는 별도 운영 secret이 필요하지 않습니다.
+환경변수 예시는 [`.env.example`](../.env.example)에 있습니다. 로컬 기본값으로 일반 기능을 실행할 때는 별도 운영 secret이 필요하지 않지만, 구르미 내부 통계는 `ONGI_GUREUMI_ADMIN_KEY`를 설정해야 활성화됩니다.
 
 ```bash
 docker compose up -d postgres
@@ -68,6 +68,7 @@ Flyway migration은 Backend 시작 시 자동 실행됩니다. 이미 운영에 
 | `DB_USERNAME` | DB 사용자 | `ongi` |
 | `DB_PASSWORD` | DB 비밀번호 | 로컬 개발 비밀번호 |
 | `ONGI_ALLOWED_ORIGINS` | credential CORS 허용 origin | `http://localhost:5173` |
+| `ONGI_GUREUMI_ADMIN_KEY` | 구르미 내부 Beta 통계 shared key | 없음(접근 비활성) |
 | `ONGI_SECURE_COOKIE` | HTTPS 전용 cookie | `false` |
 | `ONGI_ROOM_ACTIVE_LIFETIME` | 활성 Room 만료 | `12h` |
 | `ONGI_TOMBSTONE_RETENTION` | 종료 상태와 session hash 유지 | `24h` |
@@ -131,6 +132,12 @@ GET    /api/engagement/share-links/{code}
 ```
 
 좋아요는 밸런스 게임의 대화 온도, 최애 월드컵의 주제, 공동체 도구의 모드처럼 `variantCode` 단위로 집계합니다. 전체 데이터 정의와 ERD는 [Engagement v0.1](./engagement-v0.1.md)에 있습니다.
+
+### 구르미 Beta 내부 통계
+
+`/?page=gureumi-beta-stats`는 공개 메뉴에 등록하지 않은 desktop 집계 화면입니다. 접근 시 `.env` 또는 `.env.home-server`의 `ONGI_GUREUMI_ADMIN_KEY`와 같은 키를 입력합니다. 운영 compose는 이 변수가 없으면 backend를 시작하지 않습니다.
+
+화면은 문항 choice·평균 응답 시간, 축 HIGH/LOW·boundary, 8종 결과, 결과별·전체 만족도, funnel을 익명 집계로 보여줍니다. 개별 attempt와 token은 내부 API에서도 반환하지 않습니다. 상세한 집계 의미와 보호 경계는 [GUREUMI Beta 구현 메모](./gureumi/beta-implementation.md)를 참고하세요.
 
 ## 실시간 갱신
 

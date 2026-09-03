@@ -20,7 +20,11 @@ describe('활동 직접 링크', () => {
       id: 'balance-game',
       initialBalanceGameWeight: 'light',
     });
-    expect(parseActivitySearch('?activity=gureumi-teaser')).toEqual({ id: 'gureumi-teaser' });
+    expect(parseActivitySearch('?activity=gureumi-teaser')).toEqual({ id: 'gureumi' });
+    expect(parseActivitySearch('?activity=gureumi')).toEqual({ id: 'gureumi' });
+    expect(buildActivityUrl('https://example.com/?activity=gureumi-teaser', {
+      id: 'gureumi',
+    })).toBe('/?activity=gureumi');
     expect(parseActivitySearch('?tool=unknown')).toBeNull();
     expect(parseActivitySearch('?activity=unknown')).toBeNull();
   });
@@ -79,5 +83,13 @@ describe('활동 직접 링크', () => {
       'https://example.com/heart-trace-test/?page=updates',
       { id: 'balance-game' },
     )).toBe('/heart-trace-test/?activity=balance-game&weight=light');
+  });
+
+  it('내부 구르미 Beta 통계 주소를 읽는다', () => {
+    expect(parsePageSearch('?page=gureumi-beta-stats')).toBe('gureumi-beta-stats');
+    expect(buildPageUrl(
+      'https://example.com/heart-trace-test/?utm_source=internal',
+      'gureumi-beta-stats',
+    )).toBe('/heart-trace-test/?utm_source=internal&page=gureumi-beta-stats');
   });
 });

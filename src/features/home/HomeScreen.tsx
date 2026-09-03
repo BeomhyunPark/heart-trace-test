@@ -18,7 +18,7 @@ type HomeScreenProps = {
 
 const ACTIVITY_MARKS: Record<ActivityId, string> = {
   'heart-trace': '✦',
-  'gureumi-teaser': '☁',
+  'gureumi': '☁',
   'balance-game': 'VS',
   'ideal-world-cup': '★',
   'group-picker': '?',
@@ -247,22 +247,22 @@ export function HomeScreen({
 
       <section className="home-section home-section--preview" aria-labelledby="preview-title">
         <div className="home-section__meta">
-          <p>곧 만나요</p>
+          <p>먼저 경험해 주세요</p>
           <span aria-hidden="true">04</span>
         </div>
-        <h2 id="preview-title">업데이트 예정</h2>
+        <h2 id="preview-title">Beta 테스트</h2>
 
         <button
           className="gureumi-home-teaser"
           type="button"
-          aria-label="구르미 테스트 티저 보기"
-          onClick={() => onSelectActivity('gureumi-teaser')}
+          aria-label="구르미 Beta 테스트 시작하기"
+          onClick={() => onSelectActivity('gureumi')}
         >
           <span className="gureumi-home-teaser__copy">
-            <small>ONGI · SECOND TEST</small>
+            <small>GUREUMI · BETA v0.1</small>
             <strong>구르미 테스트</strong>
-            <span>흔적을 이을 여덟 친구를<br />먼저 만나보세요.</span>
-            <b>티저 보기</b>
+            <span>27개의 선택을 따라가며<br />나와 닮은 구르미를 만나보세요.</span>
+            <b>Beta 참여하기</b>
           </span>
           <span className="gureumi-home-teaser__preview" aria-hidden="true">
             <img

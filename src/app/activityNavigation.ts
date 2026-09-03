@@ -17,7 +17,7 @@ export type ActivityTarget = {
   initialBalanceGameWeight?: BalanceGameWeight;
 };
 
-export type AppPage = 'updates';
+export type AppPage = 'updates' | 'gureumi-beta-stats';
 
 const AVAILABLE_ACTIVITY_IDS = new Set<ActivityId>(
   ACTIVITIES.filter(({ available }) => available).map(({ id }) => id),
@@ -36,6 +36,10 @@ export function parseActivitySearch(search: string): ActivityTarget | null {
   }
 
   const activity = searchParams.get('activity');
+
+  if (activity === 'gureumi-teaser') {
+    return { id: 'gureumi' };
+  }
 
   if (activity === 'balance-game') {
     const weight = searchParams.get('weight');
@@ -57,7 +61,8 @@ export function parseActivitySearch(search: string): ActivityTarget | null {
 }
 
 export function parsePageSearch(search: string): AppPage | null {
-  return new URLSearchParams(search).get('page') === 'updates' ? 'updates' : null;
+  const page = new URLSearchParams(search).get('page');
+  return page === 'updates' || page === 'gureumi-beta-stats' ? page : null;
 }
 
 export function buildActivityUrl(

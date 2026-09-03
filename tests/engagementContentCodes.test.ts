@@ -12,8 +12,8 @@ describe('콘텐츠 engagement 코드', () => {
     expect(getEngagementContentCode({ id: 'anonymous-sharing' })).toBe('anonymous-sharing');
   });
 
-  it('아직 공개되지 않은 구르미 티저는 참여 통계에서 제외한다', () => {
-    expect(getEngagementContentCode({ id: 'gureumi-teaser' })).toBeNull();
+  it('구르미 Beta는 attempt 기반 통계를 사용하므로 공용 참여 통계에서 제외한다', () => {
+    expect(getEngagementContentCode({ id: 'gureumi' })).toBeNull();
   });
 
   it('카테고리형 콘텐츠의 좋아요 variant를 실제 선택값으로 분리한다', () => {

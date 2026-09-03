@@ -22,7 +22,13 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
             .allowedOrigins(properties.allowedOrigins().toArray(String[]::new))
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("Content-Type", "X-OnGi-Client", "Last-Event-ID")
+            .allowedHeaders(
+                "Content-Type",
+                "X-OnGi-Client",
+                "X-Gureumi-Resume-Token",
+                "X-Gureumi-Admin-Key",
+                "Last-Event-ID"
+            )
             .allowCredentials(true)
             .maxAge(3600);
     }

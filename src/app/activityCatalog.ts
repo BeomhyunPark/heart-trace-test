@@ -1,4 +1,4 @@
-export type ActivityId = 'heart-trace' | 'gureumi-teaser' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'anonymous-sharing';
+export type ActivityId = 'heart-trace' | 'gureumi' | 'balance-game' | 'ideal-world-cup' | 'group-picker' | 'anonymous-sharing';
 
 export type ActivityKind = '성격검사' | '새로운 테스트' | 'VS 놀이' | '토너먼트' | '모임 도구' | '소그룹 나눔';
 export type ActivityGroup = 'play' | 'community-tool' | 'teaser';
@@ -25,12 +25,13 @@ export const ACTIVITIES: readonly Activity[] = [
     available: true,
   },
   {
-    id: 'gureumi-teaser',
+    id: 'gureumi',
     group: 'teaser',
     kind: '새로운 테스트',
     title: '구르미 테스트',
-    description: '흔적을 이을 여덟 친구의 새로운 이야기를 먼저 만나보세요.',
-    meta: '두 번째 테스트 · 곧 공개',
+    description: '27개의 선택을 따라가며 나와 닮은 구르미를 만나보세요.',
+    meta: 'Beta v0.1 · 27문항 · 약 4~5분',
+    badge: 'BETA',
     available: true,
   },
   {

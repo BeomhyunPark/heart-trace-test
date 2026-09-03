@@ -52,12 +52,12 @@ const loadAnonymousSharingApp = async () => {
   return { default: module.AnonymousSharingApp };
 };
 const AnonymousSharingApp = lazy(loadAnonymousSharingApp);
-const loadGureumiTeaserApp = async () => {
-  const module = await import('../features/gureumi-teaser/GureumiTeaserApp');
+const loadGureumiApp = async () => {
+  const module = await import('../features/gureumi/GureumiApp');
 
-  return { default: module.GureumiTeaserApp };
+  return { default: module.GureumiApp };
 };
-const GureumiTeaserApp = lazy(loadGureumiTeaserApp);
+const GureumiApp = lazy(loadGureumiApp);
 
 const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
   'heart-trace': {
@@ -85,10 +85,10 @@ const ACTIVITY_REGISTRY: Partial<Record<ActivityId, ActivityDefinition>> = {
     Component: AnonymousSharingApp,
     preload: loadAnonymousSharingApp,
   },
-  'gureumi-teaser': {
-    id: 'gureumi-teaser',
-    Component: GureumiTeaserApp,
-    preload: loadGureumiTeaserApp,
+  'gureumi': {
+    id: 'gureumi',
+    Component: GureumiApp,
+    preload: loadGureumiApp,
   },
 };
 

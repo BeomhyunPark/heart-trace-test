@@ -247,6 +247,8 @@ scripts/home-server/install-autodeploy-cron.sh --remove
 
 홈서버 운영이 어려워질 경우 Railway 같은 관리형 환경으로 옮길 수 있습니다.
 
+현재 운영 전환 절차는 [Railway Backend 배포 가이드](./RAILWAY_DEPLOYMENT.md)를 따릅니다. 새 Railway PostgreSQL에서 시작하며 기존 홈서버 데이터는 이전하지 않습니다.
+
 1. Backend source root를 `/backend`로 지정합니다.
 2. Backend와 PostgreSQL을 같은 region에 둡니다.
 3. DB 접속 정보, CORS origin, secure cookie를 운영 secret과 변수로 설정합니다.

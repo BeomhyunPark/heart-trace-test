@@ -2,6 +2,8 @@ import type {
   CreatedGureumiAttempt,
   GureumiAttemptState,
   GureumiChoice,
+  GureumiFollowUpFeedback,
+  GureumiQuickFeedback,
   GureumiQuestionsResponse,
   GureumiResult,
 } from '../domain/types';
@@ -97,12 +99,24 @@ export const gureumiApi = {
     resumeToken,
   ),
 
-  saveFeedback: (attemptId: string, resumeToken: string, rating: number) => request<{
+  saveFeedback: (attemptId: string, resumeToken: string, feedback: GureumiQuickFeedback) => request<{
     attemptId: string;
-    rating: number;
+    rating?: number;
+    confusingQuestionOrders: number[];
+    selfSelectedResultType: string;
   }>(
     `/api/gureumi/attempts/${attemptId}/feedback`,
     resumeToken,
-    { method: 'PUT', body: JSON.stringify({ rating }) },
+    { method: 'PUT', body: JSON.stringify(feedback) },
+  ),
+
+  saveFollowUpFeedback: (
+    attemptId: string,
+    resumeToken: string,
+    feedback: GureumiFollowUpFeedback,
+  ) => request<{ attemptId: string; submitted: true }>(
+    `/api/gureumi/attempts/${attemptId}/feedback/follow-up`,
+    resumeToken,
+    { method: 'PUT', body: JSON.stringify(feedback) },
   ),
 };

@@ -7,10 +7,13 @@ import {
   type GureumiAttemptReference,
   type GureumiAttemptState,
   type GureumiChoice,
+  type GureumiFollowUpFeedback,
   type GureumiQuestion,
+  type GureumiQuickFeedback,
   type GureumiResult,
 } from './domain/types';
 import { GureumiIntroScreen } from './screens/GureumiIntroScreen';
+import { GureumiFeedbackFlow } from './screens/GureumiFeedbackFlow';
 import { GureumiQuestionScreen } from './screens/GureumiQuestionScreen';
 import { GureumiResultScreen } from './screens/GureumiResultScreen';
 import {
@@ -25,7 +28,7 @@ type GureumiAppProps = {
   onBackHome: () => void;
 };
 
-type Phase = 'booting' | 'intro' | 'questions' | 'result';
+type Phase = 'booting' | 'intro' | 'questions' | 'result' | 'feedback';
 
 function answersByQuestion(answers: GureumiAnswer[]): Partial<Record<string, GureumiChoice>> {
   return Object.fromEntries(answers.map(({ questionId, choice }) => [questionId, choice]));
@@ -66,10 +69,10 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
         if (!active) return;
         setReference(saved);
         if (state.completed) {
-          const completedResult = await gureumiApi.getResult(saved.attemptId, saved.resumeToken);
-          if (!active) return;
-          setResult(completedResult);
-          setPhase('result');
+          clearGureumiAttempt();
+          setReference(null);
+          setResumeState(null);
+          setPhase('intro');
         } else {
           setResumeState(state);
           setPhase('intro');
@@ -218,6 +221,39 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
     }
   };
 
+  const handleOpenFeedback = async () => {
+    if (!reference || !result || busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      if (questions.length !== 27) {
+        const response = await gureumiApi.getQuestions(reference.attemptId, reference.resumeToken);
+        setQuestions(response.questions);
+      }
+      setPhase('feedback');
+    } catch (feedbackError) {
+      setError(errorMessage(feedbackError));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSaveQuickFeedback = async (feedback: GureumiQuickFeedback) => {
+    if (!reference) throw new Error('GUREUMI_ATTEMPT_NOT_FOUND');
+    await gureumiApi.saveFeedback(reference.attemptId, reference.resumeToken, feedback);
+  };
+
+  const handleSaveFollowUpFeedback = async (feedback: GureumiFollowUpFeedback) => {
+    if (!reference) throw new Error('GUREUMI_ATTEMPT_NOT_FOUND');
+    await gureumiApi.saveFollowUpFeedback(reference.attemptId, reference.resumeToken, feedback);
+  };
+
+  const handleRetest = () => {
+    if (busy) return;
+    const previousToken = reference?.resumeToken;
+    void createAndOpen(previousToken);
+  };
+
   if (phase === 'booting') {
     return (
       <main className="gureumi-screen gureumi-loading" aria-live="polite">
@@ -247,7 +283,26 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
 
   if (phase === 'result' && result) {
     return (
-      <GureumiResultScreen result={result} />
+      <GureumiResultScreen
+        result={result}
+        feedbackOpening={busy}
+        retestStarting={busy}
+        onOpenFeedback={() => void handleOpenFeedback()}
+        onRetest={handleRetest}
+      />
+    );
+  }
+
+  if (phase === 'feedback' && result) {
+    return (
+      <GureumiFeedbackFlow
+        result={result}
+        questions={questions}
+        onSaveQuick={handleSaveQuickFeedback}
+        onSaveFollowUp={handleSaveFollowUpFeedback}
+        onBackResult={() => setPhase('result')}
+        onRetest={handleRetest}
+      />
     );
   }
 

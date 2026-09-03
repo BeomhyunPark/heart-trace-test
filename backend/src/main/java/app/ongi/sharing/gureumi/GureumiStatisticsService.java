@@ -208,7 +208,7 @@ class GureumiStatisticsService {
             SELECT
               attempt.result_type,
               count(*) AS result_count,
-              count(feedback.id) AS feedback_count,
+              count(feedback.rating) AS feedback_count,
               avg(feedback.rating) AS average_rating,
               count(feedback.id) FILTER (WHERE feedback.rating = 1) AS rating_1,
               count(feedback.id) FILTER (WHERE feedback.rating = 2) AS rating_2,

@@ -59,6 +59,10 @@ function getAbsoluteImageUrl(characterKey: string): string {
   ).href;
 }
 
+function getJavascriptKey(): string | undefined {
+  return import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY?.trim() || undefined;
+}
+
 function loadKakaoSdk(): Promise<KakaoSdk> {
   if (window.Kakao) return Promise.resolve(window.Kakao);
   if (kakaoSdkPromise) return kakaoSdkPromise;
@@ -143,32 +147,53 @@ async function shareWithDevice(
   return await copyShareText(text) ? 'copied' : 'failed';
 }
 
+function sendWithKakao(kakao: KakaoSdk, javascriptKey: string, payload: KakaoSharePayload, testUrl: string) {
+  if (!kakao.isInitialized()) kakao.init(javascriptKey);
+
+  kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `나는 ${payload.name}!`,
+      description: payload.descriptor.replaceAll('\n', ' '),
+      imageUrl: getAbsoluteImageUrl(payload.characterKey),
+      imageWidth: 1080,
+      imageHeight: 1920,
+      link: { mobileWebUrl: testUrl, webUrl: testUrl },
+    },
+    buttons: [{
+      title: '나도 테스트하러 가기',
+      link: { mobileWebUrl: testUrl, webUrl: testUrl },
+    }],
+  });
+}
+
+export async function prepareGureumiKakaoShare(): Promise<boolean> {
+  const javascriptKey = getJavascriptKey();
+  if (!javascriptKey) return false;
+  try {
+    const kakao = await loadKakaoSdk();
+    if (!kakao.isInitialized()) kakao.init(javascriptKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function shareGureumiResult(
   payload: KakaoSharePayload,
 ): Promise<GureumiShareResult> {
   const testUrl = getTestUrl();
-  const javascriptKey = import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY?.trim();
+  const javascriptKey = getJavascriptKey();
 
   if (javascriptKey) {
     try {
+      // When preloaded, this branch stays synchronous so iOS keeps the tap's popup permission.
+      if (window.Kakao) {
+        sendWithKakao(window.Kakao, javascriptKey, payload, testUrl);
+        return 'kakao';
+      }
       const kakao = await loadKakaoSdk();
-      if (!kakao.isInitialized()) kakao.init(javascriptKey);
-
-      kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: `나는 ${payload.name}!`,
-          description: payload.descriptor.replaceAll('\n', ' '),
-          imageUrl: getAbsoluteImageUrl(payload.characterKey),
-          imageWidth: 1080,
-          imageHeight: 1920,
-          link: { mobileWebUrl: testUrl, webUrl: testUrl },
-        },
-        buttons: [{
-          title: '나도 테스트하러 가기',
-          link: { mobileWebUrl: testUrl, webUrl: testUrl },
-        }],
-      });
+      sendWithKakao(kakao, javascriptKey, payload, testUrl);
       return 'kakao';
     } catch {
       // SDK/domain failures fall back to the device share sheet.

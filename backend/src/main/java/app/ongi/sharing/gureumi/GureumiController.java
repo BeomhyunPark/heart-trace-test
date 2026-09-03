@@ -5,6 +5,8 @@ import static app.ongi.sharing.gureumi.GureumiDtos.CompletionResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.CreatedAttemptResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.FeedbackRequest;
 import static app.ongi.sharing.gureumi.GureumiDtos.FeedbackResponse;
+import static app.ongi.sharing.gureumi.GureumiDtos.FollowUpFeedbackRequest;
+import static app.ongi.sharing.gureumi.GureumiDtos.FollowUpFeedbackResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.QuestionsResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.ResultResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.SaveAnswerRequest;
@@ -88,6 +90,15 @@ public class GureumiController {
         @RequestHeader(value = RESUME_HEADER, required = false) String resumeToken,
         @Valid @RequestBody FeedbackRequest request
     ) {
-        return service.saveFeedback(attemptId, resumeToken, request.rating());
+        return service.saveFeedback(attemptId, resumeToken, request);
+    }
+
+    @PutMapping("/attempts/{attemptId}/feedback/follow-up")
+    FollowUpFeedbackResponse saveFollowUpFeedback(
+        @PathVariable UUID attemptId,
+        @RequestHeader(value = RESUME_HEADER, required = false) String resumeToken,
+        @Valid @RequestBody FollowUpFeedbackRequest request
+    ) {
+        return service.saveFollowUpFeedback(attemptId, resumeToken, request);
     }
 }

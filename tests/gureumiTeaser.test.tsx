@@ -153,4 +153,30 @@ describe('구르미 테스트 Beta', () => {
     expect(screen.getByText('4–6 / 27')).toBeTruthy();
     expect(screen.getAllByRole('radio').filter((radio) => (radio as HTMLInputElement).checked)).toHaveLength(2);
   });
+
+  it('완료 후 홈에서 다시 들어오면 이전 결과 대신 새 테스트 인트로를 연다', async () => {
+    window.localStorage.setItem('ongi_gureumi_attempt_v01', JSON.stringify({
+      attemptId: ATTEMPT_ID,
+      resumeToken: RESUME_TOKEN,
+    }));
+    const fetchMock = vi.fn(async () => json({
+      attemptId: ATTEMPT_ID,
+      version: 'GUREUMI_BETA_V01',
+      attemptNo: 1,
+      completed: true,
+      answeredCount: 27,
+      nextOrder: 27,
+      answers: [],
+      startedAt: '2026-09-03T00:00:00Z',
+      completedAt: '2026-09-03T00:05:00Z',
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+    window.history.replaceState({}, '', '/?activity=gureumi');
+
+    render(<App />);
+
+    expect(await screen.findByRole('button', { name: 'Beta 테스트 시작하기' })).toBeTruthy();
+    expect(window.localStorage.getItem('ongi_gureumi_attempt_v01')).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
 });

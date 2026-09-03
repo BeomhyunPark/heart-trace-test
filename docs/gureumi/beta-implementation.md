@@ -7,7 +7,7 @@
 3. 질문 API는 문항 ID·순서·상황·A/B 문장만 반환한다.
 4. 선택할 때마다 서버가 attempt 소유권과 version을 검증해 answer를 upsert한다.
 5. 완료 요청에서 서버가 27개 답과 축별 9개 문항을 다시 검증하고 score·level·boundary·result를 한 transaction에서 확정한다.
-6. 완료된 attempt만 결과와 만족도를 조회·저장할 수 있다.
+6. 완료된 attempt만 결과와 익명 Beta 피드백을 조회·저장할 수 있다.
 
 ## API
 
@@ -19,7 +19,8 @@
 - `PUT /api/gureumi/attempts/{attemptId}/answers` — 문항별 선택과 response time 즉시 저장 또는 수정.
 - `POST /api/gureumi/attempts/{attemptId}/complete` — 서버 authoritative scoring과 결과 확정.
 - `GET /api/gureumi/attempts/{attemptId}/result` — 완료된 결과의 표시용 최소 정보 조회.
-- `PUT /api/gureumi/attempts/{attemptId}/feedback` — 1–4 만족도 upsert.
+- `PUT /api/gureumi/attempts/{attemptId}/feedback` — 1–4 결과 공감도, 헷갈린 문항, 직접 고른 구르미 upsert.
+- `PUT /api/gureumi/attempts/{attemptId}/feedback/follow-up` — 선택형 9문항 후속 설문 upsert.
 
 ### 내부 Beta 통계
 
@@ -31,7 +32,7 @@
 
 ## 익명 Beta 분석
 
-개인정보와 raw IP를 추가 수집하지 않는다. version, attempt number, 시작/완료 시각, 문항별 raw choice·서버 score·response time, 축별 score/level/boundary, result type, feedback rating을 이용해 문항·축·결과 분포와 funnel을 계산할 수 있다.
+개인정보와 raw IP를 추가 수집하지 않는다. version, attempt number, 시작/완료 시각, 문항별 raw choice·서버 score·response time, 축별 score/level/boundary, result type과 Figma에 정의된 선택형 Beta 피드백을 이용해 문항·축·결과 분포와 funnel을 계산할 수 있다. 자유 의견에는 이름·연락처를 적지 않도록 화면에서 안내한다.
 
 Funnel은 attempt 수, 해당 attempt의 최대 answer order, completed 상태와 feedback 존재 여부로 `started`, `Q9 reached`, `Q18 reached`, `completed`, `feedback submitted`를 계산한다.
 

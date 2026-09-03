@@ -4,6 +4,9 @@ import static app.ongi.sharing.gureumi.GureumiDtos.AttemptStateResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.CompletionResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.CreatedAttemptResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.FeedbackResponse;
+import static app.ongi.sharing.gureumi.GureumiDtos.FeedbackRequest;
+import static app.ongi.sharing.gureumi.GureumiDtos.FollowUpFeedbackRequest;
+import static app.ongi.sharing.gureumi.GureumiDtos.FollowUpFeedbackResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.QuestionResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.QuestionsResponse;
 import static app.ongi.sharing.gureumi.GureumiDtos.ResultResponse;
@@ -232,17 +235,70 @@ public class GureumiService {
     }
 
     @Transactional
-    public FeedbackResponse saveFeedback(UUID attemptId, String resumeToken, int rating) {
+    public FeedbackResponse saveFeedback(UUID attemptId, String resumeToken, FeedbackRequest request) {
         GureumiAttempt attempt = requireAttemptForUpdate(attemptId, resumeToken);
         if (!attempt.isCompleted()) {
             throw new ApiException(HttpStatus.CONFLICT, "GUREUMI_RESULT_NOT_READY", "결과를 확인한 뒤 만족도를 남길 수 있어요.");
         }
+        List<Integer> confusingOrders = request.confusingQuestionOrders() == null
+            ? List.of()
+            : request.confusingQuestionOrders().stream().distinct().sorted().toList();
         Instant now = clock.instant();
         GureumiResultFeedback feedback = feedbackRepository.findByAttempt_Id(attemptId)
-            .orElseGet(() -> new GureumiResultFeedback(UUID.randomUUID(), attempt, rating, now));
-        feedback.update(rating, now);
+            .orElseGet(() -> new GureumiResultFeedback(UUID.randomUUID(), attempt, now));
+        feedback.updateQuick(
+            request.rating(),
+            joinValues(confusingOrders.stream().map(String::valueOf).toList()),
+            request.selfSelectedResultType(),
+            now
+        );
         feedbackRepository.save(feedback);
-        return new FeedbackResponse(attemptId, rating);
+        return new FeedbackResponse(
+            attemptId,
+            request.rating(),
+            confusingOrders,
+            request.selfSelectedResultType() == null ? null : request.selfSelectedResultType().name()
+        );
+    }
+
+    @Transactional
+    public FollowUpFeedbackResponse saveFollowUpFeedback(
+        UUID attemptId,
+        String resumeToken,
+        FollowUpFeedbackRequest request
+    ) {
+        GureumiAttempt attempt = requireAttemptForUpdate(attemptId, resumeToken);
+        if (!attempt.isCompleted()) {
+            throw new ApiException(HttpStatus.CONFLICT, "GUREUMI_RESULT_NOT_READY", "결과를 확인한 뒤 설문을 남길 수 있어요.");
+        }
+        Instant now = clock.instant();
+        GureumiResultFeedback feedback = feedbackRepository.findByAttempt_Id(attemptId)
+            .orElseGet(() -> new GureumiResultFeedback(UUID.randomUUID(), attempt, now));
+        feedback.updateFollowUp(
+            request.flowRating(),
+            request.questionUiRating(),
+            request.resultHelpfulnessRating(),
+            joinValues(request.helpfulSections()),
+            joinValues(request.resultIssues()),
+            clean(request.shareIntent()),
+            joinValues(request.errorAreas()),
+            clean(request.environment()),
+            clean(request.comment()),
+            now
+        );
+        feedbackRepository.save(feedback);
+        return new FollowUpFeedbackResponse(attemptId, true);
+    }
+
+    private String joinValues(List<?> values) {
+        if (values == null || values.isEmpty()) return null;
+        return values.stream().map(String::valueOf).map(String::trim).filter(value -> !value.isBlank())
+            .collect(Collectors.joining("|"));
+    }
+
+    private String clean(String value) {
+        if (value == null || value.isBlank()) return null;
+        return value.trim();
     }
 
     private void requireValidQuestionSet(UUID versionId) {

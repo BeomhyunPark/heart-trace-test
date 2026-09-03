@@ -8,10 +8,14 @@ import {
   preloadGureumiResultImage,
   saveGureumiResultImage,
 } from '../services/resultImage';
-import { shareGureumiResult } from '../services/kakaoShare';
+import { prepareGureumiKakaoShare, shareGureumiResult } from '../services/kakaoShare';
 
 type GureumiResultScreenProps = {
   result: GureumiResult;
+  feedbackOpening?: boolean;
+  retestStarting?: boolean;
+  onOpenFeedback?: () => void;
+  onRetest?: () => void;
 };
 
 type ResultVariables = CSSProperties & {
@@ -45,7 +49,13 @@ const AXIS_COPY = {
   RELATION: { short: '관계', formal: '사회적 민감성' },
 } as const;
 
-export function GureumiResultScreen({ result }: GureumiResultScreenProps) {
+export function GureumiResultScreen({
+  result,
+  feedbackOpening = false,
+  retestStarting = false,
+  onOpenFeedback,
+  onRetest,
+}: GureumiResultScreenProps) {
   const definition = GUREUMI_RESULTS[result.resultType];
   const [saveMessage, setSaveMessage] = useState('');
   const [shareMessage, setShareMessage] = useState('');
@@ -83,6 +93,7 @@ export function GureumiResultScreen({ result }: GureumiResultScreenProps) {
     void preloadGureumiResultImage(definition.characterKey).catch(() => {
       // The button retries the request and reports an actionable error.
     });
+    void prepareGureumiKakaoShare();
   }, [definition.characterKey]);
 
   const handleSaveImage = async () => {
@@ -241,6 +252,20 @@ export function GureumiResultScreen({ result }: GureumiResultScreenProps) {
           </button>
           <p className="gureumi-result__legal">이 결과는 놀이형 자기이해 콘텐츠이며,<br />전문적인 심리검사나 진단을 대신하지 않습니다.</p>
         </footer>
+
+        {onOpenFeedback && onRetest ? (
+          <section className="gureumi-result__feedback-handoff" aria-labelledby="gureumi-feedback-title">
+            <small>BETA 1 · 결과를 확인했다면</small>
+            <h2 id="gureumi-feedback-title">이 결과가 나와 얼마나 닮았는지 알려주세요</h2>
+            <p>헷갈린 문항과 더 가까운 구르미도<br />내용을 다시 보며 선택할 수 있어요.</p>
+            <button type="button" disabled={feedbackOpening} onClick={onOpenFeedback}>
+              {feedbackOpening ? '피드백을 준비하고 있어요…' : '피드백 남기기'}
+            </button>
+            <button type="button" disabled={retestStarting} onClick={onRetest}>
+              {retestStarting ? '새 테스트를 준비하고 있어요…' : '다시 테스트하기'}
+            </button>
+          </section>
+        ) : null}
       </article>
 
       {showIosHelp ? (

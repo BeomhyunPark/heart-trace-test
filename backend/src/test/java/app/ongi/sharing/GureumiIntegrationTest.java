@@ -194,8 +194,50 @@ class GureumiIntegrationTest {
         saveFeedback(created, 3)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.rating", is(3)));
+
+        mockMvc.perform(put("/api/gureumi/attempts/{id}/feedback", created.attemptId())
+                .header(CLIENT_HEADER, "web")
+                .header(RESUME_HEADER, created.resumeToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(java.util.Map.of(
+                    "rating", 4,
+                    "confusingQuestionOrders", List.of(5, 17),
+                    "selfSelectedResultType", "POGEUN"
+                ))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.confusingQuestionOrders", hasSize(2)))
+            .andExpect(jsonPath("$.selfSelectedResultType", is("POGEUN")));
+
+        mockMvc.perform(put("/api/gureumi/attempts/{id}/feedback/follow-up", created.attemptId())
+                .header(CLIENT_HEADER, "web")
+                .header(RESUME_HEADER, created.resumeToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(java.util.Map.of(
+                    "flowRating", 4,
+                    "questionUiRating", 5,
+                    "resultHelpfulnessRating", 4,
+                    "helpfulSections", List.of("강점", "균형을 위한 조언"),
+                    "resultIssues", List.of("특별히 없었다"),
+                    "shareIntent", "아마 할 것 같다",
+                    "errorAreas", List.of("없었음"),
+                    "environment", "Android Chrome",
+                    "comment", "잘 맞았어요."
+                ))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.submitted", is(true)));
+
         assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM gureumi_result_feedback", Integer.class))
             .isEqualTo(1);
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT confusing_question_orders FROM gureumi_result_feedback WHERE attempt_id = ?",
+            String.class,
+            created.attemptId()
+        )).isEqualTo("5|17");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT free_comment FROM gureumi_result_feedback WHERE attempt_id = ?",
+            String.class,
+            created.attemptId()
+        )).isEqualTo("잘 맞았어요.");
 
         CreatedAttempt retest = createAttempt(created.resumeToken());
         assertThat(retest.attemptId()).isNotEqualTo(created.attemptId());

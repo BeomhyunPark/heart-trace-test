@@ -7,6 +7,7 @@ import java.util.UUID;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 final class GureumiDtos {
 
@@ -64,7 +65,30 @@ final class GureumiDtos {
 
     record TraitAxisResponse(String key, String label, TraitLevel level) {}
 
-    record FeedbackRequest(@Min(1) @Max(4) int rating) {}
+    record FeedbackRequest(
+        @Min(1) @Max(4) Integer rating,
+        @Size(max = 27) List<@Min(1) @Max(27) Integer> confusingQuestionOrders,
+        GureumiResultType selfSelectedResultType
+    ) {}
 
-    record FeedbackResponse(UUID attemptId, int rating) {}
+    record FeedbackResponse(
+        UUID attemptId,
+        Integer rating,
+        List<Integer> confusingQuestionOrders,
+        String selfSelectedResultType
+    ) {}
+
+    record FollowUpFeedbackRequest(
+        @Min(1) @Max(5) Integer flowRating,
+        @Min(1) @Max(5) Integer questionUiRating,
+        @Min(1) @Max(5) Integer resultHelpfulnessRating,
+        @Size(max = 5) List<@Size(max = 40) String> helpfulSections,
+        @Size(max = 5) List<@Size(max = 40) String> resultIssues,
+        @Size(max = 40) String shareIntent,
+        @Size(max = 6) List<@Size(max = 40) String> errorAreas,
+        @Size(max = 40) String environment,
+        @Size(max = 1000) String comment
+    ) {}
+
+    record FollowUpFeedbackResponse(UUID attemptId, boolean submitted) {}
 }

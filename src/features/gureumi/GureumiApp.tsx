@@ -309,10 +309,18 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
   return (
     <GureumiIntroScreen
       answeredCount={resumeState?.answeredCount ?? 0}
-      hasSavedAttempt={Boolean(reference && resumeState)}
+      hasSavedAttempt={Boolean(
+          reference && resumeState && resumeState.answeredCount > 0
+      )}
       busy={busy}
       error={error}
-      onStart={() => void createAndOpen()}
+      onStart={() => {
+        if (reference && resumeState) {
+          void handleResume();
+        } else {
+          void createAndOpen();
+        }
+      }}
       onResume={() => void handleResume()}
       onStartFresh={handleStartFresh}
       onBackHome={onBackHome}

@@ -39,6 +39,14 @@
   font-weight: 700;
 }
 
+.gureumi-credit {
+  margin: 0.5rem 0 0;
+  color: rgb(52 50 51 / 0.66);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
 .gureumi-intro {
   padding: 0 0.75rem calc(1rem + env(safe-area-inset-bottom));
   background: #f4f8fc;

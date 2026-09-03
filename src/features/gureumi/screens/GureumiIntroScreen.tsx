@@ -60,6 +60,8 @@ export function GureumiIntroScreen({
             {busy ? '준비하고 있어요…' : 'Beta 테스트 시작하기'}
           </button>
         )}
+        <p className="gureumi-credit">유형, 문항 디자인 · 권봉준 · hyunee</p>
+        <p className="gureumi-credit">기힉, UIUX, 개발 · hyunee</p>
 
         {error ? <p className="gureumi-error" role="alert">{error}</p> : null}
         <p className="gureumi-intro__disclaimer">

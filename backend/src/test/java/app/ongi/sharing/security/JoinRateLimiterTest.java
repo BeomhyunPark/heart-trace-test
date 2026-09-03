@@ -23,7 +23,7 @@ class JoinRateLimiterTest {
             new OngiProperties.Session(false, Duration.ofHours(24)),
             new OngiProperties.Room(Duration.ofHours(12), 2, 10),
             new OngiProperties.Realtime(Duration.ofMinutes(10), Duration.ofSeconds(20)),
-            new OngiProperties.RateLimit(10, 1, false)
+            new OngiProperties.RateLimit(1, false)
         );
         JoinRateLimiter limiter = new JoinRateLimiter(
             properties,
@@ -48,7 +48,7 @@ class JoinRateLimiterTest {
             new OngiProperties.Session(true, Duration.ofHours(24)),
             new OngiProperties.Room(Duration.ofHours(12), 2, 10),
             new OngiProperties.Realtime(Duration.ofMinutes(10), Duration.ofSeconds(20)),
-            new OngiProperties.RateLimit(10, 1, true)
+            new OngiProperties.RateLimit(1, true)
         );
         JoinRateLimiter limiter = new JoinRateLimiter(
             properties,
@@ -67,5 +67,26 @@ class JoinRateLimiterTest {
 
         assertThatThrownBy(() -> limiter.check(first, "7KFM-3QPX"))
             .isInstanceOf(RateLimitException.class);
+    }
+
+    @Test
+    void doesNotLimitAttemptsAcrossDifferentRoomCodes() {
+        OngiProperties properties = new OngiProperties(
+            List.of("https://ongi.greengroove.app"),
+            new OngiProperties.Session(true, Duration.ofHours(24)),
+            new OngiProperties.Room(Duration.ofHours(12), 2, 10),
+            new OngiProperties.Realtime(Duration.ofMinutes(10), Duration.ofSeconds(20)),
+            new OngiProperties.RateLimit(1, false)
+        );
+        JoinRateLimiter limiter = new JoinRateLimiter(
+            properties,
+            new SessionTokenService(),
+            Clock.fixed(Instant.parse("2026-09-01T00:00:00Z"), ZoneOffset.UTC)
+        );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("203.0.113.7");
+
+        limiter.check(request, "7KFM-3QPX");
+        limiter.check(request, "8NGT-4RWY");
     }
 }

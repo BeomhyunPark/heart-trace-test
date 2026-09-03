@@ -21,7 +21,7 @@ class RoomEventPublisherTest {
             new OngiProperties.Session(false, Duration.ofHours(24)),
             new OngiProperties.Room(Duration.ofHours(12), 2, 10),
             new OngiProperties.Realtime(Duration.ofMinutes(10), Duration.ofSeconds(20)),
-            new OngiProperties.RateLimit(10, 5, false)
+            new OngiProperties.RateLimit(5, false)
         );
         RoomEventPublisher publisher = new RoomEventPublisher(
             properties,

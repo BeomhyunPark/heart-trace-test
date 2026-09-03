@@ -37,7 +37,6 @@ public class JoinRateLimiter {
         String source = sourceAddress(request);
         String sourceHash = tokenService.hash(processSalt + ":" + source);
         long window = clock.instant().getEpochSecond() / WINDOW_SECONDS;
-        consume("source:" + sourceHash, properties.rateLimit().attemptsPerMinute(), window);
         consume(
             "source-code:" + sourceHash + ":" + RoomCodeGenerator.normalize(rawRoomCode),
             properties.rateLimit().attemptsPerCodePerMinute(),

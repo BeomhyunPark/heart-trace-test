@@ -49,6 +49,5 @@ ongi:
     timeout: ${ONGI_SSE_TIMEOUT:10m}
     heartbeat: ${ONGI_SSE_HEARTBEAT:20s}
   rate-limit:
-    attempts-per-minute: ${ONGI_JOIN_ATTEMPTS_PER_MINUTE:30}
     attempts-per-code-per-minute: ${ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE:15}
     trust-cloudflare-connecting-ip: ${ONGI_TRUST_CLOUDFLARE_CONNECTING_IP:false}

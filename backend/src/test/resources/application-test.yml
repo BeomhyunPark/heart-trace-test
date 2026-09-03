@@ -15,5 +15,4 @@ ongi:
     timeout: 10m
     heartbeat: 20s
   rate-limit:
-    attempts-per-minute: 1000
     attempts-per-code-per-minute: 1000

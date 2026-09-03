@@ -20,7 +20,6 @@ public record OngiProperties(
     public record Realtime(Duration timeout, Duration heartbeat) {}
 
     public record RateLimit(
-        int attemptsPerMinute,
         int attemptsPerCodePerMinute,
         boolean trustCloudflareConnectingIp
     ) {}

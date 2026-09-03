@@ -71,7 +71,6 @@ Flyway migration은 Backend 시작 시 자동 실행됩니다. 이미 운영에 
 | `ONGI_SECURE_COOKIE` | HTTPS 전용 cookie | `false` |
 | `ONGI_ROOM_ACTIVE_LIFETIME` | 활성 Room 만료 | `12h` |
 | `ONGI_TOMBSTONE_RETENTION` | 종료 상태와 session hash 유지 | `24h` |
-| `ONGI_JOIN_ATTEMPTS_PER_MINUTE` | IP별 join 시도 제한 | 로컬 `30`, 홈서버 `600` |
 | `ONGI_JOIN_ATTEMPTS_PER_CODE_PER_MINUTE` | 같은 IP와 code 조합 제한 | 로컬 `15`, 홈서버 `30` |
 | `ONGI_TRUST_CLOUDFLARE_CONNECTING_IP` | Tunnel이 보장한 실제 client IP 사용 | `false` |
 | `VITE_API_BASE_URL` | Frontend API origin | `http://localhost:8080` |

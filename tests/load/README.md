@@ -9,6 +9,7 @@
 - 원격 주소는 `CONFIRM_LOAD_TEST=ONGI_LOAD_TEST`가 없으면 실행되지 않습니다.
 - Room당 참가자는 2~10명만 허용합니다.
 - 기본 최대 40개 Room, 총 400명까지만 허용합니다.
+- 400명을 초과하는 한계 테스트는 `CONFIRM_LARGE_LOAD_TEST=ONGI_LARGE_LOAD_TEST`를 추가해야 하며, 최대 100개 Room과 총 1,000명까지 허용합니다.
 - 결과 JSON에는 session cookie, 이름, 답변 내용, Room Code를 기록하지 않습니다.
 - 나눔 시작 전 오류가 발생하면 생성한 테스트 Room을 Host session으로 자동 취소하고 cleanup 결과도 JSON에 기록합니다.
 

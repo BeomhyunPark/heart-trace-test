@@ -4,6 +4,10 @@ import { performance } from 'node:perf_hooks';
 
 const TARGET_URL = (process.env.TARGET_URL ?? 'http://localhost:8080').replace(/\/$/, '');
 const IS_LOCAL_TARGET = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(TARGET_URL);
+const LARGE_LOAD_TEST_ENABLED = process.env.CONFIRM_LARGE_LOAD_TEST === 'ONGI_LARGE_LOAD_TEST';
+const MAX_ROOMS = LARGE_LOAD_TEST_ENABLED ? 100 : 40;
+const MAX_PARTICIPANTS = LARGE_LOAD_TEST_ENABLED ? 1_000 : 400;
+const MAX_SETUP_CONCURRENCY = LARGE_LOAD_TEST_ENABLED ? 1_000 : 400;
 const CONFIG = {
   targetUrl: TARGET_URL,
   origin: process.env.LOAD_TEST_ORIGIN ?? (IS_LOCAL_TARGET
@@ -66,17 +70,17 @@ function validateConfiguration() {
   if (!IS_LOCAL_TARGET && process.env.CONFIRM_LOAD_TEST !== 'ONGI_LOAD_TEST') {
     throw new Error('Remote load tests require CONFIRM_LOAD_TEST=ONGI_LOAD_TEST');
   }
-  if (CONFIG.rooms < 1 || CONFIG.rooms > 40) {
-    throw new Error('ROOMS must be between 1 and 40');
+  if (CONFIG.rooms < 1 || CONFIG.rooms > MAX_ROOMS) {
+    throw new Error(`ROOMS must be between 1 and ${MAX_ROOMS}`);
   }
   if (CONFIG.participantsPerRoom < 2 || CONFIG.participantsPerRoom > 10) {
     throw new Error('PARTICIPANTS_PER_ROOM must be between 2 and 10');
   }
-  if (CONFIG.rooms * CONFIG.participantsPerRoom > 400) {
-    throw new Error('This script refuses to create more than 400 participants');
+  if (CONFIG.rooms * CONFIG.participantsPerRoom > MAX_PARTICIPANTS) {
+    throw new Error(`This script refuses to create more than ${MAX_PARTICIPANTS} participants`);
   }
-  if (CONFIG.setupConcurrency < 1 || CONFIG.setupConcurrency > 400) {
-    throw new Error('SETUP_CONCURRENCY must be between 1 and 400');
+  if (CONFIG.setupConcurrency < 1 || CONFIG.setupConcurrency > MAX_SETUP_CONCURRENCY) {
+    throw new Error(`SETUP_CONCURRENCY must be between 1 and ${MAX_SETUP_CONCURRENCY}`);
   }
 }
 
@@ -593,9 +597,11 @@ function summarizeMetrics() {
 
 async function writeResult() {
   const metrics = summarizeMetrics();
-  const allMetrics = [...requestMetrics.values()];
-  const totalRequests = allMetrics.reduce((sum, metric) => sum + metric.count, 0);
-  const totalFailures = allMetrics.reduce((sum, metric) => sum + metric.failures, 0);
+  const httpMetrics = [...requestMetrics.entries()]
+    .filter(([tag]) => tag !== 'event_refresh_total')
+    .map(([, metric]) => metric);
+  const totalRequests = httpMetrics.reduce((sum, metric) => sum + metric.count, 0);
+  const totalFailures = httpMetrics.reduce((sum, metric) => sum + metric.failures, 0);
   const eventRefresh = metrics.event_refresh_total ?? { p95Ms: 0, p99Ms: 0 };
   const result = {
     runId,

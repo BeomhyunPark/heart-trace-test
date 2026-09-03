@@ -25,7 +25,6 @@ export class GureumiStatisticsApiError extends Error {
 }
 
 export async function getGureumiStatistics(
-  adminKey: string,
   filters: GureumiStatisticsFilters,
 ): Promise<GureumiStatistics> {
   const query = new URLSearchParams({
@@ -37,9 +36,6 @@ export async function getGureumiStatistics(
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}/api/gureumi/internal/statistics?${query}`, {
-      headers: {
-        'X-Gureumi-Admin-Key': adminKey,
-      },
       cache: 'no-store',
     });
   } catch {

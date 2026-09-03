@@ -4,8 +4,6 @@ spring:
 ongi:
   allowed-origins:
     - http://localhost:5173
-  gureumi:
-    admin-key: test-gureumi-admin-secret
   session:
     secure-cookie: false
     tombstone-retention: 24h

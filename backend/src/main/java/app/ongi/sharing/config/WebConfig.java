@@ -26,7 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
                 "Content-Type",
                 "X-OnGi-Client",
                 "X-Gureumi-Resume-Token",
-                "X-Gureumi-Admin-Key",
                 "Last-Event-ID"
             )
             .allowCredentials(true)

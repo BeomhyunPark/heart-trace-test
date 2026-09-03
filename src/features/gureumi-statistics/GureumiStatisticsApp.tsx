@@ -1,17 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  getGureumiStatistics,
-  GureumiStatisticsApiError,
-} from './api/statisticsApi';
+import { getGureumiStatistics } from './api/statisticsApi';
 import type {
   GureumiFunnelStatistics,
   GureumiStatistics,
   GureumiStatisticsFilters,
 } from './domain/types';
 import './styles/gureumi-statistics.css';
-
-const ADMIN_KEY_STORAGE = 'ongi_gureumi_admin_key_v1';
 
 type GureumiStatisticsAppProps = {
   onBackHome: () => void;
@@ -29,23 +24,6 @@ const AXIS_SHORT_LABELS: Record<string, string> = {
   WORRY: 'W',
   RELATION: 'R',
 };
-
-function readAdminKey(): string {
-  try {
-    return window.sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? '';
-  } catch {
-    return '';
-  }
-}
-
-function storeAdminKey(key: string): void {
-  try {
-    if (key) window.sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
-    else window.sessionStorage.removeItem(ADMIN_KEY_STORAGE);
-  } catch {
-    // sessionStorage가 막혀도 현재 화면에서는 사용할 수 있다.
-  }
-}
 
 function formatPercent(value: number): string {
   return `${value.toFixed(1)}%`;
@@ -70,21 +48,19 @@ function funnelCards(funnel: GureumiFunnelStatistics) {
 }
 
 export function GureumiStatisticsApp({ onBackHome }: GureumiStatisticsAppProps) {
-  const [adminKey, setAdminKey] = useState(readAdminKey);
-  const [keyInput, setKeyInput] = useState('');
   const [filters, setFilters] = useState<GureumiStatisticsFilters>(DEFAULT_FILTERS);
   const [statistics, setStatistics] = useState<GureumiStatistics | null>(null);
-  const [loadState, setLoadState] = useState<LoadState>(adminKey ? 'loading' : 'idle');
+  const [loadState, setLoadState] = useState<LoadState>('loading');
   const [error, setError] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
   const requestSequence = useRef(0);
 
-  const load = useCallback(async (key: string, nextFilters: GureumiStatisticsFilters) => {
+  const load = useCallback(async (nextFilters: GureumiStatisticsFilters) => {
     const sequence = ++requestSequence.current;
     setLoadState('loading');
     setError('');
     try {
-      const response = await getGureumiStatistics(key, nextFilters);
+      const response = await getGureumiStatistics(nextFilters);
       if (sequence !== requestSequence.current) return;
       setStatistics(response);
       setLoadState('ready');
@@ -93,73 +69,20 @@ export function GureumiStatisticsApp({ onBackHome }: GureumiStatisticsAppProps) 
       const message = loadError instanceof Error
         ? loadError.message
         : '통계를 불러오지 못했습니다.';
-      if (loadError instanceof GureumiStatisticsApiError && loadError.status === 401) {
-        storeAdminKey('');
-        setAdminKey('');
-        setStatistics(null);
-        setLoadState('idle');
-      } else {
-        setLoadState(statistics ? 'ready' : 'idle');
-      }
+      setLoadState(statistics ? 'ready' : 'idle');
       setError(message);
     }
   }, [statistics]);
 
   useEffect(() => {
-    if (!adminKey) return;
-    void load(adminKey, filters);
+    void load(filters);
     // refreshKey는 수동 새로고침 요청을 표현한다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adminKey, filters.version, filters.completedAnswersOnly, filters.firstAttemptOnly, refreshKey]);
-
-  const handleAccess = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const nextKey = keyInput.trim();
-    if (!nextKey) {
-      setError('관리자 키를 입력해주세요.');
-      return;
-    }
-    storeAdminKey(nextKey);
-    setAdminKey(nextKey);
-    setKeyInput('');
-  };
+  }, [filters.version, filters.completedAnswersOnly, filters.firstAttemptOnly, refreshKey]);
 
   const updateFilters = (next: Partial<GureumiStatisticsFilters>) => {
     setFilters((current) => ({ ...current, ...next }));
   };
-
-  const signOut = () => {
-    requestSequence.current += 1;
-    storeAdminKey('');
-    setAdminKey('');
-    setStatistics(null);
-    setLoadState('idle');
-    setError('');
-  };
-
-  if (!adminKey) {
-    return (
-      <main className="gureumi-stats-access">
-        <form onSubmit={handleAccess}>
-          <p>INTERNAL · GUREUMI BETA</p>
-          <h1>통계 화면 잠금 해제</h1>
-          <span>익명 집계 데이터이지만 공개 URL만으로 노출하지 않습니다.</span>
-          <label htmlFor="gureumi-admin-key">관리자 키</label>
-          <input
-            id="gureumi-admin-key"
-            type="password"
-            autoComplete="current-password"
-            value={keyInput}
-            onChange={(event) => setKeyInput(event.target.value)}
-          />
-          <button type="submit">통계 보기</button>
-          {error ? <strong role="alert">{error}</strong> : null}
-          <small>키는 URL이나 localStorage에 남기지 않고 현재 탭에만 보관합니다.</small>
-          <button className="gureumi-stats-access__home" type="button" onClick={onBackHome}>온기 홈으로</button>
-        </form>
-      </main>
-    );
-  }
 
   if (!statistics && loadState === 'loading') {
     return (
@@ -177,7 +100,7 @@ export function GureumiStatisticsApp({ onBackHome }: GureumiStatisticsAppProps) 
           <h1>통계를 불러오지 못했습니다</h1>
           <p role="alert">{error}</p>
           <button type="button" onClick={() => setRefreshKey((value) => value + 1)}>다시 시도</button>
-          <button type="button" onClick={signOut}>다른 키 입력</button>
+          <button type="button" onClick={onBackHome}>온기 홈으로</button>
         </section>
       </main>
     );
@@ -227,7 +150,7 @@ export function GureumiStatisticsApp({ onBackHome }: GureumiStatisticsAppProps) 
             >
               {loadState === 'loading' ? '갱신 중…' : '새로고침'}
             </button>
-            <button className="gureumi-stats-filters__exit" type="button" onClick={signOut}>잠금</button>
+            <button className="gureumi-stats-filters__exit" type="button" onClick={onBackHome}>홈</button>
           </div>
         </header>
 

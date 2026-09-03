@@ -6,7 +6,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '../src/app/App';
 
-const ADMIN_KEY = 'beta-admin-key';
 const RESULT_NAMES = ['아롱이', '달몽이', '후우', '쯨이', '촉촉이', '몽실이', '찌릿이', '포근이'];
 
 function json(data: unknown, status = 200): Response {
@@ -87,22 +86,25 @@ afterEach(() => {
 });
 
 describe('구르미 Beta 내부 통계', () => {
-  it('숨겨진 주소로 진입해도 키 인증 전에는 집계 API를 호출하지 않는다', async () => {
-    const fetchMock = vi.fn();
+  it('숨겨진 주소로 진입하면 키 없이 익명 집계를 바로 조회한다', async () => {
+    const fetchMock = vi.fn(async (
+      _input: string | URL | Request,
+      _init?: RequestInit,
+    ) => json(statisticsResponse()));
     vi.stubGlobal('fetch', fetchMock);
     window.history.replaceState({}, '', '/?page=gureumi-beta-stats');
 
     const { container } = render(<App />);
 
-    expect(await screen.findByRole('heading', { name: '통계 화면 잠금 해제' })).toBeTruthy();
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(screen.queryByRole('link', { name: /통계/ })).toBeNull();
+    expect(await screen.findByRole('heading', { name: '구르미 Beta 통계', level: 1 })).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText('관리자 키')).toBeNull();
     expect((await axe.run(container, {
       rules: { 'color-contrast': { enabled: false } },
     })).violations).toEqual([]);
   });
 
-  it('관리자 키로 익명 집계를 열고 필터를 서버 조건으로 전달한다', async () => {
+  it('문항·축·결과·만족도를 표시하고 필터를 서버 조건으로 전달한다', async () => {
     const fetchMock = vi.fn(async (
       _input: string | URL | Request,
       _init?: RequestInit,
@@ -111,9 +113,6 @@ describe('구르미 Beta 내부 통계', () => {
     window.history.replaceState({}, '', '/?page=gureumi-beta-stats');
     const { container } = render(<App />);
 
-    fireEvent.change(await screen.findByLabelText('관리자 키'), { target: { value: ADMIN_KEY } });
-    fireEvent.click(screen.getByRole('button', { name: '통계 보기' }));
-
     expect(await screen.findByRole('heading', { name: '구르미 Beta 통계', level: 1 })).toBeTruthy();
     expect(screen.getByText('27번 상황')).toBeTruthy();
     expect(screen.getByRole('heading', { name: '축 분포와 Boundary' })).toBeTruthy();
@@ -121,16 +120,12 @@ describe('구르미 Beta 내부 통계', () => {
     expect(screen.getByText('포근이')).toBeTruthy();
     expect(screen.getByText(/3.36 \/ 4/)).toBeTruthy();
     expect(screen.getByText(/개인정보와 raw token은 표시하지 않음/)).toBeTruthy();
-    expect(window.sessionStorage.getItem('ongi_gureumi_admin_key_v1')).toBe(ADMIN_KEY);
-    expect(window.localStorage.getItem('ongi_gureumi_admin_key_v1')).toBeNull();
-    expect(window.location.search).not.toContain(ADMIN_KEY);
-
     const firstCall = fetchMock.mock.calls[0];
     const firstUrl = new URL(String(firstCall[0]));
     expect(firstUrl.pathname).toBe('/api/gureumi/internal/statistics');
     expect(firstUrl.searchParams.get('completedAnswersOnly')).toBe('true');
     expect(firstUrl.searchParams.get('firstAttemptOnly')).toBe('true');
-    expect(new Headers(firstCall[1]?.headers).get('X-Gureumi-Admin-Key')).toBe(ADMIN_KEY);
+    expect(new Headers(firstCall[1]?.headers).has('X-Gureumi-Admin-Key')).toBe(false);
 
     fireEvent.click(screen.getByRole('button', { name: '완료자 응답' }));
     fireEvent.click(screen.getByRole('button', { name: '최초 검사' }));
@@ -145,21 +140,5 @@ describe('구르미 Beta 내부 통계', () => {
     expect((await axe.run(container, {
       rules: { 'color-contrast': { enabled: false } },
     })).violations).toEqual([]);
-  });
-
-  it('잘못된 키는 현재 탭에도 남기지 않고 다시 입력받는다', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => json({
-      code: 'GUREUMI_ADMIN_UNAUTHORIZED',
-      detail: '관리자 키가 올바르지 않습니다.',
-    }, 401)));
-    window.history.replaceState({}, '', '/?page=gureumi-beta-stats');
-    render(<App />);
-
-    fireEvent.change(await screen.findByLabelText('관리자 키'), { target: { value: 'wrong-key' } });
-    fireEvent.click(screen.getByRole('button', { name: '통계 보기' }));
-
-    expect((await screen.findByRole('alert')).textContent).toBe('관리자 키가 올바르지 않습니다.');
-    expect(screen.getByRole('heading', { name: '통계 화면 잠금 해제' })).toBeTruthy();
-    expect(window.sessionStorage.getItem('ongi_gureumi_admin_key_v1')).toBeNull();
   });
 });

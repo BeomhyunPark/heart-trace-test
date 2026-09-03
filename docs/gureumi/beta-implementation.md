@@ -25,12 +25,9 @@
 
 - Frontend: `/?page=gureumi-beta-stats`
 - API: `GET /api/gureumi/internal/statistics`
-- Header: `X-Gureumi-Admin-Key`
 - Filter: `version`, `completedAnswersOnly`, `firstAttemptOnly`
 
-통계 화면은 홈과 공개 메뉴에 링크하지 않지만, URL을 안다는 것을 권한으로 간주하지 않는다. Backend의 `ONGI_GUREUMI_ADMIN_KEY`와 요청 header가 일치해야만 열린다. 키는 URL과 `localStorage`에 넣지 않고 현재 browser tab의 `sessionStorage`에만 보관하며, 잠금 버튼으로 즉시 삭제할 수 있다. API 응답은 `no-store`다.
-
-운영 배포 전 `.env.home-server`에 충분히 긴 random 키를 설정한다. 미설정 시 API는 `503`, 키 불일치 시 `401`로 차단된다. 이 구조는 1인 운영 Beta를 위한 shared-secret 보호이며, 다중 관리자나 권한별 감사 기록이 필요해지면 별도 인증으로 교체한다.
+통계 화면은 홈과 공개 메뉴에 링크하지 않는 hidden URL로 운영한다. 별도 인증은 없으며 URL을 알게 된 사람은 누구나 접근할 수 있다. 대신 API는 개별 attempt나 token이 아닌 익명 집계만 반환하고 `no-store`를 사용한다. 운영 인원이 늘거나 외부 공유 위험이 생기면 인증을 추가한다.
 
 ## 익명 Beta 분석
 

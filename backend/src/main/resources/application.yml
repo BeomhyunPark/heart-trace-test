@@ -37,8 +37,6 @@ management:
 
 ongi:
   allowed-origins: ${ONGI_ALLOWED_ORIGINS:http://localhost:5173}
-  gureumi:
-    admin-key: ${ONGI_GUREUMI_ADMIN_KEY:}
   session:
     secure-cookie: ${ONGI_SECURE_COOKIE:false}
     tombstone-retention: ${ONGI_TOMBSTONE_RETENTION:24h}

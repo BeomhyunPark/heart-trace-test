@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { cleanup, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import type { GureumiResult, GureumiResultType, TraitLevel } from '../src/features/gureumi/domain/types';
 import { GureumiResultScreen } from '../src/features/gureumi/screens/GureumiResultScreen';
@@ -44,14 +44,7 @@ describe('구르미 결과 축 게이지', () => {
     };
 
     const { container } = render(
-      <GureumiResultScreen
-        result={result}
-        restarting={false}
-        restartError=""
-        onFeedback={vi.fn(async () => undefined)}
-        onRestart={vi.fn()}
-        onBackHome={vi.fn()}
-      />,
+      <GureumiResultScreen result={result} />,
     );
 
     for (const [index, axis] of AXES.entries()) {

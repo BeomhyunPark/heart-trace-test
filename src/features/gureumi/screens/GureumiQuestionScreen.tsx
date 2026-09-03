@@ -93,9 +93,6 @@ export function GureumiQuestionScreen({
                 );
               })}
             </div>
-            {pendingQuestionIds.has(question.questionId) ? (
-              <p className="gureumi-question__status" role="status">저장 중…</p>
-            ) : null}
             {saveErrors[question.questionId] ? (
               <p className="gureumi-question__error" role="alert">{saveErrors[question.questionId]} 답을 다시 선택해주세요.</p>
             ) : null}

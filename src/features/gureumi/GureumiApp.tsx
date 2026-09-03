@@ -218,21 +218,6 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
     }
   };
 
-  const handleRestart = async () => {
-    if (!reference) return;
-    setBusy(true);
-    setError('');
-    try {
-      const created = await gureumiApi.createAttempt(reference.resumeToken);
-      setResult(null);
-      await openAttempt({ attemptId: created.attemptId, resumeToken: created.resumeToken });
-    } catch (restartError) {
-      setError(errorMessage(restartError));
-    } finally {
-      setBusy(false);
-    }
-  };
-
   if (phase === 'booting') {
     return (
       <main className="gureumi-screen gureumi-loading" aria-live="polite">
@@ -260,18 +245,9 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
     );
   }
 
-  if (phase === 'result' && result && reference) {
+  if (phase === 'result' && result) {
     return (
-      <GureumiResultScreen
-        result={result}
-        restarting={busy}
-        restartError={error}
-        onFeedback={async (rating) => {
-          await gureumiApi.saveFeedback(reference.attemptId, reference.resumeToken, rating);
-        }}
-        onRestart={() => void handleRestart()}
-        onBackHome={onBackHome}
-      />
+      <GureumiResultScreen result={result} />
     );
   }
 

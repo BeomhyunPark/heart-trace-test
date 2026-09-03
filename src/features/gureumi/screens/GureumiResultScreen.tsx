@@ -1,17 +1,17 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 
 import { assetUrl } from '../../../utils/assetUrl';
 import { GUREUMI_RESULTS } from '../data/results';
 import type { GureumiResult } from '../domain/types';
-import { saveGureumiResultImage } from '../services/resultImage';
+import {
+  getGureumiResultImageSrc,
+  preloadGureumiResultImage,
+  saveGureumiResultImage,
+} from '../services/resultImage';
+import { shareGureumiResult } from '../services/kakaoShare';
 
 type GureumiResultScreenProps = {
   result: GureumiResult;
-  restarting: boolean;
-  restartError: string;
-  onFeedback: (rating: number) => Promise<void>;
-  onRestart: () => void;
-  onBackHome: () => void;
 };
 
 type ResultVariables = CSSProperties & {
@@ -39,28 +39,21 @@ type ResultVariables = CSSProperties & {
   '--gureumi-result-action-end': string;
 };
 
-const FEEDBACK_OPTIONS = [
-  '전혀 비슷하지 않다',
-  '조금 비슷하지 않다',
-  '조금 비슷하다',
-  '매우 비슷하다',
-] as const;
+const AXIS_COPY = {
+  NOVELTY: { short: '새로움', formal: '자극추구' },
+  WORRY: { short: '걱정', formal: '위험회피' },
+  RELATION: { short: '관계', formal: '사회적 민감성' },
+} as const;
 
-export function GureumiResultScreen({
-  result,
-  restarting,
-  restartError,
-  onFeedback,
-  onRestart,
-  onBackHome,
-}: GureumiResultScreenProps) {
+export function GureumiResultScreen({ result }: GureumiResultScreenProps) {
   const definition = GUREUMI_RESULTS[result.resultType];
-  const [feedbackRating, setFeedbackRating] = useState(result.feedbackRating ?? 0);
-  const [feedbackBusy, setFeedbackBusy] = useState(false);
-  const [feedbackMessage, setFeedbackMessage] = useState('');
   const [saveMessage, setSaveMessage] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const [savingImage, setSavingImage] = useState(false);
+  const [sharingResult, setSharingResult] = useState(false);
   const [showAllTypes, setShowAllTypes] = useState(false);
+  const [showIosHelp, setShowIosHelp] = useState(false);
+  const resultImageSrc = getGureumiResultImageSrc(definition.characterKey);
   const style: ResultVariables = {
     '--gureumi-result-hero-start': definition.theme.heroStart,
     '--gureumi-result-hero-middle': definition.theme.heroMiddle,
@@ -86,28 +79,21 @@ export function GureumiResultScreen({
     '--gureumi-result-action-end': definition.theme.actionEnd,
   };
 
-  const handleFeedback = async (rating: number) => {
-    const previous = feedbackRating;
-    setFeedbackRating(rating);
-    setFeedbackBusy(true);
-    setFeedbackMessage('');
-    try {
-      await onFeedback(rating);
-      setFeedbackMessage('고마워요! Beta 결과를 더 다듬는 데 반영할게요.');
-    } catch {
-      setFeedbackRating(previous);
-      setFeedbackMessage('만족도를 저장하지 못했어요. 잠시 후 다시 선택해주세요.');
-    } finally {
-      setFeedbackBusy(false);
-    }
-  };
+  useEffect(() => {
+    void preloadGureumiResultImage(definition.characterKey).catch(() => {
+      // The button retries the request and reports an actionable error.
+    });
+  }, [definition.characterKey]);
 
   const handleSaveImage = async () => {
+    if (savingImage) return;
     setSavingImage(true);
     setSaveMessage('');
     try {
-      await saveGureumiResultImage(result.characterKey);
-      setSaveMessage('결과 이미지를 저장했어요.');
+      const action = await saveGureumiResultImage(definition.characterKey);
+      if (action === 'shared') setSaveMessage('공유 메뉴에서 이미지 저장을 선택해주세요.');
+      if (action === 'downloaded') setSaveMessage('결과 이미지 다운로드를 시작했어요.');
+      if (action === 'ios-help') setShowIosHelp(true);
     } catch {
       setSaveMessage('이미지를 저장하지 못했어요. 잠시 후 다시 시도해주세요.');
     } finally {
@@ -115,14 +101,31 @@ export function GureumiResultScreen({
     }
   };
 
+  const handleKakaoShare = async () => {
+    if (sharingResult) return;
+    setSharingResult(true);
+    setShareMessage('');
+    try {
+      const action = await shareGureumiResult({
+        name: definition.name,
+        descriptor: definition.descriptor,
+        characterKey: definition.characterKey,
+      });
+      const messages = {
+        kakao: '카카오톡 공유 화면을 열었어요.',
+        native: '결과와 테스트 링크를 공유했어요.',
+        copied: '결과와 테스트 링크를 복사했어요.',
+        failed: '공유하지 못했어요. 잠시 후 다시 시도해주세요.',
+      } as const;
+      if (action !== 'cancelled') setShareMessage(messages[action]);
+    } finally {
+      setSharingResult(false);
+    }
+  };
+
   return (
     <main className="gureumi-result" style={style}>
-      <nav className="gureumi-result__toolbar" aria-label="결과 화면 탐색">
-        <button type="button" onClick={onBackHome}>← 홈</button>
-        <span>{result.version} · {result.displayName}</span>
-      </nav>
-
-      <article className="gureumi-result__card">
+      <article className="gureumi-result__card" aria-label={`${definition.name} 결과`}>
         <header className="gureumi-result__hero">
           <p>{definition.englishType} · GUREUMI TYPE</p>
           <span>당신의 구르미는</span>
@@ -138,30 +141,36 @@ export function GureumiResultScreen({
         <section className="gureumi-result__section gureumi-result__map" aria-labelledby="gureumi-map-title">
           <p className="gureumi-result__eyebrow">기질 한눈에 보기</p>
           <h2 id="gureumi-map-title">{definition.name}의 기질 지도</h2>
-          <p>{definition.summary}</p>
+          <p>{definition.mapSummary}</p>
           <div className="gureumi-result__axes">
-            {result.axes.map((axis) => (
-              <div key={axis.key}>
-                <span>{axis.label}</span>
-                <strong>{axis.level === 'HIGH' ? '높음' : '낮음'}</strong>
-                <i aria-hidden="true"><b style={{ width: axis.level === 'HIGH' ? '88%' : '34%' }} /></i>
-              </div>
-            ))}
+            {result.axes.map((axis) => {
+              const copy = AXIS_COPY[axis.key];
+              return (
+                <div key={axis.key}>
+                  <span>{copy.short}</span>
+                  <strong>{axis.level === 'HIGH' ? '높음' : '낮음'}</strong>
+                  <i aria-hidden="true"><b style={{ width: axis.level === 'HIGH' ? '88%' : '34%' }} /></i>
+                  <small>{copy.formal} {axis.level === 'HIGH' ? '↑' : '↓'}</small>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         <section className="gureumi-result__section">
-          <p className="gureumi-result__eyebrow">{definition.name}의 이야기</p>
-          <h2>{definition.strengthLead}</h2>
-          <p className="gureumi-result__story">{definition.summary}</p>
+          <p className="gureumi-result__eyebrow">{definition.name}는요</p>
+          <h2>{definition.storyLead}</h2>
+          <div className="gureumi-result__story">
+            {definition.storyBody.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
           <blockquote className="gureumi-result__desire">
-            <small>마음속 핵심 욕구</small>
+            <small>✦ &nbsp;{definition.name}의 마음</small>
             “{definition.coreDesire}”
           </blockquote>
         </section>
 
         <section className="gureumi-result__section">
-          <p className="gureumi-result__eyebrow">타고난 빛</p>
+          <p className="gureumi-result__eyebrow">{definition.name}의 빛</p>
           <h2>{definition.strengthLead}</h2>
           <p>{definition.strengthBody}</p>
           <ul className="gureumi-result__strengths" aria-label="대표 강점">
@@ -171,17 +180,17 @@ export function GureumiResultScreen({
 
         <section className="gureumi-result__balance">
           <p className="gureumi-result__eyebrow">빛이 너무 강해질 때</p>
-          <h2>균형 있게 빛나기 위한 한 가지</h2>
+          <h2>{definition.balanceTitle}</h2>
           <p>{definition.caution}</p>
           <hr />
-          <strong>균형을 위한 작은 제안</strong>
+          <strong>{definition.balanceTipLabel}</strong>
           <p>{definition.balanceTip}</p>
         </section>
 
         <section className="gureumi-result__section">
-          <p className="gureumi-result__eyebrow">다른 구르미와 비교</p>
+          <p className="gureumi-result__eyebrow">다른 구르미와 만날 때</p>
           <h2>비슷해 보여도 달라요</h2>
-          <p>가까운 유형과 비교하면 {definition.name}만의 기질이 더 선명해져요.</p>
+          <p>{definition.comparisonIntro}</p>
           <ul className="gureumi-result__differences">
             {definition.differences.map((difference) => (
               <li key={difference.name}><strong>{difference.name}</strong><p>{difference.body}</p></li>
@@ -190,7 +199,7 @@ export function GureumiResultScreen({
           <div className="gureumi-result__synergy">
             <p className="gureumi-result__eyebrow">함께할 때 빛나는 조합</p>
             <h2>서로의 강점을 살리는 친구들</h2>
-            <p>누가 더 좋은 유형이라기보다, 서로의 강점을 살리기 쉬운 조합이에요.</p>
+            <p>누가 더 좋은 유형이라기보다,<br />서로의 강점을 살리기 쉬운 조합이에요.</p>
             {definition.synergies.map((synergy) => (
               <article key={synergy.pair}>
                 <small>{synergy.label}</small>
@@ -199,30 +208,6 @@ export function GureumiResultScreen({
               </article>
             ))}
           </div>
-        </section>
-
-        <section className="gureumi-result__feedback" aria-labelledby="gureumi-feedback-title">
-          <p className="gureumi-result__eyebrow">BETA FEEDBACK</p>
-          <h2 id="gureumi-feedback-title">결과가 나와 얼마나 비슷하다고 느꼈나요?</h2>
-          <div role="radiogroup" aria-label="결과 만족도">
-            {FEEDBACK_OPTIONS.map((label, index) => {
-              const rating = index + 1;
-              return (
-                <button
-                  className={feedbackRating === rating ? 'is-selected' : ''}
-                  type="button"
-                  role="radio"
-                  aria-checked={feedbackRating === rating}
-                  disabled={feedbackBusy}
-                  onClick={() => void handleFeedback(rating)}
-                  key={label}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-          <p aria-live="polite">{feedbackMessage}</p>
         </section>
 
         {showAllTypes ? (
@@ -246,20 +231,34 @@ export function GureumiResultScreen({
           <button type="button" disabled={savingImage} onClick={() => void handleSaveImage()}>
             {savingImage ? '이미지를 준비하고 있어요…' : '결과 이미지 저장하기'}
           </button>
+          <button className="gureumi-result__kakao-button" type="button" disabled={sharingResult} onClick={() => void handleKakaoShare()}>
+            {sharingResult ? '공유 화면 여는 중…' : '카카오톡으로 결과 공유하기'}
+          </button>
+          {saveMessage ? <p aria-live="polite">{saveMessage}</p> : null}
+          {shareMessage ? <p aria-live="polite">{shareMessage}</p> : null}
           <button className="gureumi-result__all-button" type="button" onClick={() => setShowAllTypes((value) => !value)}>
             {showAllTypes ? '8가지 구르미 접기' : '8가지 구르미 모두 보기 →'}
           </button>
-          <p aria-live="polite">{saveMessage}</p>
-          <p className="gureumi-result__legal">이 테스트는 Cloninger의 기질 이론에서 논의된 일부 개념을 참고해 독자적으로 제작한 놀이형 자기이해 콘텐츠입니다. 정식 TCI 검사 또는 심리학적 진단·평가 도구가 아닙니다.</p>
-          <div className="gureumi-result__actions">
-            <button type="button" disabled={restarting} onClick={onRestart}>
-              {restarting ? '새 테스트 준비 중…' : '다시 테스트하기'}
-            </button>
-            <button type="button" onClick={onBackHome}>홈으로 돌아가기</button>
-          </div>
-          {restartError ? <p className="gureumi-error" role="alert">{restartError}</p> : null}
+          <p className="gureumi-result__legal">이 결과는 놀이형 자기이해 콘텐츠이며,<br />전문적인 심리검사나 진단을 대신하지 않습니다.</p>
         </footer>
       </article>
+
+      {showIosHelp ? (
+        <div className="gureumi-save-help" role="presentation" onMouseDown={() => setShowIosHelp(false)}>
+          <section
+            className="gureumi-save-help__dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gureumi-save-help-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button type="button" aria-label="저장 안내 닫기" onClick={() => setShowIosHelp(false)}>×</button>
+            <h2 id="gureumi-save-help-title">iPhone에 이미지 저장하기</h2>
+            <p>이미지를 길게 누른 뒤<br />‘사진에 저장’을 선택해주세요.</p>
+            <img src={resultImageSrc} alt={`${definition.name} 저장용 결과 이미지`} />
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

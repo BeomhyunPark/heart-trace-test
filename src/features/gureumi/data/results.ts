@@ -19,11 +19,27 @@ export type GureumiResultDefinition = {
   closing: string;
   theme: {
     heroStart: string;
+    heroMiddle: string;
     heroEnd: string;
+    heroInk: string;
+    heroLabel: string;
+    labelAccent: string;
+    balanceLabel: string;
     accent: string;
+    accentMiddle: string;
+    accentEnd: string;
     accentSoft: string;
+    accentInk: string;
+    balanceStart: string;
+    balanceMiddle: string;
+    balanceEnd: string;
     closingStart: string;
+    closingMiddle: string;
     closingEnd: string;
+    sparkle: string;
+    actionStart: string;
+    actionMiddle: string;
+    actionEnd: string;
   };
 };
 
@@ -52,7 +68,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '확장과 정리', pair: '아롱이 × 달몽이', body: '아롱이가 새로운 관계와 경험을 열면 달몽이가 속도와 의미를 차분히 정돈한다.' },
     ],
     closing: '당신의 열정은 사람들 사이에 첫 장면을 만든다.',
-    theme: { heroStart: '#ddf8ff', heroEnd: '#ffe7f3', accent: '#52cfe0', accentSoft: '#edfafd', closingStart: '#3a466b', closingEnd: '#6a4f78' },
+    theme: {
+      heroStart: '#ddf8ff', heroMiddle: '#eee7ff', heroEnd: '#ffe7f3', heroInk: '#414b68',
+      heroLabel: '#7867b5', labelAccent: '#7b6bbb', balanceLabel: '#b25c8b',
+      accent: '#52cfe0', accentMiddle: '#b49af6', accentEnd: '#f08dc1', accentSoft: '#edfafd', accentInk: '#4f427b',
+      balanceStart: '#ffeaf5', balanceMiddle: '#f4ecff', balanceEnd: '#fff5d9',
+      closingStart: '#3a466b', closingMiddle: '#4a466f', closingEnd: '#6a4f78', sparkle: '#8fe7ec',
+      actionStart: '#48d3e7', actionMiddle: '#9b74e8', actionEnd: '#ea73be',
+    },
   },
   DALMONG: {
     id: 'DALMONG',
@@ -78,7 +101,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '정리와 확장', pair: '달몽이 × 아롱이', body: '달몽이가 속도와 의미를 정돈하면 아롱이가 새로운 관계와 경험으로 넓혀간다.' },
     ],
     closing: '당신의 차분함은 복잡한 순간에도 중심을 지켜준다.',
-    theme: { heroStart: '#e6f5ff', heroEnd: '#eee5ff', accent: '#7b6bbb', accentSoft: '#f1edff', closingStart: '#35426d', closingEnd: '#5a4373' },
+    theme: {
+      heroStart: '#eef0ff', heroMiddle: '#e8e4ff', heroEnd: '#f4ecff', heroInk: '#32365b',
+      heroLabel: '#7672d9', labelAccent: '#7672d9', balanceLabel: '#7672d9',
+      accent: '#7672d9', accentMiddle: '#a39aee', accentEnd: '#c7b9f4', accentSoft: '#e9eaff', accentInk: '#42406d',
+      balanceStart: '#f0f0ff', balanceMiddle: '#f3edff', balanceEnd: '#f8f0ff',
+      closingStart: '#32365b', closingMiddle: '#42406d', closingEnd: '#53436f', sparkle: '#c7b9f4',
+      actionStart: '#7672d9', actionMiddle: '#a39aee', actionEnd: '#c7b9f4',
+    },
   },
   HOOWOO: {
     id: 'HOOWOO',
@@ -104,7 +134,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '계획과 배려', pair: '후우 × 몽실이', body: '후우가 구조와 기준을 세우면 몽실이가 사람들이 편안히 따라올 수 있게 연결한다.' },
     ],
     closing: '당신의 신중함은 사람들이 안심하고 움직일 길을 만든다.',
-    theme: { heroStart: '#e8faf5', heroEnd: '#f3f0e7', accent: '#55b895', accentSoft: '#ecf8f3', closingStart: '#315d52', closingEnd: '#426b5d' },
+    theme: {
+      heroStart: '#e8f7f0', heroMiddle: '#eef6f2', heroEnd: '#f3f0e8', heroInk: '#2f514d',
+      heroLabel: '#69b89e', labelAccent: '#69b89e', balanceLabel: '#69b89e',
+      accent: '#69b89e', accentMiddle: '#8ccaaf', accentEnd: '#b9d9a6', accentSoft: '#eaf7ef', accentInk: '#365d55',
+      balanceStart: '#eaf7ef', balanceMiddle: '#f2f7eb', balanceEnd: '#f7f2e7',
+      closingStart: '#2f514d', closingMiddle: '#365d55', closingEnd: '#4d6659', sparkle: '#b9d9a6',
+      actionStart: '#69b89e', actionMiddle: '#8ccaaf', actionEnd: '#b9d9a6',
+    },
   },
   SUNNY: {
     id: 'SUNNY',
@@ -130,7 +167,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '도전과 검증', pair: '쨍이 × 후우', body: '쨍이가 가능성을 빠르게 시험하면 후우가 위험과 순서를 점검해 지속 가능한 실행으로 만든다.' },
     ],
     closing: '당신의 용기는 아직 없던 길에 첫 발자국을 남긴다.',
-    theme: { heroStart: '#fff7da', heroEnd: '#ffebdf', accent: '#e9a72f', accentSoft: '#fff5de', closingStart: '#634327', closingEnd: '#825b33' },
+    theme: {
+      heroStart: '#fff7d7', heroMiddle: '#fff0d5', heroEnd: '#fff6e8', heroInk: '#5b442b',
+      heroLabel: '#f4b842', labelAccent: '#f4b842', balanceLabel: '#f4b842',
+      accent: '#f4b842', accentMiddle: '#f4cb5d', accentEnd: '#f19b4b', accentSoft: '#fff6d8', accentInk: '#6d4a2e',
+      balanceStart: '#fff6d8', balanceMiddle: '#fff0df', balanceEnd: '#fff8e7',
+      closingStart: '#5b442b', closingMiddle: '#6d4a2e', closingEnd: '#71513a', sparkle: '#f19b4b',
+      actionStart: '#f4b842', actionMiddle: '#f4cb5d', actionEnd: '#f19b4b',
+    },
   },
   CHOKCHOK: {
     id: 'CHOKCHOK',
@@ -156,7 +200,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '살핌과 실행', pair: '촉촉이 × 쨍이', body: '촉촉이가 걱정과 마음을 살피면 쨍이가 가능한 선택부터 빠르게 움직여 경험으로 바꾼다.' },
     ],
     closing: '당신의 섬세함은 새로운 순간에도 사람의 마음을 지켜준다.',
-    theme: { heroStart: '#ddf7ff', heroEnd: '#eeeaff', accent: '#4dc4df', accentSoft: '#e8f8fc', closingStart: '#2e526d', closingEnd: '#4b4e7d' },
+    theme: {
+      heroStart: '#e6f7ff', heroMiddle: '#e8f2ff', heroEnd: '#f1ecff', heroInk: '#2e536a',
+      heroLabel: '#50bcd8', labelAccent: '#50bcd8', balanceLabel: '#50bcd8',
+      accent: '#50bcd8', accentMiddle: '#76cfe9', accentEnd: '#8a9fe8', accentSoft: '#eaf8ff', accentInk: '#355b76',
+      balanceStart: '#eaf8ff', balanceMiddle: '#edf3ff', balanceEnd: '#f2eeff',
+      closingStart: '#2e536a', closingMiddle: '#355b76', closingEnd: '#4e527a', sparkle: '#8a9fe8',
+      actionStart: '#50bcd8', actionMiddle: '#76cfe9', actionEnd: '#8a9fe8',
+    },
   },
   MONGSIL: {
     id: 'MONGSIL',
@@ -182,7 +233,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '계획과 소통', pair: '몽실이 × 후우', body: '후우가 구조와 기준을 세우면 몽실이가 그 계획을 부담 없이 이해하고 따를 수 있게 풀어준다.' },
     ],
     closing: '당신의 다정함은 사람들이 편안히 머물 자리를 만든다.',
-    theme: { heroStart: '#fff0f6', heroEnd: '#fff0e8', accent: '#e67ca0', accentSoft: '#fff0f4', closingStart: '#694052', closingEnd: '#824f65' },
+    theme: {
+      heroStart: '#fff0f4', heroMiddle: '#ffeaf1', heroEnd: '#fff4ee', heroInk: '#624052',
+      heroLabel: '#ee8fae', labelAccent: '#ee8fae', balanceLabel: '#ee8fae',
+      accent: '#ee8fae', accentMiddle: '#f1a1bc', accentEnd: '#e8b38d', accentSoft: '#fff0f5', accentInk: '#75485d',
+      balanceStart: '#fff0f5', balanceMiddle: '#fff4ef', balanceEnd: '#faf1e8',
+      closingStart: '#624052', closingMiddle: '#75485d', closingEnd: '#765264', sparkle: '#e8b38d',
+      actionStart: '#ee8fae', actionMiddle: '#f1a1bc', actionEnd: '#e8b38d',
+    },
   },
   ELECTRIC: {
     id: 'ELECTRIC',
@@ -208,7 +266,14 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '문제와 연결', pair: '찌릿이 × 아롱이', body: '찌릿이가 문제와 대안을 찾으면 아롱이가 필요한 사람을 모아 빠르게 함께 움직이게 한다.' },
     ],
     closing: '당신의 예민함은 아무도 못 본 신호를 먼저 발견하게 한다.',
-    theme: { heroStart: '#e8e5f5', heroEnd: '#fff3cc', accent: '#635b7c', accentSoft: '#f0edf7', closingStart: '#34303e', closingEnd: '#514457' },
+    theme: {
+      heroStart: '#f0eff8', heroMiddle: '#eceaf5', heroEnd: '#fff5d9', heroInk: '#30303e',
+      heroLabel: '#66627d', labelAccent: '#66627d', balanceLabel: '#66627d',
+      accent: '#66627d', accentMiddle: '#8c85a4', accentEnd: '#e8bc3f', accentSoft: '#f1f0f7', accentInk: '#3c394d',
+      balanceStart: '#f1f0f7', balanceMiddle: '#f3eff7', balanceEnd: '#fff4d9',
+      closingStart: '#30303e', closingMiddle: '#3c394d', closingEnd: '#514a58', sparkle: '#e8bc3f',
+      actionStart: '#66627d', actionMiddle: '#8c85a4', actionEnd: '#e8bc3f',
+    },
   },
   POGEUN: {
     id: 'POGEUN',
@@ -234,6 +299,13 @@ export const GUREUMI_RESULTS: Record<GureumiResultType, GureumiResultDefinition>
       { label: '감지와 회복', pair: '포근이 × 찌릿이', body: '찌릿이가 문제를 빠르게 감지하면 포근이가 관계와 분위기를 돌보며 회복할 자리를 마련한다.' },
     ],
     closing: '당신의 따뜻함은 사람들이 안심하고 기댈 자리를 만든다.',
-    theme: { heroStart: '#fff5e9', heroEnd: '#f9e8e2', accent: '#c28b5b', accentSoft: '#fff4e8', closingStart: '#634a3c', closingEnd: '#895d4c' },
+    theme: {
+      heroStart: '#fff5e9', heroMiddle: '#fff1e3', heroEnd: '#f8efea', heroInk: '#5b493e',
+      heroLabel: '#d7a778', labelAccent: '#d7a778', balanceLabel: '#d7a778',
+      accent: '#d7a778', accentMiddle: '#e4ba8d', accentEnd: '#d88d76', accentSoft: '#fff4e8', accentInk: '#6b5144',
+      balanceStart: '#fff4e8', balanceMiddle: '#faf0e7', balanceEnd: '#fff7ef',
+      closingStart: '#5b493e', closingMiddle: '#6b5144', closingEnd: '#765b51', sparkle: '#d88d76',
+      actionStart: '#d7a778', actionMiddle: '#e4ba8d', actionEnd: '#d88d76',
+    },
   },
 };

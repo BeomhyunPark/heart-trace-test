@@ -16,11 +16,27 @@ type GureumiResultScreenProps = {
 
 type ResultVariables = CSSProperties & {
   '--gureumi-result-hero-start': string;
+  '--gureumi-result-hero-middle': string;
   '--gureumi-result-hero-end': string;
+  '--gureumi-result-hero-ink': string;
+  '--gureumi-result-hero-label': string;
+  '--gureumi-result-label-accent': string;
+  '--gureumi-result-balance-label': string;
   '--gureumi-result-accent': string;
+  '--gureumi-result-accent-middle': string;
+  '--gureumi-result-accent-end': string;
   '--gureumi-result-accent-soft': string;
+  '--gureumi-result-accent-ink': string;
+  '--gureumi-result-balance-start': string;
+  '--gureumi-result-balance-middle': string;
+  '--gureumi-result-balance-end': string;
   '--gureumi-result-closing-start': string;
+  '--gureumi-result-closing-middle': string;
   '--gureumi-result-closing-end': string;
+  '--gureumi-result-sparkle': string;
+  '--gureumi-result-action-start': string;
+  '--gureumi-result-action-middle': string;
+  '--gureumi-result-action-end': string;
 };
 
 const FEEDBACK_OPTIONS = [
@@ -47,11 +63,27 @@ export function GureumiResultScreen({
   const [showAllTypes, setShowAllTypes] = useState(false);
   const style: ResultVariables = {
     '--gureumi-result-hero-start': definition.theme.heroStart,
+    '--gureumi-result-hero-middle': definition.theme.heroMiddle,
     '--gureumi-result-hero-end': definition.theme.heroEnd,
+    '--gureumi-result-hero-ink': definition.theme.heroInk,
+    '--gureumi-result-hero-label': definition.theme.heroLabel,
+    '--gureumi-result-label-accent': definition.theme.labelAccent,
+    '--gureumi-result-balance-label': definition.theme.balanceLabel,
     '--gureumi-result-accent': definition.theme.accent,
+    '--gureumi-result-accent-middle': definition.theme.accentMiddle,
+    '--gureumi-result-accent-end': definition.theme.accentEnd,
     '--gureumi-result-accent-soft': definition.theme.accentSoft,
+    '--gureumi-result-accent-ink': definition.theme.accentInk,
+    '--gureumi-result-balance-start': definition.theme.balanceStart,
+    '--gureumi-result-balance-middle': definition.theme.balanceMiddle,
+    '--gureumi-result-balance-end': definition.theme.balanceEnd,
     '--gureumi-result-closing-start': definition.theme.closingStart,
+    '--gureumi-result-closing-middle': definition.theme.closingMiddle,
     '--gureumi-result-closing-end': definition.theme.closingEnd,
+    '--gureumi-result-sparkle': definition.theme.sparkle,
+    '--gureumi-result-action-start': definition.theme.actionStart,
+    '--gureumi-result-action-middle': definition.theme.actionMiddle,
+    '--gureumi-result-action-end': definition.theme.actionEnd,
   };
 
   const handleFeedback = async (rating: number) => {

@@ -42,7 +42,7 @@ describe('구르미 테스트 Beta', () => {
     expect(betaButton.classList.contains('gureumi-home-teaser')).toBe(true);
     fireEvent.click(betaButton);
 
-    expect(await screen.findByRole('heading', { name: /구르미 테스트 Beta/, level: 1 })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /구르미 테스트에/, level: 1 })).toBeTruthy();
     expect(window.location.search).toBe('?activity=gureumi');
     expect(screen.getByText(/정식 TCI 검사 또는 심리학적 진단·평가 도구가 아닙니다/)).toBeTruthy();
     expect((await axe.run(container, {
@@ -150,8 +150,12 @@ describe('구르미 테스트 Beta', () => {
     fireEvent.click(screen.getByRole('button', { name: '6번부터 이어하기' }));
 
     expect(await screen.findByText('6번 상황')).toBeTruthy();
-    expect(screen.getByText('4–6 / 27')).toBeTruthy();
-    expect(screen.getAllByRole('radio').filter((radio) => (radio as HTMLInputElement).checked)).toHaveLength(2);
+    expect(screen.getByText('6–10 / 27')).toBeTruthy();
+    expect(screen.getAllByRole('radio').filter((radio) => (radio as HTMLInputElement).checked)).toHaveLength(0);
+
+    fireEvent.click(screen.getByRole('button', { name: '이전' }));
+    expect(screen.getByText('1–5 / 27')).toBeTruthy();
+    expect(screen.getAllByRole('radio').filter((radio) => (radio as HTMLInputElement).checked)).toHaveLength(5);
   });
 
   it('완료 후 홈에서 다시 들어오면 이전 결과 대신 새 테스트 인트로를 연다', async () => {

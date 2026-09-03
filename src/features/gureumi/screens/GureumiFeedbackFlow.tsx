@@ -369,7 +369,7 @@ export function GureumiFeedbackFlow({
           </div>
           <p className="gureumi-follow-up__privacy">응답은 Beta 개선 목적으로만 익명 저장해요.<br />이름·연락처 같은 개인정보는 받지 않아요.</p>
           <SurveyRating label="1 · 진행 흐름" question="테스트 진행이 이해하기 쉬웠나요?" value={flowRating} left="매우 어려웠다" right="매우 쉬웠다" onChange={setFlowRating} />
-          <SurveyRating label="2 · 문항 화면" question="3문항 묶음과 가로 선택 방식은 편했나요?" value={questionUiRating} left="매우 불편했다" right="매우 편했다" onChange={setQuestionUiRating} />
+          <SurveyRating label="2 · 문항 화면" question="5문항 묶음과 가로 선택 방식은 편했나요?" value={questionUiRating} left="매우 불편했다" right="매우 편했다" onChange={setQuestionUiRating} />
           <SurveyRating label="3 · 결과 설명" question="결과 설명은 이해하기 쉽고 도움이 됐나요?" value={resultHelpfulnessRating} left="전혀 아니었다" right="매우 그랬다" onChange={setResultHelpfulnessRating} />
           <SurveyOptions label="4 · 도움이 된 부분" question="결과에서 어떤 부분이 특히 도움이 됐나요?" guide="여러 개 선택할 수 있어요." options={HELPFUL_SECTIONS} selected={helpfulSections} onChange={setHelpfulSections} />
           <SurveyOptions label="5 · 불편했던 부분" question="결과에서 맞지 않거나 불편했던 점이 있었나요?" guide="여러 개 선택할 수 있어요." options={RESULT_ISSUES} selected={resultIssues} exclusive="특별히 없었다" onChange={setResultIssues} />

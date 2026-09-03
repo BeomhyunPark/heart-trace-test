@@ -180,13 +180,25 @@ describe('놀이와 도구 링크 공유', () => {
     expect(screen.queryByRole('button', { name: /링크 공유하기/ })).toBeNull();
   });
 
-  it('구르미 Beta에는 전용 공유를 노출하고 attempt 통계와 겹치는 좋아요는 두지 않는다', async () => {
+  it('구르미 Beta에는 인트로 안의 전용 공유 버튼을 노출하고 공통 플로팅 버튼은 두지 않는다', async () => {
+    const share = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
     window.history.replaceState({}, '', '/?activity=gureumi-teaser');
     render(<App />);
 
-    await screen.findByRole('heading', { name: /구르미 테스트 Beta/ });
+    await screen.findByRole('heading', { name: /구르미 테스트에/ });
     expect(screen.queryByRole('button', { name: /좋아요/ })).toBeNull();
-    expect(screen.getByRole('button', { name: '구르미 테스트 링크 공유하기' })).toBeTruthy();
+    expect(document.querySelector('.activity-link-share')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: '구르미 테스트 공유하기' }));
+    await waitFor(() => expect(share).toHaveBeenCalledWith({
+      title: '나는 어떤 구르미일까? | 온기',
+      url: 'https://ongi.greengroove.app/share/gureumi/',
+    }));
+    expect(await screen.findByText('구르미 테스트 링크를 공유했어요.')).toBeTruthy();
     expect(window.location.search).toBe('?activity=gureumi-teaser');
   });
 });

@@ -150,6 +150,98 @@
   margin-top: 0.875rem;
 }
 
+.gureumi-intro__share-button {
+  display: grid;
+  width: 100%;
+  min-height: 4.25rem;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.875rem;
+  border: 1px solid rgba(107, 134, 234, 0.22);
+  border-radius: 1.25rem;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.94), rgba(239, 242, 255, 0.94));
+  box-shadow: 0 0.5rem 1.25rem rgba(71, 97, 191, 0.1);
+  color: var(--gureumi-text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.gureumi-intro__share-button:hover {
+  border-color: rgba(107, 134, 234, 0.52);
+  box-shadow: 0 0.65rem 1.5rem rgba(71, 97, 191, 0.16);
+  transform: translateY(-1px);
+}
+
+.gureumi-intro__share-button:active {
+  transform: scale(0.985);
+}
+
+.gureumi-intro__share-button:focus-visible {
+  outline: 3px solid rgba(107, 134, 234, 0.28);
+  outline-offset: 3px;
+}
+
+.gureumi-intro__share-button > span:nth-child(2) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.gureumi-intro__share-button strong {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.gureumi-intro__share-button small {
+  color: var(--gureumi-muted);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.gureumi-intro__share-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.875rem;
+  background: linear-gradient(135deg, #718bed, #967fe5);
+  box-shadow: 0 0.4rem 0.875rem rgba(95, 109, 203, 0.22);
+  place-items: center;
+  color: #fff;
+}
+
+.gureumi-intro__share-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
+}
+
+.gureumi-intro__share-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.7;
+}
+
+.gureumi-intro__share-arrow {
+  color: var(--gureumi-blue);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.gureumi-intro__share-message {
+  min-height: 1rem;
+  margin: 0.45rem 0 0;
+  color: #52689d;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
 .gureumi-intro__resume {
   margin-top: 0.875rem;
   text-align: center;

@@ -48,7 +48,7 @@ export function GureumiQuestionScreen({
     <main className="gureumi-screen gureumi-questions">
       <header className="gureumi-question-header">
         <button type="button" onClick={onBackHome} aria-label="홈으로 돌아가기">←</button>
-        <span className="gureumi-question-header__brand">☁ <b>BETA 1</b></span>
+        <span className="gureumi-question-header__brand">☁ <b>BETA v0.1</b></span>
         <strong>{pageStart}–{pageEnd} / {GUREUMI_QUESTION_COUNT}</strong>
       </header>
       <div
@@ -111,7 +111,7 @@ export function GureumiQuestionScreen({
           {completing ? '결과를 만들고 있어요…' : isLastPage ? '결과 확인하기' : '다음'}
         </button>
       </nav>
-      {!allAnswered ? <p className="gureumi-page-guide">세 문항에 모두 답하면 다음으로 갈 수 있어요.</p> : null}
+      {!allAnswered ? <p className="gureumi-page-guide">모두 답하면 다음으로 갈 수 있어요.</p> : null}
     </main>
   );
 }

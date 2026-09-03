@@ -1,4 +1,12 @@
+import { useState } from 'react';
+
+import { getShareTarget } from '../../../app/shareTargets';
 import { assetUrl } from '../../../utils/assetUrl';
+import {
+  buildActivityShareUrl,
+  shareAppLink,
+  type ShareAppLinkResult,
+} from '../../home/services/shareAppLink';
 
 type GureumiIntroScreenProps = {
   answeredCount: number;
@@ -21,6 +29,34 @@ export function GureumiIntroScreen({
   onStartFresh,
   onBackHome,
 }: GureumiIntroScreenProps) {
+  const [sharing, setSharing] = useState(false);
+  const [shareMessage, setShareMessage] = useState('');
+
+  const handleShare = async () => {
+    if (sharing) return;
+
+    const shareTarget = getShareTarget({ id: 'gureumi' });
+    if (!shareTarget) return;
+
+    setSharing(true);
+    setShareMessage('');
+    try {
+      const result = await shareAppLink({
+        title: shareTarget.title,
+        url: buildActivityShareUrl(shareTarget.slug),
+      });
+      const messages: Partial<Record<ShareAppLinkResult, string>> = {
+        shared: '구르미 테스트 링크를 공유했어요.',
+        copied: '구르미 테스트 링크를 복사했어요.',
+        failed: '링크를 공유하지 못했어요. 잠시 후 다시 시도해주세요.',
+      };
+
+      if (result !== 'cancelled') setShareMessage(messages[result] ?? '');
+    } finally {
+      setSharing(false);
+    }
+  };
+
   return (
     <main className="gureumi-screen gureumi-intro">
       <nav className="gureumi-toolbar" aria-label="구르미 테스트 탐색">
@@ -31,7 +67,7 @@ export function GureumiIntroScreen({
       <article className="gureumi-intro__panel" aria-labelledby="gureumi-intro-title">
         <div className="gureumi-intro__badge">BETA 1</div>
         <p className="gureumi-kicker">ONGI · GUREUMI TEST</p>
-        <h1 id="gureumi-intro-title">구르미 테스트 Beta에<br />오신 걸 환영해요</h1>
+        <h1 id="gureumi-intro-title">구르미 테스트에<br />오신 걸 환영해요</h1>
         <p className="gureumi-intro__lead">27개의 선택을 따라가며<br />나와 닮은 구르미를 만나보세요.</p>
         <img
           className="gureumi-intro__character"
@@ -40,8 +76,8 @@ export function GureumiIntroScreen({
         />
 
         <section className="gureumi-intro__guide" aria-label="Beta 테스트 안내">
-          <strong>BETA 1 · 27문항 · 약 4~5분</strong>
-          <p>답변은 이름이나 연락처 없이 익명으로 저장되고, 문항과 결과 품질을 개선하는 데 활용돼요.</p>
+          <strong>27문항 · 약 4~5분</strong>
+          <p>답변은 익명으로 저장되고,<br />문항과 결과 품질을 개선하는 데 활용돼요.</p>
         </section>
 
         {hasSavedAttempt ? (
@@ -60,8 +96,32 @@ export function GureumiIntroScreen({
             {busy ? '준비하고 있어요…' : 'Beta 테스트 시작하기'}
           </button>
         )}
+        <button
+          className="gureumi-intro__share-button"
+          type="button"
+          disabled={sharing}
+          aria-label="구르미 테스트 공유하기"
+          onClick={() => void handleShare()}
+        >
+          <span className="gureumi-intro__share-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="18" cy="5" r="2.25" />
+              <circle cx="6" cy="12" r="2.25" />
+              <circle cx="18" cy="19" r="2.25" />
+              <path d="m8.1 10.8 7.7-4.5M8.1 13.2l7.7 4.5" />
+            </svg>
+          </span>
+          <span>
+            <strong>{sharing ? '공유 준비 중…' : '친구에게 공유하기'}</strong>
+            <small>구르미 테스트 링크 보내기</small>
+          </span>
+          <span className="gureumi-intro__share-arrow" aria-hidden="true">↗</span>
+        </button>
+        {shareMessage ? (
+          <p className="gureumi-intro__share-message" role="status">{shareMessage}</p>
+        ) : null}
         <p className="gureumi-credit">유형, 문항 디자인 · 권봉준 · hyunee</p>
-        <p className="gureumi-credit">기힉, UIUX, 개발 · hyunee</p>
+        <p className="gureumi-credit">기획, UIUX, 개발 · hyunee</p>
 
         {error ? <p className="gureumi-error" role="alert">{error}</p> : null}
         <p className="gureumi-intro__disclaimer">

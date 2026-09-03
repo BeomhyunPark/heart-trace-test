@@ -310,7 +310,7 @@ export function GureumiApp({ onBackHome }: GureumiAppProps) {
     <GureumiIntroScreen
       answeredCount={resumeState?.answeredCount ?? 0}
       hasSavedAttempt={Boolean(
-          reference && resumeState && resumeState.answeredCount > 0
+        reference && resumeState && resumeState.answeredCount > 0
       )}
       busy={busy}
       error={error}

@@ -12,6 +12,13 @@ function getShareUrl(): string {
     ?? window.location.href;
 }
 
+export function buildActivityShareUrl(slug: string): string {
+  const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href;
+  const siteBaseUrl = new URL(canonical ?? './', window.location.href);
+
+  return new URL(`share/${slug}/`, siteBaseUrl).href;
+}
+
 async function copyText(text: string): Promise<void> {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);

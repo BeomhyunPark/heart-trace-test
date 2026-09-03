@@ -3,6 +3,7 @@ import { memo, useEffect, useState, type CSSProperties } from 'react';
 import type { ActivityTarget } from '../app/activityNavigation';
 import { getShareTarget } from '../app/shareTargets';
 import {
+  buildActivityShareUrl,
   shareAppLink,
   type ShareAppLinkResult,
 } from '../features/home/services/shareAppLink';
@@ -19,16 +20,6 @@ import type { EngagementContentCode, LikeResponse } from '../engagement/types';
 type ActivityShareButtonProps = {
   target: ActivityTarget;
 };
-
-function getSiteBaseUrl(): URL {
-  const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href;
-
-  return new URL(canonical ?? './', window.location.href);
-}
-
-export function buildActivityShareUrl(slug: string): string {
-  return new URL(`share/${slug}/`, getSiteBaseUrl()).href;
-}
 
 type ActivityLikeButtonProps = {
   contentCode: EngagementContentCode;

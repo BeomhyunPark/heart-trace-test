@@ -252,9 +252,11 @@ export function App() {
             onWorldCupCategoryChange={handleWorldCupCategoryChange}
             onBalanceGameWeightChange={handleBalanceGameWeightChange}
           />
-          <ActivityShareButton
-            target={activeActivity}
-          />
+          {activeActivity.id !== 'gureumi' ? (
+            <ActivityShareButton
+              target={activeActivity}
+            />
+          ) : null}
         </div>
       ) : (
         <HomeScreen

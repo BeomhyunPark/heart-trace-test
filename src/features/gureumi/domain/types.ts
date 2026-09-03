@@ -1,5 +1,5 @@
 export const GUREUMI_QUESTION_COUNT = 27;
-export const GUREUMI_PAGE_SIZE = 3;
+export const GUREUMI_PAGE_SIZE = 5;
 
 export type GureumiChoice = 'A_VERY' | 'A_LITTLE' | 'B_LITTLE' | 'B_VERY';
 

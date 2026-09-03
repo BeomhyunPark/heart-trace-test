@@ -135,7 +135,7 @@ GET    /api/engagement/share-links/{code}
 
 ### 구르미 Beta 내부 통계
 
-`/?page=gureumi-beta-stats`는 공개 메뉴에 등록하지 않은 desktop 집계 화면입니다. 접근 시 `.env` 또는 `.env.home-server`의 `ONGI_GUREUMI_ADMIN_KEY`와 같은 키를 입력합니다. 운영 compose는 이 변수가 없으면 backend를 시작하지 않습니다.
+`/?page=gureumi-beta-stats`는 공개 메뉴에 등록하지 않은 desktop 집계 화면입니다. 접근 시 `.env` 또는 `.env.home-server`의 `ONGI_GUREUMI_ADMIN_KEY`와 같은 키를 입력합니다. 운영 compose는 이 변수가 없어도 일반 backend를 배포하되, 내부 통계 API만 `503` 상태로 비활성화합니다. 키를 추가하면 홈서버 감시기가 환경 파일 변경을 감지해 재배포합니다.
 
 화면은 문항 choice·평균 응답 시간, 축 HIGH/LOW·boundary, 8종 결과, 결과별·전체 만족도, funnel을 익명 집계로 보여줍니다. 개별 attempt와 token은 내부 API에서도 반환하지 않습니다. 상세한 집계 의미와 보호 경계는 [GUREUMI Beta 구현 메모](./gureumi/beta-implementation.md)를 참고하세요.
 

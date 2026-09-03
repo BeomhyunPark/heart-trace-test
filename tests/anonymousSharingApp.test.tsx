@@ -312,7 +312,7 @@ describe('익명 자기소개 나눔', () => {
     render(<AnonymousSharingApp onBackHome={vi.fn()} />);
     fireEvent.click(await screen.findByRole('button', { name: '이거 저예요' }));
 
-    expect(screen.getByText('정말 내 이야기인가요?')).toBeTruthy();
+    expect(await screen.findByText('정말 내 이야기인가요?')).toBeTruthy();
     expect(revealed).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: '네, 제 이름을 공개할게요' }));
 

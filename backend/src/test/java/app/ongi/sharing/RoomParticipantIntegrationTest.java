@@ -96,6 +96,28 @@ class RoomParticipantIntegrationTest {
     }
 
     @Test
+    void participantCannotCompleteWithOnlyBlankAnswers() throws Exception {
+        MvcResult room = createRoom("빈 답변 방지 모임");
+        String roomId = jsonValue(room, "roomId");
+        MvcResult joined = join(jsonValue(room, "roomCode"), "참여자")
+            .andExpect(status().isOk())
+            .andReturn();
+        Cookie participantCookie = joined.getResponse().getCookie("ongi_participant_session");
+        String questionId = objectMapper.readTree(mockMvc.perform(get("/api/rooms/{roomId}/questions", roomId)
+                .cookie(participantCookie))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString()).path("questions").get(0).path("id").asText();
+
+        saveAnswer(roomId, participantCookie, questionId, "   ");
+
+        mockMvc.perform(post("/api/rooms/{roomId}/responses/complete", roomId)
+                .cookie(participantCookie)
+                .header("X-OnGi-Client", "web"))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code", is("ANSWER_REQUIRED")));
+    }
+
+    @Test
     void hostLocksRoomAndNewJoinIsRejectedWithoutLeakingStatus() throws Exception {
         MvcResult room = createRoom("닫힌 모임");
         String code = jsonValue(room, "roomCode");

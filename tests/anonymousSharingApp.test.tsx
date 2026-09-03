@@ -83,6 +83,7 @@ describe('익명 자기소개 나눔', () => {
     fireEvent.click(screen.getByRole('button', { name: '참여하기' }));
 
     expect(await screen.findByRole('heading', { name: '요즘 가장 좋아하는 것은 무엇인가요?' })).toBeTruthy();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '산책' } });
     fireEvent.click(screen.getByRole('button', { name: '다음' }));
 
     expect(await screen.findByRole('heading', { name: '쉬는 날 가장 하고 싶은 것은 무엇인가요?' })).toBeTruthy();
@@ -95,6 +96,55 @@ describe('익명 자기소개 나눔', () => {
       expect(new Headers(joinInit.headers).get('X-OnGi-Client')).toBe('web');
       expect(joinInit.credentials).toBe('include');
     });
+  });
+
+  it('모든 답변이 비어 있거나 공백뿐이면 작성을 완료할 수 없다', async () => {
+    window.history.replaceState({}, '', `/?activity=anonymous-sharing#room=${ROOM_ID}`);
+    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url.endsWith(`/api/rooms/${ROOM_ID}/state`)) {
+        return json({
+          roomId: ROOM_ID,
+          title: '빈 답변 방지 모임',
+          status: 'WRITING',
+          role: 'PARTICIPANT',
+          version: 1,
+          participantCount: 2,
+          completedParticipantCount: 0,
+          participantJoined: true,
+          responseCompleted: false,
+          currentRound: 0,
+          totalRounds: 0,
+          expiresAt: '2026-09-02T00:00:00Z',
+        });
+      }
+      if (url.endsWith(`/api/rooms/${ROOM_ID}/questions`)) {
+        return json({ questions: [
+          { id: QUESTION_ONE, position: 1, prompt: '첫 번째 질문' },
+          { id: QUESTION_TWO, position: 2, prompt: '두 번째 질문' },
+        ] });
+      }
+      if (url.endsWith(`/api/rooms/${ROOM_ID}/responses/me`)) {
+        return json({ answers: [], completed: false });
+      }
+      if (url.endsWith(`/api/rooms/${ROOM_ID}/responses`) && init?.method === 'PUT') {
+        return json({ answers: [], completed: false });
+      }
+      return json({ code: 'NOT_FOUND', detail: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<AnonymousSharingApp onBackHome={vi.fn()} />);
+    expect(await screen.findByRole('heading', { name: '첫 번째 질문' })).toBeTruthy();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '   ' } });
+    fireEvent.click(screen.getByRole('button', { name: '다음' }));
+
+    expect(await screen.findByRole('heading', { name: '두 번째 질문' })).toBeTruthy();
+    const completeButton = screen.getByRole('button', { name: '작성 완료' });
+    expect((completeButton as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText('답변을 하나 이상 작성해야 완료할 수 있어요.')).toBeTruthy();
+    expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith('/responses/complete'))).toBe(false);
   });
 
   it('진행자가 권한을 유지한 채 참여자로 들어가 답변을 작성할 수 있다', async () => {

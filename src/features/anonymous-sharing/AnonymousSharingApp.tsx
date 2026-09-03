@@ -373,6 +373,7 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
     && ['WRITING', 'LOCKED'].includes(roomState.status)
     && roomState.responseCompleted;
   const currentQuestion = questions[questionIndex];
+  const hasWrittenAnswer = questions.some(({ id }) => Boolean(answers[id]?.trim()));
 
   return (
     <ScreenLayout className="anonymous-sharing-screen">
@@ -514,9 +515,12 @@ export function AnonymousSharingApp({ onBackHome }: AnonymousSharingAppProps) {
             {questionIndex < questions.length - 1 ? (
               <PrimaryButton disabled={busy} onClick={() => void moveQuestion(1)}>다음</PrimaryButton>
             ) : (
-              <PrimaryButton disabled={busy} onClick={finishAnswers}>작성 완료</PrimaryButton>
+              <PrimaryButton disabled={busy || !hasWrittenAnswer} onClick={finishAnswers}>작성 완료</PrimaryButton>
             )}
           </div>
+          {questionIndex === questions.length - 1 && !hasWrittenAnswer ? (
+            <p className="anonymous-sharing-help" role="status">답변을 하나 이상 작성해야 완료할 수 있어요.</p>
+          ) : null}
         </section>
       ) : null}
 

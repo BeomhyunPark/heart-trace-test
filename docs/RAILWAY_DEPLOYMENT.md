@@ -15,10 +15,15 @@ Backend와 PostgreSQL을 Railway에서 새로 시작한다. 기존 홈서버 데
 2. 서비스 이름을 `ongi-backend`로 지정한다.
 3. Settings → Source에서 배포 branch를 `master`로 지정한다.
 4. Root Directory를 `/backend`로 지정한다.
-5. Config File 경로를 `/backend/railway.json`으로 지정한다.
-6. GitHub Autodeploy를 활성화하고 `Wait for CI`를 켠다.
+5. GitHub Autodeploy를 활성화하고 `Wait for CI`를 켠다.
+6. Settings → Deploy에서 아래 값을 설정한다.
+   - Healthcheck Path: `/actuator/health/readiness`
+   - Healthcheck Timeout: `180`
+   - Restart Policy: `On Failure`
+   - Max restart retries: `5`
+   - Replicas: `1`
 
-`backend/railway.json`은 Dockerfile build, 단일 replica, readiness 검사와 실패 시 재시작 정책을 정의한다.
+Railway는 `/backend/Dockerfile`을 자동으로 감지한다. 기존 `railway.json` Config as Code 방식은 새 Railway 서비스에서 사용할 수 없으므로 위 배포 설정은 대시보드에서 관리한다.
 
 ## 3. 환경변수 연결
 
